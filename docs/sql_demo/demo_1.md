@@ -1,4 +1,4 @@
-##demo1 单流kafka写入mysqld  参考
+## demo1 单流kafka写入mysqld  参考
 
 
 source kafka json 数据格式  {"day_time": "20201009","id": 7,"amnount":20}

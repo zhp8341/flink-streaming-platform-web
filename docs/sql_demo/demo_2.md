@@ -1,4 +1,4 @@
-##demo2 双流kafka写入mysql 参考
+## demo2 双流kafka写入mysql 参考
 
 
 source kafka json 数据格式  

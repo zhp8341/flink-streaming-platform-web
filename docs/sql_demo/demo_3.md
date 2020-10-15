@@ -1,4 +1,4 @@
-##demo3 kafka和mysql维表实时关联写入mysql 参考
+## demo3 kafka和mysql维表实时关联写入mysql 参考
 
 
 source kafka json 数据格式  

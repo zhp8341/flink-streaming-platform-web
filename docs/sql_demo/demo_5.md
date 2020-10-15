@@ -1,4 +1,4 @@
-##demo5 滑动窗口
+## demo5 滑动窗口
 
 
 source kafka json 数据格式  
@@ -68,7 +68,7 @@ CREATE TABLE sync_test_hop_output (
 				  clicks BIGINT
  ) WITH (
    'connector.type' = 'jdbc',
-   'connector.url' = 'jdbc:mysql://rdsr2eeezymbyqz1o.mysql.rds.aliyuncs.com:3306/flink_web?characterEncoding=UTF-8',
+   'connector.url' = 'jdbc:mysql://127.0.0.1:3306/flink_web?characterEncoding=UTF-8',
    'connector.table' = 'sync_test_hop_output',
    'connector.username' = 'flink_web_test',
    'connector.password' = 'flink_web_test_123'
