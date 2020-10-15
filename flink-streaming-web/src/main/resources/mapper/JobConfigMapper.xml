@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flink.streaming.web.mapper.JobConfigMapper">
+    <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfig">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
+        <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig"/>
+        <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
+        <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
+        <result column="is_open" jdbcType="BIT" property="isOpen"/>
+        <result column="stauts" jdbcType="BIT" property="stauts"/>
+        <result column="udf_jar_path" jdbcType="VARCHAR" property="udfJarPath"/>
+        <result column="udf_register_name" jdbcType="VARCHAR" property="udfRegisterName"/>
+        <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
+        <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="editor" jdbcType="VARCHAR" property="editor"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+               type="com.flink.streaming.web.model.entity.JobConfig">
+        <result column="flink_sql" jdbcType="LONGVARCHAR" property="flinkSql"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        job_name,
+        deploy_mode,
+        flink_run_config,
+        flink_checkpoint_config,
+        job_id,
+        is_open,
+        stauts,
+        udf_register_name,
+        udf_jar_path,
+        last_start_time,
+        last_run_log_id,
+        version,
+        is_deleted,
+        create_time,
+        edit_time,
+        creator,
+        editor
+    </sql>
+    <sql id="Blob_Column_List">
+        flink_sql
+    </sql>
+
+    <insert id="insert" parameterType="com.flink.streaming.web.model.entity.JobConfig">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into job_config (job_name, deploy_mode, flink_run_config,
+        flink_checkpoint_config, job_id, is_open,
+        stauts, last_start_time, version,
+        is_deleted, create_time, edit_time,
+        creator, editor, flink_sql,udf_jar_path,udf_register_name
+        )
+        values (#{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
+        #{flinkRunConfig,jdbcType=VARCHAR},
+        #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
+        #{stauts,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,
+        0, now(), now(),
+        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
+        #{udfJarPath,jdbcType=VARCHAR}, #{udfRegisterName,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from job_config
+        where id = #{id,jdbcType=BIGINT} and is_deleted=0
+    </select>
+
+
+    <select id="findJobConfig" parameterType="com.flink.streaming.web.model.param.JobConfigParam"
+            resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+
+        from job_config
+
+        where is_deleted=0
+
+        <if test="jobName != null and jobName != ''">
+            <![CDATA[
+	               and job_name like CONCAT('%',#{jobName,jdbcType=VARCHAR},'%')
+			 ]]>
+        </if>
+
+        <if test="stauts != null ">
+            <![CDATA[
+	               and stauts = #{stauts,jdbcType=BIT}
+			 ]]>
+        </if>
+
+        <if test="open != null ">
+            <![CDATA[
+	               and is_open = #{open,jdbcType=BIT}
+			 ]]>
+        </if>
+
+        <if test="jobId != null and jobId != '' ">
+            <![CDATA[
+	               and job_id = #{jobId,jdbcType=VARCHAR}
+			 ]]>
+        </if>
+
+        <if test="deployMode != null and deployMode != '' ">
+            <![CDATA[
+	               deploy_mode = #{deployMode,jdbcType=VARCHAR},
+			 ]]>
+        </if>
+
+        order by create_time desc
+
+    </select>
+
+    <select id="findJobConfigByRun"  resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+
+        from job_config
+
+        where is_deleted=0 and stauts=1
+
+    </select>
+
+
+    <select id="selectCountByJobName" resultType="java.lang.Long">
+        select
+        count(job_name)
+        from job_config
+        where job_name = #{jobName,jdbcType=VARCHAR}
+        <if test="id != null ">
+            <![CDATA[
+	               and id != #{id,jdbcType=BIT}
+			 ]]>
+        </if>
+    </select>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.flink.streaming.web.model.entity.JobConfig">
+        update job_config
+        <set>
+            <if test="jobName != null">
+                job_name = #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="deployMode != null">
+                deploy_mode = #{deployMode,jdbcType=VARCHAR},
+            </if>
+            <if test="flinkRunConfig != null">
+                flink_run_config = #{flinkRunConfig,jdbcType=VARCHAR},
+            </if>
+            <if test="flinkCheckpointConfig != null">
+                flink_checkpoint_config = #{flinkCheckpointConfig,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="isOpen != null">
+                is_open = #{isOpen,jdbcType=BIT},
+            </if>
+            <if test="stauts != null">
+                stauts = #{stauts,jdbcType=BIT},
+            </if>
+
+            <if test="udfJarPath != null">
+                udf_jar_path = #{udfJarPath,jdbcType=VARCHAR},
+            </if>
+
+            <if test="udfRegisterName != null">
+                udf_register_name = #{udfRegisterName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="lastStartTime != null">
+                last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=BIT},
+            </if>
+
+            <if test="editor != null">
+                editor = #{editor,jdbcType=VARCHAR},
+            </if>
+            <if test="flinkSql != null">
+                flink_sql = #{flinkSql,jdbcType=LONGVARCHAR},
+            </if>
+
+            <if test="lastRunLogId != null">
+                last_run_log_id = #{lastRunLogId,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT} and is_deleted=0
+    </update>
+
+    <update id="deleteById">
+        update job_config
+        set is_deleted=1,
+            editor    = #{userName,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+          and is_deleted = 0
+    </update>
+
+
+</mapper>

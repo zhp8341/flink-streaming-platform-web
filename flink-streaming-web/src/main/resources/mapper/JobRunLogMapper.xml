@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flink.streaming.web.mapper.JobRunLogMapper">
+    <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobRunLog">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="job_config_id" jdbcType="BIGINT" property="jobConfigId"/>
+        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
+        <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
+        <result column="remote_log_url" jdbcType="VARCHAR" property="remoteLogUrl"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="job_status" jdbcType="VARCHAR" property="jobStatus"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="editor" jdbcType="VARCHAR" property="editor"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+               type="com.flink.streaming.web.model.entity.JobRunLog">
+        <result column="local_log" jdbcType="LONGVARCHAR" property="localLog"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        job_config_id,
+        job_name,
+        deploy_mode,
+        job_id,
+        remote_log_url,
+        start_time,
+        end_time,
+        job_status,
+        is_deleted,
+        create_time,
+        edit_time,
+        creator,
+        editor
+    </sql>
+    <sql id="Blob_Column_List">
+        local_log
+    </sql>
+
+
+    <insert id="insert" parameterType="com.flink.streaming.web.model.entity.JobRunLog">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into job_run_log (job_config_id, job_name, deploy_mode,
+        job_id, remote_log_url, start_time,
+        end_time, job_status, is_deleted,
+        create_time, edit_time, creator,
+        editor, local_log)
+        values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
+        #{jobId,jdbcType=VARCHAR}, #{remoteLogUrl,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
+        #{endTime,jdbcType=TIMESTAMP}, #{jobStatus,jdbcType=VARCHAR}, 0,
+        now(), now(), #{creator,jdbcType=VARCHAR},
+        #{editor,jdbcType=VARCHAR}, #{localLog,jdbcType=LONGVARCHAR})
+    </insert>
+
+    <update id="update" parameterType="com.flink.streaming.web.model.entity.JobRunLog">
+
+        update job_run_log
+        <set>
+            <if test="remoteLogUrl != null">
+                remote_log_url = #{remoteLogUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="jobStatus != null">
+                job_status = #{jobStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="localLog != null">
+                local_log = #{localLog,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="selectByParam" parameterType="com.flink.streaming.web.model.param.JobRunLogParam"
+            resultMap="ResultMapWithBLOBs">
+        select
+
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+
+        from job_run_log
+
+        where is_deleted=0
+
+        <if test="jobConfigId != null ">
+            <![CDATA[
+	               and job_config_id = #{jobConfigId,jdbcType=BIGINT}
+			 ]]>
+        </if>
+
+        <if test="jobId != null  and jobId!='' ">
+            <![CDATA[
+	               and job_id = #{jobId,jdbcType=BIGINT}
+			 ]]>
+        </if>
+
+        <if test="jobName != null and jobName != ''">
+            <![CDATA[
+	               and job_name like CONCAT('%',#{jobName,jdbcType=VARCHAR},'%')
+			 ]]>
+        </if>
+
+        order by create_time desc
+
+    </select>
+
+
+    <select id="selectById" resultMap="ResultMapWithBLOBs">
+        select
+
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+
+        from job_run_log
+
+        where is_deleted=0 and id=#{id,jdbcType=BIGINT}
+
+    </select>
+
+    <update id="deleteByJobConfigId" >
+
+        update job_run_log
+        set is_deleted=1
+        where is_deleted = 0
+          and job_config_id = #{jobConfigId,jdbcType=BIGINT}
+    </update>
+
+
+</mapper>

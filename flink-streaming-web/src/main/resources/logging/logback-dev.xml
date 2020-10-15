@@ -1,0 +1,50 @@
+<configuration>
+
+    <!-- 引用yml配置中的变量值 -->
+    <springProperty scope="context" name="LOG_HOME" source="log.file.root"/>
+    <springProperty scope="context" name="LOG_SIZE" source="log.file.maxSize"/>
+    <springProperty scope="context" name="LOG_NUM" source="log.file.maxHistory"/>
+    <springProperty scope="context" name="APP_NAME" source="app.app-name"/>
+    <springProperty scope="context" name="APP_NAME_NODE" source="app.app-name-node"/>
+
+    <springProperty scope="context" name="TRACE_URLS" source="yttrace.urls"/>
+    <springProperty scope="context" name="TRACE_CLUSTERNAME" source="yttrace.clusterName"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level -  [%logger{0} - %M] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+
+    <logger name="org" level="INFO"/>
+    <logger name="com.alibaba" level="WARN"/>
+    <!--<logger name="springfox" level="ERROR"/>-->
+
+    <!--myibatis log configure-->
+    <!--<logger name="jdbc.sqlonly" level="OFF"/>-->
+    <!--<logger name="jdbc.sqltiming" level="OFF"/>-->
+    <!--<logger name="jdbc.audit" level="OFF"/>-->
+    <!--<logger name="jdbc.resultset" level="OFF"/>-->
+    <!--<logger name="jdbc.resultsettable" level="OFF"/>-->
+    <!--<logger name="jdbc.connection" level="OFF"/>-->
+    <!--<logger name="com.apache.ibatis" level="${log.sql.level}"/>-->
+    <!--<logger name="com.ibatis" level="${log.sql.level}"/>-->
+    <!--<logger name="java.sql.Connection" level="${log.sql.level}"/>-->
+    <!--<logger name="java.sql.Statement" level="${log.sql.level}"/>-->
+    <!--<logger name="java.sql.PreparedStatement" level="${log.sql.level}"/>-->
+    <!--<logger name="java.sql.ResultSet" level="${log.sql.level}"/>-->
+    <logger name="org.dozer" level="WARN"/>
+    <logger name="net.rubyeye.xmemcached" level="WARN"/>
+    <logger name="com.google.code" level="WARN"/>
+
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
+
