@@ -69,6 +69,6 @@
 </div>
 
 <!--sd -->
-
+<#include "../../layout/bottom.ftl">
 </body>
 </html>

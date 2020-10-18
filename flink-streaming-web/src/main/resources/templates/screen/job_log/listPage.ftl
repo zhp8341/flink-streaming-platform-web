@@ -44,6 +44,7 @@
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-primary" onclick="searchForm(1)">搜索</button>
                         </div>
+
                 </form>
             </div>
         </div>
@@ -131,7 +132,7 @@
 </div>
 
 
-
+<#include "../../layout/bottom.ftl">
 <script>
     function searchForm(pageNum) {
         $("#pageNum").attr("value", pageNum);

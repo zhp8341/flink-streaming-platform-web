@@ -61,6 +61,9 @@
                         <div class="col-sm-1">
                             <button type="button" class="btn btn-primary" onclick="searchForm(1)">搜索</button>
                         </div>
+                        <div class="col-sm-1">
+                            <a class="btn btn-primary" href="/admin/addPage">新增</a>
+                        </div>
                 </form>
             </div>
         </div>
@@ -182,7 +185,7 @@
     </div>
 </div>
 
-
+<#include "../../layout/bottom.ftl">
 
 <script src="/static/js/customer/list_job_config.js"></script>
 </body>

@@ -88,7 +88,7 @@
         </div>
     </div>
 </div>
-
+<#include "../../layout/bottom.ftl">
 <script>
 
     $(function () { $("[data-toggle='tooltip']").tooltip(); });

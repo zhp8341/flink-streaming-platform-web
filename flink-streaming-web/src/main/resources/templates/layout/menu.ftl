@@ -10,7 +10,7 @@
         <li <#if active??&&active=="synconfig" > class="active" </#if> ><a href="/admin/sysConfig">系统设置</a></li>
         <li class="nav-header">报警管理</li>
         <li <#if active??&&active=="alartConfig" > class="active" </#if> ><a href="/admin/alartConfig">报警设置</a></li>
-        <li <#if active??&&active=="alartLogList" > class="active" </#if> ><a href="/admin/alartLogList">发送日志</a></li>
+        <li <#if active??&&active=="alartLogList" > class="active" </#if> ><a href="/admin/alartLogList">报警日志</a></li>
     </ul>
 
 

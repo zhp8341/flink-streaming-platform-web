@@ -89,7 +89,7 @@
         </div>
     </div>
 </div>
-
+<#include "../../layout/bottom.ftl">
 <script>
     function start(id,savepointId) {
         $.post("../api/start", {
