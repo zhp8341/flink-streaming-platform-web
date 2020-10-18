@@ -439,3 +439,13 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 1、升级flink版本到1.11
 
 2、支持STANDALONE、LOCAL 模式
+
+
+另外寻觅一起做开源flink-sql流平台的码友 
+
+微信二维码
+
+
+[二维码地址 http://img.ccblog.cn/fimg/2wm.jpeg](http://img.ccblog.cn/fimg/2wm.jpeg)
+
+
