@@ -7,15 +7,15 @@
 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
  
  效果图 
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749367.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749384.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018180417416.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749210.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018113454426.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
-
  
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v0.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v1.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v2.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v3.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v4.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v5.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/v6.png)
+ ![图片](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/img/1.png)
 
   
 ## 二、环境以及安装
@@ -127,7 +127,7 @@ f:集群
 
 如果需要集群部署模式 简单参考图
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018111339635.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+![图片](https://img-blog.csdnimg.cn/20201018111339635.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 
 
 ## 三、功能介绍
@@ -215,7 +215,7 @@ f: udf注册名称
 
 
 ~~~~
-   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110845622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+   ![图片](https://img-blog.csdnimg.cn/20201018110845622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 
 ### 3、报警设置
 
@@ -229,12 +229,12 @@ f: udf注册名称
     
 ~~~~
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110534482.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018112359232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+![图片](https://img-blog.csdnimg.cn/20201018110534482.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+![图片](https://img-blog.csdnimg.cn/20201018112359232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 
    
 效果图
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018111816869.png#pic_center)
+![图片](https://img-blog.csdnimg.cn/20201018111816869.png#pic_center)
 
 ##  三、配置demo
 
@@ -325,7 +325,7 @@ GROUP BY day_time;
 2、由于es 、hbase等版本不一样可能需要下载源码重新选择对应版本 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
 
 微信交流和解答
-![在这里插入图片描述](https://img-blog.csdnimg.cn/img_convert/9bed09333837cc8488722134157b6436.png#pic_center)
+![图片](https://img-blog.csdnimg.cn/img_convert/9bed09333837cc8488722134157b6436.png#pic_center)
 
 
 ##  六、问题
