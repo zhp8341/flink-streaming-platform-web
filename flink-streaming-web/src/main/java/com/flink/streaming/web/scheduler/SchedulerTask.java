@@ -53,14 +53,14 @@ public class SchedulerTask {
 
 
     /**
-     * 每隔10分钟进行一次一致性校验检查
+     * 每隔5分钟进行一次一致性校验检查(如果校验失败会进行告警)
      *
      * @author zhuhuipei
      * @date 2020-09-22
      * @time 23:45
      */
     @Async("taskExecutor")
-    @Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void checkJobStatus() {
         if (!ipStatusService.isLeader()) {
             return;

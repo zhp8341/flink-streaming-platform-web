@@ -79,7 +79,7 @@ CREATE TABLE `job_run_log` (
   `job_name` varchar(64) NOT NULL COMMENT '任务名称',
   `deploy_mode` varchar(64) NOT NULL COMMENT '提交模式: standalone 、yarn 、yarn-session ',
   `job_id` varchar(64) DEFAULT NULL COMMENT '运行后的任务id',
-  `local_log` text COMMENT '启动时本地日志',
+  `local_log` mediumtext COMMENT '启动时本地日志',
   `remote_log_url` varchar(128) DEFAULT NULL COMMENT '远程日志url的地址',
   `start_time` datetime DEFAULT NULL COMMENT '启动时间',
   `end_time` datetime DEFAULT NULL COMMENT '启动时间',

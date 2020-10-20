@@ -33,16 +33,15 @@ public class FlinkHttpRequestAdapterImpl implements FlinkHttpRequestAdapter {
         if (StringUtils.isEmpty(appId)) {
             throw new BizException(SysErrorEnum.HTTP_REQUEST_IS_NULL);
         }
-
-        String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriJobsForYarn(appId);
-
-        log.info("[getJobInfoForPerYarnByAppId]请求参数 appId={} url={}", appId, url);
-        String res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
-        log.info("[getJobInfoForPerYarnByAppId]请求参数结果: res={}", res);
-        if (StringUtils.isEmpty(res)) {
-            return null;
-        }
+        String res = null;
         try {
+            String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriJobsForYarn(appId);
+            log.info("[getJobInfoForPerYarnByAppId]请求参数 appId={} url={}", appId, url);
+            res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
+            log.info("[getJobInfoForPerYarnByAppId]请求参数结果: res={}", res);
+            if (StringUtils.isEmpty(res)) {
+                return null;
+            }
             JSONArray jsonArray = (JSONArray) JSON.parseObject(res).get("jobs");
             JSONObject jsonObject = (JSONObject) jsonArray.get(0);
             JobInfo jobInfo = new JobInfo();

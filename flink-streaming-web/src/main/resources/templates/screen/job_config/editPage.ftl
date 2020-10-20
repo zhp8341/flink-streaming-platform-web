@@ -71,19 +71,10 @@
                          <div class="form-group">
                                  <div  id="message"/>
                          </div>
-                        <#if  (jobConfig.stauts?? && jobConfig.stauts==1) || (jobConfig.isOpen?? && jobConfig.isOpen==1) >
-                            <div class="form-group alert alert-warning">
-                                修改的时候任务必须是 非运行状态 和 关闭配置 (请先停止任务和关闭配置)
-                            </div>
-                        <#else>
-                            <div class="form-group">
+
+                          <div class="form-group">
                                <button class="btn btn-lg btn-primary " onclick="editConfig()" type="submit">提交</button>
-                            </div>
-                        </#if>
-
-
-
-
+                          </div>
 
         </div>
     </div>

@@ -58,9 +58,7 @@ public class JobConfigServiceImpl implements JobConfigService {
         if (jobConfig==null){
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        if (YN.getYNByValue(jobConfig.getIsOpen()).getCode()){
-            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_OPEN);
-        }
+
 
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobName())) {
             this.checkJobName(jobConfigDTO.getJobName(), jobConfigDTO.getId());

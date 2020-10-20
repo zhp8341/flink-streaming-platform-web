@@ -6,7 +6,15 @@
   主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
  
- 效果图 https://blog.csdn.net/zhp8341/article/details/109107408
+ 效果图 
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749367.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749384.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749369.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018180417416.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749346.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018110749210.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201018113454426.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+
  
 
   
@@ -433,6 +441,8 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 1、升级flink版本到1.11
 
 2、支持STANDALONE、LOCAL 模式
+
+3、完善登录（退出、修改密码 添加帐号）
 
 
 另外寻觅一起做开源flink-sql流平台的码友 

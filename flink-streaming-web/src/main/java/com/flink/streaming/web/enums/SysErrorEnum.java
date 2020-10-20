@@ -34,7 +34,7 @@ public enum SysErrorEnum {
     JOB_CONFIG_PARAM_IS_NULL("20000", "参数不能为空"),
     JOB_CONFIG_JOB_NAME_IS_EXIST("20001", "任务名称已经存在"),
     JOB_CONFIG_JOB_IS_NOT_EXIST("20002", "任务配置不存在"),
-    JOB_CONFIG_JOB_IS_OPEN("20003", "任务开启或者运行状态不能修改"),
+    JOB_CONFIG_JOB_IS_OPEN("20003", "任务开启或者运行状态不能修改，请先关闭任务"),
 
     SYSTEM_CONFIG_IS_NULL("30000", "请先配置系统环境 "),
     SYSTEM_CONFIG_IS_NULL_FLINK_HOME("30001", "请先flink_home环境的目录地址"),

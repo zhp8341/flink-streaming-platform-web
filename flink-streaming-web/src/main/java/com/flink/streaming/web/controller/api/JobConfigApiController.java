@@ -8,6 +8,8 @@ import com.flink.streaming.web.common.util.HttpUtil;
 import com.flink.streaming.web.controller.web.BaseController;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.param.CheckPointParam;
 import com.flink.streaming.web.model.param.UpsertJobConfigParam;
 import com.flink.streaming.web.service.JobConfigService;
@@ -151,6 +153,13 @@ public class JobConfigApiController extends BaseController {
             return restResult;
         }
         try {
+            JobConfigDTO jobConfigDTO=jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
+            if (jobConfigDTO==null){
+                return RestResult.error("数据不存在");
+            }
+            if (YN.getYNByValue(jobConfigDTO.getIsOpen()).getCode()) {
+                return RestResult.error(SysErrorEnum.JOB_CONFIG_JOB_IS_OPEN.getErrorMsg());
+            }
             jobConfigService.updateJobConfigById(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
         } catch (BizException biz) {
             log.warn("updateJobConfigById is error ", biz);

@@ -251,13 +251,30 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
                 } catch (Exception e) {
                     log.error("exe is error", e);
-                    localLog.append(e);
+                    localLog.append(e).append(errorInfoDir());
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
                     localLog.append("\n ######启动结束#########:").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
                     this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), jobRunYarnDTO, appId);
                 }
 
+            }
+
+
+            /**
+             *错误日志目录提示
+             * @author zhuhuipei
+             * @date 2020-10-19
+             * @time 21:47
+             */
+            private String errorInfoDir(){
+                StringBuilder errorTips = new StringBuilder("\n\n") ;
+                errorTips.append("详细错误日志可以登录服务器:").append(IpUtil.getInstance().getLocalIP()).append("\n");
+                errorTips.append("web系统日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())).append("logs/error.log").append("\n");
+                errorTips.append("flink提交日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey())).append("log/").append("\n");
+                errorTips.append("\n");
+                errorTips.append("\n");
+                return errorTips.toString();
             }
 
 
