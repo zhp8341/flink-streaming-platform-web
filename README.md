@@ -184,19 +184,11 @@ e: udf地址
 ~~~~
 udf地址 只支持http并且填写一个 
  如： http://xxx.xxx.com/flink-streaming-udf.jar 
+ 
+ 地址填写后 可以在sql语句里面直接写
+ CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF;
 ~~~~
 udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://github.com/zhp8341/flink-streaming-udf)
-
-f: udf注册名称
-~~~~
- 多个可用;分隔 
- utc2local代表udf函数名称 com.streaming.flink.udf.UTC2Local代表类名 中间用|分隔
-
- 如多个写法:
-  utc2local|com.streaming.flink.udf.UTC2Local;
-  utc2local2|com.streaming.flink.udf.UTC2Local2;
-  utc2local3|com.streaming.flink.udf.UTC2Local3;
-~~~~
 
 
 
@@ -242,6 +234,10 @@ f: udf注册名称
 如
 
 ```sql
+
+CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF;
+-- 如果使用udf 函数必须配置 udf地址
+
      create table flink_test_6 ( 
   id BIGINT,
   day_time VARCHAR,

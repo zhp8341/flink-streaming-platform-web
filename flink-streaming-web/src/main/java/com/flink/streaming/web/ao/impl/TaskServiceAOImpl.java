@@ -90,7 +90,12 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             //TODO 不同的deployMode 需要调用不同的接口查询 目前只有一种模式
             String appId = null;
             try {
-                appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig()));
+                String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
+                if (StringUtils.isEmpty(queueName)) {
+                    continue;
+                }
+                log.info("check job getJobName={} queueName={}",jobConfigDTO.getJobName(),queueName);
+                appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
             } catch (BizException be) {
                 if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
                     continue;
