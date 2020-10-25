@@ -84,13 +84,13 @@ public interface JobConfigService {
 
 
     /**
-     * 获取状态是运行中的任务
+     * 按状态获取任务
      *
      * @author zhuhuipei
      * @date 2020-09-22
      * @time 23:04
      */
-    List<JobConfigDTO> findRunJobConfig();
+    List<JobConfigDTO> findJobConfigByStatus(Integer... status);
 
 
 }

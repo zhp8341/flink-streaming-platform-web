@@ -65,17 +65,39 @@ public class SchedulerTask {
         if (!ipStatusService.isLeader()) {
             return;
         }
-        log.info("#####checkJobStatus#######");
+        log.info("#####checkJobStatusByYarn#######");
         try {
-            taskServiceAO.checkJobStatus();
+            taskServiceAO.checkJobStatusByYarn();
         } catch (Exception e) {
-            log.error("checkJobStatus is error", e);
+            log.error("checkJobStatusByYarn is error", e);
         }
     }
 
 
     /**
-     *每隔1小时进行一次自动savePoint
+     *每隔20分钟进行一次对停止任务进行是否在yarn上运行的检查
+     * @author zhuhuipei
+     * @date 2020-10-25
+     * @time 18:34
+     */
+    @Async("taskExecutor")
+    @Scheduled(cron = "0 */20 * * * ?")
+    public void checkYarnJobByStop() {
+        if (!ipStatusService.isLeader()) {
+            return;
+        }
+        log.info("#####checkYarnJobByStop#######");
+        try {
+            taskServiceAO.checkYarnJobByStop();
+        } catch (Exception e) {
+            log.error("checkYarnJobByStop is error", e);
+        }
+    }
+
+
+    /**
+     * 每隔1小时进行一次自动savePoint
+     *
      * @author zhuhuipei
      * @date 2020-09-22
      * @time 23:45

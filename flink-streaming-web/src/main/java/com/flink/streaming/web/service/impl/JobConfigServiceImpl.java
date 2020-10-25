@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -136,8 +138,16 @@ public class JobConfigServiceImpl implements JobConfigService {
     }
 
     @Override
-    public List<JobConfigDTO> findRunJobConfig() {
-        return JobConfigDTO.toListDTO(jobConfigMapper.findJobConfigByRun());
+    public List<JobConfigDTO> findJobConfigByStatus(Integer... status) {
+        if (status==null){
+            return Collections.emptyList();
+        }
+
+        List<Integer> statusList= new ArrayList<>();
+        for (Integer s:status) {
+            statusList.add(s);
+        }
+        return JobConfigDTO.toListDTO(jobConfigMapper.findJobConfigByStatus(statusList));
     }
 
 

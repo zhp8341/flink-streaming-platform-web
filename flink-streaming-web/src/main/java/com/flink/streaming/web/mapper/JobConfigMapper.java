@@ -29,7 +29,7 @@ public interface JobConfigMapper {
 
     int deleteById(@Param("id") Long id, @Param("userName") String userName);
 
-    List<JobConfig> findJobConfigByRun();
+    List<JobConfig> findJobConfigByStatus(@Param("statusList") List<Integer> statusList);
 
 
 }

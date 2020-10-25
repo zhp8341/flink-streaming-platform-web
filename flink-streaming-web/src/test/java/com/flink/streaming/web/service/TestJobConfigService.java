@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * @author zhuhuipei
  * @Description:
@@ -76,6 +78,12 @@ public class TestJobConfigService extends TestRun {
     @Test
     public void delete() {
         jobConfigService.deleteJobConfigById(1L, "test1");
+    }
+
+    @Test
+    public void findJobConfigByStatus() {
+        List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode(),JobConfigStatus.STOP.getCode());
+        System.out.println(jobConfigDTOList);
     }
 
     @Test

@@ -50,7 +50,7 @@ CREATE TABLE `job_config` (
   `job_name` varchar(64) NOT NULL COMMENT '任务名称',
   `deploy_mode` varchar(64) NOT NULL COMMENT '提交模式: standalone 、yarn 、yarn-session ',
   `flink_run_config` varchar(512) NOT NULL COMMENT 'flink运行配置',
-  `flink_sql` text NOT NULL COMMENT 'sql语句',
+  `flink_sql` MEDIUMTEXT NOT NULL COMMENT 'sql语句',
   `flink_checkpoint_config` varchar(512) DEFAULT NULL COMMENT 'checkPoint配置',
   `job_id` varchar(64) DEFAULT NULL COMMENT '运行后的任务id',
   `is_open` tinyint(1) NOT NULL COMMENT '1:开启 0: 关闭',

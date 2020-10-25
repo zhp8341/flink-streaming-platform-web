@@ -62,7 +62,7 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
                 return appTO.getId();
             }
         }
-        throw new BizException("yarn队列"+queueName+"中没有找到运行的任务 name=" + JobConfigDTO.buildRunName(jobName));
+        throw new BizException("yarn队列"+queueName+"中没有找到运行的任务 name=" + JobConfigDTO.buildRunName(jobName),SysErrorEnum.YARN_CODE.getCode());
     }
 
 

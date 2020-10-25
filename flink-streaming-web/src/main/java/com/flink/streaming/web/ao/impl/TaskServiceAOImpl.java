@@ -1,12 +1,16 @@
 package com.flink.streaming.web.ao.impl;
 
 import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
+import com.flink.streaming.web.adapter.HttpRequestAdapter;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.ao.TaskServiceAO;
 import com.flink.streaming.web.common.SystemConstants;
+import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.common.util.YarnUtil;
 import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.flink.JobInfo;
 import com.flink.streaming.web.service.JobConfigService;
@@ -36,6 +40,9 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private FlinkHttpRequestAdapter flinkHttpRequestAdapter;
 
     @Autowired
+    private HttpRequestAdapter httpRequestAdapter;
+
+    @Autowired
     private AlarmServiceAO alarmServiceAO;
 
     @Autowired
@@ -45,10 +52,11 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private SystemConfigService systemConfigService;
 
     @Override
-    public void checkJobStatus() {
+    public void checkJobStatusByYarn() {
 
-        List<JobConfigDTO> jobConfigDTOList = getindRunJobConfig();
+        List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
+            log.warn("当前配置中没有运行的任务");
             return;
         }
 
@@ -63,7 +71,8 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                 jobConfig.setId(jobConfigDTO.getId());
                 jobConfig.setJobId("");
                 jobConfigService.updateJobConfigById(jobConfig);
-                alart(jobConfigDTO);
+
+                alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO.getId());
             }
             this.sleep();
         }
@@ -71,8 +80,38 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     }
 
     @Override
+    public void checkYarnJobByStop() {
+        List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.STOP.getCode());
+        if (CollectionUtils.isEmpty(jobConfigDTOList)) {
+            return;
+        }
+
+        for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
+            //TODO 不同的deployMode 需要调用不同的接口查询 目前只有一种模式
+            String appId = null;
+            try {
+                appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig()));
+            } catch (BizException be) {
+                if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
+                    continue;
+                }
+                log.error("getAppIdByYarn is error ", be);
+            } catch (Exception e) {
+                log.error("getAppIdByYarn is error ", e);
+                continue;
+            }
+            if (!StringUtils.isEmpty(appId)) {
+                jobServerAO.stop(jobConfigDTO.getId(), "sys");
+                alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO.getId());
+            }
+        }
+
+
+    }
+
+    @Override
     public void autoSavePoint() {
-        List<JobConfigDTO> jobConfigDTOList = getindRunJobConfig();
+        List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             return;
         }
@@ -87,32 +126,22 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     }
 
 
-    private List<JobConfigDTO> getindRunJobConfig() {
-        List<JobConfigDTO> jobConfigDTOList = jobConfigService.findRunJobConfig();
-        if (CollectionUtils.isEmpty(jobConfigDTOList)) {
-            log.warn("当前配置中没有运行的任务");
-            return null;
-        }
-        return jobConfigDTOList;
-    }
-
-
     private void sleep() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
         }
     }
 
 
-    private void alart(JobConfigDTO jobConfigDTO) {
+    private void alart(String content, Long jobConfigId) {
         try {
             String alartUrl = systemConfigService.getSystemConfigByKey(SysConfigEnum.DINGDING_ALARM_URL.getKey());
             if (StringUtils.isEmpty(alartUrl)) {
                 log.warn("没有配置钉钉url地址 不发送告警");
                 return;
             }
-            alarmServiceAO.sendForDingding(alartUrl, SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO.getId());
+            alarmServiceAO.sendForDingding(alartUrl, content, jobConfigId);
         } catch (Exception e) {
             log.error("告警失败 is error");
         }

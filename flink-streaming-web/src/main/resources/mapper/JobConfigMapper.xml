@@ -125,13 +125,17 @@
 
     </select>
 
-    <select id="findJobConfigByRun"  resultMap="ResultMapWithBLOBs">
+    <select id="findJobConfigByStatus"  resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
 
         from job_config
 
-        where is_deleted=0 and stauts=1
+        where is_deleted=0 and  stauts in
+
+        <foreach collection="statusList" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
 
     </select>
 

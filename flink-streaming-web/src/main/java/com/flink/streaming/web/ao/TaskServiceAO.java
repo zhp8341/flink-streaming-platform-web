@@ -17,15 +17,27 @@ public interface TaskServiceAO {
      * @date 2020-09-22
      * @time 23:00
      */
-    void checkJobStatus();
+    void checkJobStatusByYarn();
+
+
+    /**
+     * 检查yarn上任务存在 但是状态已经停止，这个时候停止Yarn任务
+     *
+     * @author zhuhuipei
+     * @date 2020-10-25
+     * @time 17:15
+     */
+    void checkYarnJobByStop();
 
 
     /**
      * 针对在线运行任务进行自动SavePoint
+     *
      * @author zhuhuipei
      * @date 2020-09-22
      * @time 23:25
      */
     void autoSavePoint();
+
 
 }

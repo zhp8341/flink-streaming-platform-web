@@ -42,6 +42,9 @@ public enum SysErrorEnum {
     SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME("30003", "请先配置web平台的目录地址"),
 
 
+    YARN_CODE("00000", "yarn队列中没有找到运行的任务"),
+
+
     ADD_SAVEPOINT_ERROR("40000", "手动添加SAVEPOINT失败"),
 
     ;

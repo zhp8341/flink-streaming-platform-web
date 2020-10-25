@@ -138,7 +138,6 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
         this.aSyncExec(jobRunYarnDTO, jobConfigDTO, jobRunLogId, savepointPath);
 
-
     }
 
 
@@ -150,7 +149,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
         }
         //1、停止前做一次savepoint操作
         try {
-            taskServiceAO.autoSavePoint();
+           this.savepoint(id);
         }catch (Exception e){
             log.error("autoSavePoint is error");
         }
