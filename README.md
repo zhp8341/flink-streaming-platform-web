@@ -321,8 +321,9 @@ GROUP BY day_time;
 2、由于es 、hbase等版本不一样可能需要下载源码重新选择对应版本 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
 
 微信交流和解答
-![图片](https://img-blog.csdnimg.cn/img_convert/9bed09333837cc8488722134157b6436.png#pic_center)
+最新二维码 [二维码地址 http://img.ccblog.cn/fimg/2wm.jpeg](http://img.ccblog.cn/fimg/2wm.jpeg)
 
+![图片](http://ccblog.oss-cn-hangzhou.aliyuncs.com/fimg/2wm.jpeg)
 
 ##  六、问题
 
