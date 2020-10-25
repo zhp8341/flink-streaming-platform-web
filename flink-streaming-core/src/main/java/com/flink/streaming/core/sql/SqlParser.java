@@ -93,4 +93,22 @@ public class SqlParser {
         }
         return str.substring(start, end);
     }
+
+    public static void main(String[] args){
+
+        String stmt="CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF";
+
+        final Matcher matcher = SqlCommand.CREATE_FUNCTION.getPattern().matcher(stmt);
+        if (matcher.matches()) {
+            System.out.println(true);
+            final String[] groups = new String[matcher.groupCount()];
+            for (int i = 0; i < groups.length; i++) {
+                groups[i] = matcher.group(i + 1);
+            }
+            System.out.println(groups);
+        }else {
+            System.out.println(false);
+        }
+
+    }
 }

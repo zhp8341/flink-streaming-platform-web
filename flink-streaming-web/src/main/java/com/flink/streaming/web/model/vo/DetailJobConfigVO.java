@@ -69,14 +69,6 @@ public class DetailJobConfigVO {
 
 
 
-    /**
-     * udf注册名称如
-     * utc2local|com.streaming.flink.udf.UTC2Local 多个可用;分隔
-     * utc2local代表组册的名称
-     * com.streaming.flink.udf.UTC2Local代表类名
-     *
-     */
-    private String udfRegisterName;
 
     /**
      * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
@@ -112,7 +104,6 @@ public class DetailJobConfigVO {
         detailJobConfigVO.setFlinkSql(jobConfigDTO.getFlinkSql());
         detailJobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         detailJobConfigVO.setUdfJarPath(jobConfigDTO.getUdfJarPath());
-        detailJobConfigVO.setUdfRegisterName(jobConfigDTO.getUdfRegisterName());
         return detailJobConfigVO;
     }
 

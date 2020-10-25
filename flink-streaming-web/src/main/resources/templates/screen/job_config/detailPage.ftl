@@ -50,10 +50,6 @@
                         <pre>${jobConfig.udfJarPath!"无"}</pre>
                     </div>
                     <div class="form-group">
-                        <h4>udf注册名称：</h4>
-                        <pre>${jobConfig.udfRegisterName!"无"}</pre>
-                    </div>
-                    <div class="form-group">
                         <h4>sql语句：</h4>
                         <pre>${jobConfig.flinkSql!""}</pre>
 

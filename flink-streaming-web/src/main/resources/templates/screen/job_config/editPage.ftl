@@ -59,10 +59,6 @@
                             <input class="form-control input-lg" type="text" placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" value="${jobConfig.udfJarPath!""}"  name="udfJarPath"  id="udfJarPath" >
                         </div>
 
-                        <div class="form-group">
-                            <h4 >udf注册名称：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="如 utc2local|com.streaming.flink.udf.UTC2Local&#10; 多个可用;分隔 &#10;  utc2local代表组册的名称 &#10; com.streaming.flink.udf.UTC2Local代表类名"/></h4>
-                            <textarea  rows="8" class="form-control input-lg" type="text" placeholder="udf地址 如 utc2local|com.streaming.flink.udf.UTC2Local  utc2local代表注册的名称  com.streaming.flink.udf.UTC2Local代表类名" name="udfRegisterName"  id="udfRegisterName" >${jobConfig.udfRegisterName!""}</textarea>
-                        </div>
 
                         <div class="form-group">
                             <h4>*sql语句：</h4>
@@ -92,8 +88,7 @@
                 flinkRunConfig:  $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql:  $('#flinkSql').val(),
-                udfJarPath:  $('#udfJarPath').val(),
-                udfRegisterName:  $('#udfRegisterName').val()
+                udfJarPath:  $('#udfJarPath').val()
             },
             function (data, status) {
                 $("#message").removeClass();

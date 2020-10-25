@@ -19,9 +19,27 @@ public enum SqlCommand {
             "(INSERT\\s+INTO.*)",
             (operands) -> Optional.of(new String[]{operands[0]})),
 
+
+
+
     CREATE_TABLE(
             "(CREATE\\s+TABLE.*)",
             (operands) -> Optional.of(new String[]{operands[0]})),
+
+
+
+    CREATE_FUNCTION(
+            "CREATE\\s*FUNCTION(\\s+(\\S+)\\s*AS(.*))?",
+            (operands) -> {
+                if (operands.length >= 3) {
+                    if (operands[0] == null) {
+                        return Optional.of(new String[0]);
+                    }
+                } else {
+                    return Optional.empty();
+                }
+                return Optional.of(new String[]{operands[1], operands[2]});
+            }),
 
 
     SET(

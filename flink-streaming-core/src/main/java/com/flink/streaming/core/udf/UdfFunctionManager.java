@@ -1,7 +1,5 @@
 package com.flink.streaming.core.udf;
 
-import com.flink.streaming.core.model.JobRunParam;
-import com.flink.streaming.core.utils.AttributeUtils;
 import com.flink.streaming.core.utils.LoadJarUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,22 +27,19 @@ public class UdfFunctionManager {
      * @date 2020-08-28
      * @time 21:39
      */
-    public static void registerTableUDF(TableEnvironment tEnv, JobRunParam jobRunParam) throws Exception {
+    public static void registerTableUDF(TableEnvironment tEnv, String udfJarPath, Map<String, String> udfMap) throws Exception {
 
-        if (StringUtils.isEmpty(jobRunParam.getUdfRegisterName()) || StringUtils.isEmpty(jobRunParam.getUdfJarPath())) {
+        if (udfMap == null || StringUtils.isEmpty(udfJarPath)) {
             System.out.println("没有启用udf函数");
             return;
         }
 
-        log.info("jobRunParam ={}", jobRunParam);
+        log.info("udfJarPath ={} udfMap={}", udfJarPath, udfMap);
         ClassLoader levelClassLoader = tEnv.getClass().getClassLoader();
 
-        for (String jarPath : AttributeUtils.toSet(jobRunParam.getUdfJarPath())) {
-            LoadJarUtil.loadJar(jarPath, levelClassLoader);
-        }
+        LoadJarUtil.loadJar(udfJarPath, levelClassLoader);
 
-        Map<String, String> map = AttributeUtils.attributesToMap(jobRunParam.getUdfRegisterName());
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, String> entry : udfMap.entrySet()) {
             String funcName = entry.getKey().trim();
             String funcClassName = entry.getValue().trim();
             log.info("注册udf 函数名{} ,类名:{}", funcName, funcClassName);

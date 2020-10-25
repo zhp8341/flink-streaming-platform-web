@@ -46,14 +46,6 @@ public class UpsertJobConfigParam {
     private String flinkSql;
 
 
-    /**
-     * udf注册名称如
-     * utc2local|com.streaming.flink.udf.UTC2Local 多个可用;分隔
-     * utc2local代表组册的名称
-     * com.streaming.flink.udf.UTC2Local代表类名
-     *
-     */
-    private String udfRegisterName;
 
     /**
      * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
@@ -90,7 +82,6 @@ public class UpsertJobConfigParam {
             jobConfigDTO.setUdfJarPath(upsertJobConfigParam.getUdfJarPath().trim());
         }
 
-        jobConfigDTO.setUdfRegisterName(upsertJobConfigParam.getUdfRegisterName());
         return jobConfigDTO;
     }
 

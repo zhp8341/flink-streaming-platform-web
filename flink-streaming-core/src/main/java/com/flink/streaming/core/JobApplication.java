@@ -65,8 +65,12 @@ public class JobApplication {
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
 
+            List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
+            SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
+
+
             //注册自定义的udf
-            UdfFunctionManager.registerTableUDF(tEnv, jobRunParam);
+            UdfFunctionManager.registerTableUDF(tEnv, jobRunParam.getUdfJarPath(),sqlConfig.getUdfMap());
 
 
             //设置checkPoint
@@ -76,8 +80,7 @@ public class JobApplication {
             TableConfig tableConfig = tEnv.getConfig();
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
 
-            List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
-            SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
+
 
             //加载配置
             setConfiguration(tEnv, sqlConfig);
@@ -154,19 +157,16 @@ public class JobApplication {
         options.addOption("tolerableCheckpointFailureNumber", true, "tolerableCheckpointFailureNumber");
         options.addOption("asynchronousSnapshots", true, "asynchronousSnapshots");
         options.addOption("udfJarPath", true, "udfJarPath");
-        options.addOption("udfRegisterName", true, "udfRegisterName");
         CommandLineParser parser = new DefaultParser();
         CommandLine cl = parser.parse(options, args);
         String sqlPath = cl.getOptionValue("sql");
         String udfJarPath = cl.getOptionValue("udfJarPath");
-        String udfRegisterName = cl.getOptionValue("udfRegisterName");
         Preconditions.checkNotNull(sqlPath, "sql 目录为空");
 
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(buildCheckPointParam(cl));
         jobRunParam.setUdfJarPath(udfJarPath);
-        jobRunParam.setUdfRegisterName(udfRegisterName);
 
         return jobRunParam;
     }

@@ -67,9 +67,8 @@ public class CommandUtil {
             command.append(" ").append(jobRunYarnDTO.getFlinkCheckpointConfig());
         }
 
-        if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath()) && StringUtils.isNotEmpty(jobConfig.getUdfRegisterName())) {
+        if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath())) {
             command.append(" -udfJarPath ").append(jobConfig.getUdfJarPath());
-            command.append(" -udfRegisterName ").append(jobConfig.getUdfRegisterName().replaceAll("\n",""));
         }
 
         return command.toString();

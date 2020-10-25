@@ -200,10 +200,6 @@ public class JobConfigApiController extends BaseController {
             }
 
         }
-        if ((StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath()) && StringUtils.isEmpty(upsertJobConfigParam.getUdfRegisterName()))
-          ||(StringUtils.isEmpty(upsertJobConfigParam.getUdfJarPath()) && StringUtils.isNotEmpty(upsertJobConfigParam.getUdfRegisterName())) ){
-            return RestResult.error("udf注册名称和udf地址： 不允许一个为空 另外一个不为空");
-        }
 
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath()) && !HttpUtil.isHttpsOrHttp(upsertJobConfigParam.getUdfJarPath())){
             return RestResult.error("udf地址错误： 非法的http或者是https地址");
