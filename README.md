@@ -38,6 +38,7 @@ kafka版本 1.0+
 mysql版本 5.6+
 
 
+
 ### 2、应用安装
 
 #### 1、flink客户端安装
@@ -67,6 +68,8 @@ b: /flink-1.10.0/lib  hadoop集成
 ~~~~
 
 #### 2、flink-streaming-platform-web安装
+
+技术选型 springboot2.2.8.RELEASE
 
 a:下载解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/download/tagv1.0/flink-streaming-platform-web.tar.gz
 
@@ -235,7 +238,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 ```sql
 
-CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF;
+CREATE   FUNCTION jsonHasKey as com.yt.udf.JsonHasKeyUDF;
 -- 如果使用udf 函数必须配置 udf地址
 
      create table flink_test_6 ( 

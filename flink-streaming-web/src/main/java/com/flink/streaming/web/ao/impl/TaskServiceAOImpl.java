@@ -61,18 +61,12 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         }
 
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            //TODO 不同的deployMode 需要调用不同的接口查询 目前只有一种模式
-            JobInfo jobInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-            if (jobInfo == null || !"RUNNING".equals(jobInfo.getStatus())) {
-                log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobInfo);
-                JobConfigDTO jobConfig = new JobConfigDTO();
-                jobConfig.setStauts(JobConfigStatus.STOP);
-                jobConfig.setEditor("sys_auto");
-                jobConfig.setId(jobConfigDTO.getId());
-                jobConfig.setJobId("");
-                jobConfigService.updateJobConfigById(jobConfig);
-
-                alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO.getId());
+            switch (jobConfigDTO.getDeployModeEnum()) {
+                case YARN_PER:
+                    this.checkYarn(jobConfigDTO);
+                    break;
+                default:
+                    break;
             }
             this.sleep();
         }
@@ -94,7 +88,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                 if (StringUtils.isEmpty(queueName)) {
                     continue;
                 }
-                log.info("check job getJobName={} queueName={}",jobConfigDTO.getJobName(),queueName);
+                log.info("check job getJobName={} queueName={}", jobConfigDTO.getJobName(), queueName);
                 appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
             } catch (BizException be) {
                 if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
@@ -107,7 +101,8 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             }
             if (!StringUtils.isEmpty(appId)) {
                 jobServerAO.stop(jobConfigDTO.getId(), "sys");
-                alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO.getId());
+                alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
+                        jobConfigDTO.getJobName()), jobConfigDTO.getId());
             }
         }
 
@@ -135,6 +130,29 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
+        }
+    }
+
+
+    private void checkYarn(JobConfigDTO jobConfigDTO) {
+
+        if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称：" + jobConfigDTO.getJobName());
+            this.alart(message, jobConfigDTO.getId());
+            log.error(message);
+            return;
+        }
+        JobInfo jobInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+        if (jobInfo == null || !"RUNNING".equals(jobInfo.getStatus())) {
+            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobInfo);
+            JobConfigDTO jobConfig = new JobConfigDTO();
+            jobConfig.setStauts(JobConfigStatus.STOP);
+            jobConfig.setEditor("sys_auto");
+            jobConfig.setId(jobConfigDTO.getId());
+            jobConfig.setJobId("");
+            jobConfigService.updateJobConfigById(jobConfig);
+            this.alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
+                    jobConfigDTO.getJobName()), jobConfigDTO.getId());
         }
     }
 

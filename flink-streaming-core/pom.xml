@@ -151,7 +151,6 @@
             <version>${flink.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-hive_${scala.binary.version}</artifactId>
@@ -164,23 +163,12 @@
             <version>${flink.version}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.apache.flink</groupId>-->
-            <!--<artifactId>flink-connector-kafka-0.11_${scala.binary.version}</artifactId>-->
-            <!--<version>${flink.version}</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.flink</groupId>-->
-            <!--<artifactId>flink-connector-kafka-0.9_${scala.binary.version}</artifactId>-->
-            <!--<version>${flink.version}</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -199,7 +187,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <!-- Flink modules  end -->
 
     </dependencies>

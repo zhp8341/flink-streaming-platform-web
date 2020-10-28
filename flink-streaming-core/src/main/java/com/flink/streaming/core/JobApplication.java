@@ -81,7 +81,6 @@ public class JobApplication {
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
 
 
-
             //加载配置
             setConfiguration(tEnv, sqlConfig);
 

@@ -22,7 +22,6 @@ public class UdfFunctionManager {
 
     /**
      * 注册自定义的udfs
-     *
      * @author zhuhuipei
      * @date 2020-08-28
      * @time 21:39

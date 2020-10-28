@@ -98,6 +98,9 @@
                 <exclude>commons-httpclient:*</exclude>
                 <exclude>com.yammer.*:*</exclude>
                 <exclude>com.lmax:*</exclude>
+                <exclude>junit:junit:*</exclude>
+                <exclude>io.dropwizard.*:*</exclude>
+
             </excludes>
         </dependencySet>
     </dependencySets>
