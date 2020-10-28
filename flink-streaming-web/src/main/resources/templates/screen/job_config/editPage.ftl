@@ -69,7 +69,7 @@
 
                         <div class="form-group">
                             <h4>*sql语句：</h4>
-                            <textarea placeholder="sql语句" name="flinkSql" id="flinkSql">${jobConfig.flinkSql!""}</textarea>
+                            <textarea  name="flinkSql" id="flinkSql">${jobConfig.flinkSql!""}</textarea>
                         </div>
                          <div class="form-group">
                                  <div  id="message"/>
