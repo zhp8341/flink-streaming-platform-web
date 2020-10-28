@@ -97,7 +97,7 @@ public class SqlParser {
 
     public static void main(String[] args){
 
-        String stmt="CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF";
+        String stmt="CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF'";
 
         final Matcher matcher = SqlCommand.CREATE_FUNCTION.getPattern().matcher(stmt);
         if (matcher.matches()) {

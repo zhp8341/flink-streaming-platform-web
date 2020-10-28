@@ -6,12 +6,9 @@ import com.flink.streaming.core.model.JobRunParam;
 import com.flink.streaming.core.model.SqlConfig;
 import com.flink.streaming.core.sql.SqlParser;
 import com.flink.streaming.core.udf.UdfFunctionManager;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
@@ -52,8 +49,8 @@ public class JobApplication {
         try {
             JobRunParam jobRunParam = buildParam(args);
 
-            StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
+            StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
             env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
@@ -64,14 +61,12 @@ public class JobApplication {
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
-
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
-            SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
 
+            SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
 
             //注册自定义的udf
             UdfFunctionManager.registerTableUDF(tEnv, jobRunParam.getUdfJarPath(),sqlConfig.getUdfMap());
-
 
             //设置checkPoint
             setCheckpoint(env, jobRunParam.getCheckPointParam());
@@ -79,7 +74,6 @@ public class JobApplication {
             //设置tableConfig
             TableConfig tableConfig = tEnv.getConfig();
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
-
 
             //加载配置
             setConfiguration(tEnv, sqlConfig);
@@ -91,7 +85,6 @@ public class JobApplication {
             callDml(tEnv, sqlConfig);
 
             tEnv.execute("JobApplication-" + UUID.randomUUID().toString());
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,26 +140,14 @@ public class JobApplication {
     }
 
     private static JobRunParam buildParam(String[] args) throws Exception {
-        Options options = new Options();
-        options.addOption("sql", true, "sql");
-        options.addOption("checkpointInterval", true, "checkpointInterval");
-        options.addOption("checkpointingMode", true, "checkpointingMode");
-        options.addOption("checkpointTimeout", true, "checkpointTimeout");
-        options.addOption("checkpointDir", true, "checkpointDir");
-        options.addOption("tolerableCheckpointFailureNumber", true, "tolerableCheckpointFailureNumber");
-        options.addOption("asynchronousSnapshots", true, "asynchronousSnapshots");
-        options.addOption("udfJarPath", true, "udfJarPath");
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cl = parser.parse(options, args);
-        String sqlPath = cl.getOptionValue("sql");
-        String udfJarPath = cl.getOptionValue("udfJarPath");
-        Preconditions.checkNotNull(sqlPath, "sql 目录为空");
-
+        ParameterTool parameterTool= ParameterTool.fromArgs(args);
+        String sqlPath =parameterTool.get("sql") ;
+        String udfJarPath =parameterTool.get("udfJarPath");
+        Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
-        jobRunParam.setCheckPointParam(buildCheckPointParam(cl));
+        jobRunParam.setCheckPointParam(buildCheckPointParam(parameterTool));
         jobRunParam.setUdfJarPath(udfJarPath);
-
         return jobRunParam;
     }
 
@@ -178,22 +159,22 @@ public class JobApplication {
      * @date 2020-08-23
      * @time 22:44
      */
-    private static CheckPointParam buildCheckPointParam(CommandLine cl) throws Exception {
+    private static CheckPointParam buildCheckPointParam(ParameterTool parameterTool) throws Exception {
 
-        String checkpointDir = cl.getOptionValue("checkpointDir");
+        String checkpointDir = parameterTool.get("checkpointDir");
         //如果checkpointDir为空不启用CheckPoint
         if (StringUtils.isEmpty(checkpointDir)) {
             return null;
         }
-        String checkpointingMode = cl.getOptionValue("checkpointingMode", CheckpointingMode.EXACTLY_ONCE.name());
+        String checkpointingMode = parameterTool.get("checkpointingMode", CheckpointingMode.EXACTLY_ONCE.name());
 
-        String checkpointInterval = cl.getOptionValue("checkpointInterval");
+        String checkpointInterval = parameterTool.get("checkpointInterval");
 
-        String checkpointTimeout = cl.getOptionValue("checkpointTimeout");
+        String checkpointTimeout = parameterTool.get("checkpointTimeout");
 
-        String tolerableCheckpointFailureNumber = cl.getOptionValue("tolerableCheckpointFailureNumber");
+        String tolerableCheckpointFailureNumber =parameterTool.get("tolerableCheckpointFailureNumber");
 
-        String asynchronousSnapshots = cl.getOptionValue("asynchronousSnapshots");
+        String asynchronousSnapshots = parameterTool.get("asynchronousSnapshots");
 
         CheckPointParam checkPointParam = new CheckPointParam();
         if (StringUtils.isNotEmpty(asynchronousSnapshots)) {

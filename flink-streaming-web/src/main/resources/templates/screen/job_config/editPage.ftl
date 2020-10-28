@@ -10,6 +10,13 @@
     <title>编辑配置</title>
     <#include "../../control/public_css_js.ftl">
     <link href="/static/css/dashboard/dashboard.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/theme/mbo.css"/>
+    <script type="text/javascript" src="/static/codemirror/js/codemirror.js"></script>
+    <script type="text/javascript" src="/static/codemirror/js/css.js"></script>
+    <script type="text/javascript" src="/static/codemirror/js/sql.js"></script>
+
 </head>
 
 <body>
@@ -62,7 +69,7 @@
 
                         <div class="form-group">
                             <h4>*sql语句：</h4>
-                            <textarea class="form-control" rows="20" placeholder="sql语句" name="flinkSql" id="flinkSql">  ${jobConfig.flinkSql!""}  </textarea>
+                            <textarea placeholder="sql语句" name="flinkSql" id="flinkSql">${jobConfig.flinkSql!""}</textarea>
                         </div>
                          <div class="form-group">
                                  <div  id="message"/>
@@ -77,17 +84,30 @@
 </div>
 <#include "../../layout/bottom.ftl">
 <script>
+    var flinkSqlVal;
+    myTextarea = document.getElementById("flinkSql");
+    var editor = CodeMirror.fromTextArea(myTextarea, {
+        mode: "text/x-sql",
+        lineNumbers: false,//显示行数
+        matchBrackets: true,  // 括号匹配（这个需要导入codemirror的matchbrackets.js文件）
+        indentUnit: 4,//缩进块用多少个空格表示 默认是2
+        theme: "mbo"
+    });
+
+    editor.setSize('auto','500px');
+
 
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
 
     function editConfig() {
+        flinkSqlVal=editor.getValue();
         $.post("../api/editConfig", {
                 id: $('#id').val(),
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig:  $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
-                flinkSql:  $('#flinkSql').val(),
+                flinkSql:   flinkSqlVal,
                 udfJarPath:  $('#udfJarPath').val()
             },
             function (data, status) {

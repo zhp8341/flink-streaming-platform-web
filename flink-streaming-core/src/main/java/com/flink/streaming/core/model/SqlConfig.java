@@ -45,7 +45,7 @@ public class SqlConfig implements Serializable {
                     sqlConfig.getMapConfig().put(sqlCommandCall.operands[0], sqlCommandCall.operands[1]);
                     break;
                 case CREATE_FUNCTION:
-                    sqlConfig.getUdfMap().put(sqlCommandCall.operands[0], sqlCommandCall.operands[1]);
+                    sqlConfig.getUdfMap().put(sqlCommandCall.operands[0], sqlCommandCall.operands[1].replace("'","").trim());
                     break;
                 case CREATE_TABLE:
                     sqlConfig.getDdlList().add(sqlCommandCall.operands[0]);
