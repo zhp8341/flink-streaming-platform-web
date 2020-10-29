@@ -69,6 +69,7 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
 
     @Override
     public void stopJobByJobId(String appId) {
+        log.info("执行stopJobByJobId appId={}",appId);
         if (StringUtils.isEmpty(appId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL_YARN_APPID);
         }

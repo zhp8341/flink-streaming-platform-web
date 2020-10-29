@@ -100,7 +100,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                 continue;
             }
             if (!StringUtils.isEmpty(appId)) {
-                jobServerAO.stop(jobConfigDTO.getId(), "sys");
+                httpRequestAdapter.stopJobByJobId(appId);
                 alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
                         jobConfigDTO.getJobName()), jobConfigDTO.getId());
             }

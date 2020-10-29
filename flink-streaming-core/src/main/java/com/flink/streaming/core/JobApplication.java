@@ -49,7 +49,6 @@ public class JobApplication {
         try {
             JobRunParam jobRunParam = buildParam(args);
 
-
             StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
             env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
@@ -94,9 +93,6 @@ public class JobApplication {
 
 
     }
-
-
-
 
     /**
      * 设置Configuration

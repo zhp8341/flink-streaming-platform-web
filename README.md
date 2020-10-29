@@ -233,12 +233,24 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 ##  三、配置demo
 
- 详见 [https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo)
-如
+
+
+[demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
+
+[demo2 双流kafka写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_2.md)
+
+[demo3 kafka和mysql维表实时关联写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_3.md)
+
+[demo4 滚动窗口 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_4.md)
+
+[demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
+
+
+
 
 ```sql
 
-CREATE   FUNCTION jsonHasKey as com.yt.udf.JsonHasKeyUDF;
+CREATE   FUNCTION jsonHasKey as com.xx.udf.JsonHasKeyUDF;
 -- 如果使用udf 函数必须配置 udf地址
 
      create table flink_test_6 ( 
