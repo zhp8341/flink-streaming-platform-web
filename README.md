@@ -71,7 +71,7 @@ b: /flink-1.10.0/lib  hadoop集成
 
 技术选型 springboot2.2.8.RELEASE
 
-a:下载解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/download/tagv1.0/flink-streaming-platform-web.tar.gz
+a:下载最新版本 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
 
 ~~~~
  tar -xvf   flink-streaming-platform-web.tar.gz
