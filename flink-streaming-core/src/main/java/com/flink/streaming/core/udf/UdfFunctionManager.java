@@ -4,7 +4,7 @@ import com.flink.streaming.core.utils.LoadJarUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.functions.AggregateFunction;
 import org.apache.flink.table.functions.ScalarFunction;
 import org.apache.flink.table.functions.TableFunction;
@@ -72,7 +72,7 @@ public class UdfFunctionManager {
      */
     private static void registerScalaUDF(String funcName, String funcClassName, TableEnvironment tEnv, ClassLoader levelClassLoader) throws Exception {
         ScalarFunction udfFunc = Class.forName(funcClassName, Boolean.FALSE, levelClassLoader).asSubclass(ScalarFunction.class).newInstance();
-        tEnv.registerFunction(funcName, udfFunc);
+        tEnv.createTemporarySystemFunction(funcName, udfFunc);
     }
 
 
@@ -86,7 +86,7 @@ public class UdfFunctionManager {
     private static void registerTableUDF(String funcName, String funcClassName, TableEnvironment tEnv, ClassLoader levelClassLoader) throws Exception {
         checkStreamTableEnv(tEnv);
         TableFunction udfFunc = Class.forName(funcClassName, Boolean.FALSE, levelClassLoader).asSubclass(TableFunction.class).newInstance();
-        ((StreamTableEnvironment) tEnv).registerFunction(funcName, udfFunc);
+        ((StreamTableEnvironment) tEnv).createTemporarySystemFunction(funcName, udfFunc);
     }
 
 
@@ -100,7 +100,7 @@ public class UdfFunctionManager {
     private static void registerAggregateUDF(String funcName, String funcClassName, TableEnvironment tEnv, ClassLoader levelClassLoader) throws Exception {
         checkStreamTableEnv(tEnv);
         AggregateFunction udfFunc = Class.forName(funcClassName, Boolean.FALSE, levelClassLoader).asSubclass(AggregateFunction.class).newInstance();
-        ((StreamTableEnvironment) tEnv).registerFunction(funcName, udfFunc);
+        ((StreamTableEnvironment) tEnv).createTemporarySystemFunction(funcName, udfFunc);
     }
 
 
