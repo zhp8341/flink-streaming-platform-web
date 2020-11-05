@@ -19,7 +19,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +120,7 @@ public class JobApplication {
         for (String ddl : sqlConfig.getDdlList()) {
             System.out.println("#############ddl############# \n" + ddl);
             log.info("#############ddl############# \n {}", ddl);
-            tEnv.sqlUpdate(ddl);
+            tEnv.executeSql(ddl);
         }
     }
 
@@ -131,7 +131,7 @@ public class JobApplication {
         for (String dml : sqlConfig.getDmlList()) {
             System.out.println("#############dml############# \n" + dml);
             log.info("#############dml############# \n {}", dml);
-            tEnv.sqlUpdate(dml);
+            tEnv.executeSql(dml);
         }
     }
 
