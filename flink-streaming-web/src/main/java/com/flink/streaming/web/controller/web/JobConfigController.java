@@ -12,7 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author zhuhuipei
@@ -36,7 +40,6 @@ public class JobConfigController {
     public String listPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
 
         PageModel<JobConfigDTO> pageModel = jobConfigService.queryJobConfig(jobConfigParam);
-        String domain=systemConfigService.getYarnRmHttpAddress();
         PageVO pageVO = new PageVO();
         pageVO.setPageNum(pageModel.getPageNum());
         pageVO.setPages(pageModel.getPages());
@@ -44,7 +47,16 @@ public class JobConfigController {
         pageVO.setTotal(pageModel.getTotal());
         modelMap.put("pageVO", pageVO);
         modelMap.put("jobConfigParam", jobConfigParam);
-        modelMap.put("jobConfigList", JobConfigVO.toListVO(pageModel.getResult(),domain));
+
+        List<JobConfigVO> jobConfigVOList=null;
+        if (CollectionUtils.isEmpty(pageModel.getResult())){
+            jobConfigVOList=Collections.emptyList();
+        }else{
+            jobConfigVOList=JobConfigVO.toListVO(pageModel.getResult(),systemConfigService.getYarnRmHttpAddress());
+        }
+        modelMap.put("jobConfigList",jobConfigVOList );
+
+
         modelMap.put("active", "list");
         return "screen/job_config/listPage";
     }

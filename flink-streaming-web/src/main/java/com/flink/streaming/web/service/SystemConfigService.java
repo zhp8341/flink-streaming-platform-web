@@ -65,6 +65,15 @@ public interface SystemConfigService {
 
 
     /**
+     *获取flink地址
+     * @author zhuhuipei
+     * @date 2020/11/4
+     * @time 10:52
+     */
+    String getFlinkHttpAddress();
+
+
+    /**
      * 检查配置是否存在
      *
      * @author zhuhuipei

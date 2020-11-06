@@ -32,6 +32,8 @@ public class SystemConstants {
 
     public static final String HTTP_YARN_CLUSTER_APPS = "cluster/app/";
 
+    public static final String HTTP_STANDALONE_APPS = "#/job/";
+
 
     public static final String YQU = "yqu";
 

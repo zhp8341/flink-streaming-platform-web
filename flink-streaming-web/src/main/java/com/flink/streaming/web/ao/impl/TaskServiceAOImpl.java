@@ -12,7 +12,8 @@ import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.model.flink.JobInfo;
+import com.flink.streaming.web.model.flink.JobStandaloneInfo;
+import com.flink.streaming.web.model.flink.JobYarnInfo;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private AlarmServiceAO alarmServiceAO;
 
     @Autowired
-    private JobServerAO jobServerAO;
+    private JobServerAO jobYarnServerAO;
 
     @Autowired
     private SystemConfigService systemConfigService;
@@ -59,11 +60,13 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             log.warn("当前配置中没有运行的任务");
             return;
         }
-
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
                     this.checkYarn(jobConfigDTO);
+                    break;
+                case LOCAL:
+                    this.checkStandalone(jobConfigDTO);
                     break;
                 default:
                     break;
@@ -79,34 +82,36 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             return;
         }
-
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            //TODO 不同的deployMode 需要调用不同的接口查询 目前只有一种模式
-            String appId = null;
-            try {
-                String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
-                if (StringUtils.isEmpty(queueName)) {
-                    continue;
-                }
-                log.info("check job getJobName={} queueName={}", jobConfigDTO.getJobName(), queueName);
-                appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
-            } catch (BizException be) {
-                if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
-                    continue;
-                }
-                log.error("getAppIdByYarn is error ", be);
-            } catch (Exception e) {
-                log.error("getAppIdByYarn is error ", e);
-                continue;
-            }
-            if (!StringUtils.isEmpty(appId)) {
-                httpRequestAdapter.stopJobByJobId(appId);
-                alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
-                        jobConfigDTO.getJobName()), jobConfigDTO.getId());
+            switch (jobConfigDTO.getDeployModeEnum()) {
+                case YARN_PER:
+                    String appId = null;
+                    try {
+                        String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
+                        if (StringUtils.isEmpty(queueName)) {
+                            continue;
+                        }
+                        log.info("check job getJobName={} queueName={}", jobConfigDTO.getJobName(), queueName);
+                        appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
+                    } catch (BizException be) {
+                        if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
+                            continue;
+                        }
+                        log.error("getAppIdByYarn is error ", be);
+                    } catch (Exception e) {
+                        log.error("getAppIdByYarn is error ", e);
+                        continue;
+                    }
+                    if (!StringUtils.isEmpty(appId)) {
+                        httpRequestAdapter.stopJobByJobId(appId);
+                        alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
+                                jobConfigDTO.getJobName()), jobConfigDTO.getId());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
-
-
     }
 
     @Override
@@ -116,12 +121,17 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            //TODO 不同的deployMode 需要调用不同的接口查询 目前只有一种模式
-            JobInfo jobInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-            if (jobInfo != null && "RUNNING".equals(jobInfo.getStatus())) {
-                jobServerAO.savepoint(jobConfigDTO.getId());
+            switch (jobConfigDTO.getDeployModeEnum()) {
+                case YARN_PER:
+                    JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+                    if (jobYarnInfo != null && "RUNNING".equals(jobYarnInfo.getStatus())) {
+                        jobYarnServerAO.savepoint(jobConfigDTO.getId());
+                    }
+                    this.sleep();
+                    break;
+                default:
+                    break;
             }
-            this.sleep();
         }
     }
 
@@ -135,16 +145,37 @@ public class TaskServiceAOImpl implements TaskServiceAO {
 
 
     private void checkYarn(JobConfigDTO jobConfigDTO) {
-
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
             String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称：" + jobConfigDTO.getJobName());
             this.alart(message, jobConfigDTO.getId());
             log.error(message);
             return;
         }
-        JobInfo jobInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-        if (jobInfo == null || !"RUNNING".equals(jobInfo.getStatus())) {
-            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobInfo);
+        JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+        if (jobYarnInfo == null || !"RUNNING".equals(jobYarnInfo.getStatus())) {
+            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobYarnInfo);
+            JobConfigDTO jobConfig = new JobConfigDTO();
+            jobConfig.setStauts(JobConfigStatus.STOP);
+            jobConfig.setEditor("sys_auto");
+            jobConfig.setId(jobConfigDTO.getId());
+            jobConfig.setJobId("");
+            jobConfigService.updateJobConfigById(jobConfig);
+            this.alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
+                    jobConfigDTO.getJobName()), jobConfigDTO.getId());
+        }
+    }
+
+
+    private void checkStandalone(JobConfigDTO jobConfigDTO) {
+        if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称：" + jobConfigDTO.getJobName());
+            this.alart(message, jobConfigDTO.getId());
+            log.error(message);
+            return;
+        }
+        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId());
+        if (jobStandaloneInfo == null || !"RUNNING".equals(jobStandaloneInfo.getState())) {
+            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobStandaloneInfo={}", jobStandaloneInfo);
             JobConfigDTO jobConfig = new JobConfigDTO();
             jobConfig.setStauts(JobConfigStatus.STOP);
             jobConfig.setEditor("sys_auto");

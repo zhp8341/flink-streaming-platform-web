@@ -16,4 +16,5 @@
 org.apache.flink.streaming.connectors.kafka.KafkaTableSourceSinkFactory
 org.apache.flink.formats.json.JsonRowFormatFactory
 org.apache.flink.api.java.io.jdbc.JDBCTableSourceSinkFactory
-
+org.apache.flink.table.planner.delegation.BlinkPlannerFactory
+org.apache.flink.table.planner.delegation.BlinkExecutorFactory

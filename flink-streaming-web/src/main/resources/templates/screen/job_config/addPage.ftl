@@ -34,6 +34,7 @@
                     <select class="form-control input-lg" id="deployMode">
                         <#--<option value="">运行模式</option>-->
                         <option value="YARN_PER">YARN_PER</option>
+                        <option value="LOCAL">LOCAL</option>
                         <#--<option value="STANDALONE">STANDALONE</option>-->
                     </select>
                 </div>

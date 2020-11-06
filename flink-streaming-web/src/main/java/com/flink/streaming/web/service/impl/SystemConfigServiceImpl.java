@@ -80,6 +80,15 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     }
 
     @Override
+    public String getFlinkHttpAddress() {
+        String http = this.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey());
+        if (StringUtils.isEmpty(http)) {
+            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS);
+        }
+        return http;
+    }
+
+    @Override
     public boolean isExist(String key) {
         String value = this.getSystemConfigByKey(key);
         if (StringUtils.isEmpty(value)){

@@ -1,7 +1,9 @@
 package com.flink.streaming.web.service.impl;
 
 import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.JobConfigStatus;
+import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.mapper.JobConfigMapper;
@@ -11,6 +13,7 @@ import com.flink.streaming.web.model.entity.JobConfig;
 import com.flink.streaming.web.model.param.JobConfigParam;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.JobRunLogService;
+import com.flink.streaming.web.service.SystemConfigService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,9 @@ public class JobConfigServiceImpl implements JobConfigService {
     @Autowired
     private JobRunLogService jobRunLogService;
 
+    @Autowired
+    private SystemConfigService systemConfigService;
+
     @Override
     public void addJobConfig(JobConfigDTO jobConfigDTO) {
         if (jobConfigDTO == null) {
@@ -47,19 +53,25 @@ public class JobConfigServiceImpl implements JobConfigService {
         }
         this.checkJobName(jobConfigDTO.getJobName(), jobConfigDTO.getId());
 
+        this.checkSystemConfig(jobConfigDTO.getDeployModeEnum());
+
         jobConfigMapper.insert(JobConfigDTO.toEntity(jobConfigDTO));
 
     }
 
     @Override
     public void updateJobConfigById(JobConfigDTO jobConfigDTO) {
+
         if (jobConfigDTO == null || jobConfigDTO.getId() == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_PARAM_IS_NULL);
         }
-        JobConfig jobConfig= jobConfigMapper.selectByPrimaryKey(jobConfigDTO.getId());
-        if (jobConfig==null){
+
+        JobConfig jobConfig = jobConfigMapper.selectByPrimaryKey(jobConfigDTO.getId());
+        if (jobConfig == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
+
+        this.checkSystemConfig(DeployModeEnum.valueOf(jobConfig.getDeployMode()));
 
 
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobName())) {
@@ -139,12 +151,11 @@ public class JobConfigServiceImpl implements JobConfigService {
 
     @Override
     public List<JobConfigDTO> findJobConfigByStatus(Integer... status) {
-        if (status==null){
+        if (status == null) {
             return Collections.emptyList();
         }
-
-        List<Integer> statusList= new ArrayList<>();
-        for (Integer s:status) {
+        List<Integer> statusList = new ArrayList<>();
+        for (Integer s : status) {
             statusList.add(s);
         }
         return JobConfigDTO.toListDTO(jobConfigMapper.findJobConfigByStatus(statusList));
@@ -163,5 +174,44 @@ public class JobConfigServiceImpl implements JobConfigService {
         if (count >= 1) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_NAME_IS_EXIST);
         }
+    }
+
+    /**
+     * 检查配置文件
+     *
+     * @author zhuhuipei
+     * @date 2020/11/4
+     * @time 16:43
+     */
+    private void checkSystemConfig(DeployModeEnum deployModeEnum) {
+        StringBuffer tips = new StringBuffer();
+        String flinkHome = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
+        if (StringUtils.isEmpty(flinkHome)) {
+            tips.append("请在  系统管理-->系统设置 里面配置 flinkHome");
+        }
+        String webHome = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
+        if (StringUtils.isEmpty(webHome)) {
+            tips.append(" web应用安装的目录、");
+        }
+        switch (deployModeEnum) {
+            case YARN_PER:
+                String yarnHttpAddress = systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
+                if (StringUtils.isEmpty(yarnHttpAddress)) {
+                    tips.append(" yarnHttpAddress url地址、");
+                }
+                break;
+            case LOCAL:
+                String flinkHttpAddress = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey());
+                if (StringUtils.isEmpty(flinkHttpAddress)) {
+                    tips.append(" flinkHttpAddress url地址");
+                }
+                break;
+            default:
+                break;
+        }
+        if (StringUtils.isNotEmpty(tips.toString())) {
+            throw new BizException(tips.toString());
+        }
+
     }
 }

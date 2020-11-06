@@ -1,7 +1,6 @@
 package com.flink.streaming.web.config;
 
 import com.flink.streaming.web.interceptor.LoginInterceptor;
-import com.flink.streaming.web.interceptor.SysConfigInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
@@ -21,8 +20,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
-    @Autowired
-    private SysConfigInterceptor sysConfigInterceptor;
+//    @Autowired
+//    private SysConfigInterceptor sysConfigInterceptor;
 
 
     @Override
@@ -35,9 +34,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.excludePathPatterns("/static/**","/static/*","/admin/index","/admin/login");
 
 
-        InterceptorRegistration  sysConfigRegistration= registry.addInterceptor(sysConfigInterceptor);
-        sysConfigRegistration.addPathPatterns("/admin/*");
-        sysConfigRegistration.excludePathPatterns("/admin/sysConfig","/admin/upsertSynConfig","/admin/index","/admin/login");
+//        InterceptorRegistration  sysConfigRegistration= registry.addInterceptor(sysConfigInterceptor);
+//        sysConfigRegistration.addPathPatterns("/admin/*");
+//        sysConfigRegistration.excludePathPatterns("/admin/sysConfig","/admin/upsertSynConfig","/admin/index","/admin/login");
 
     }
 }

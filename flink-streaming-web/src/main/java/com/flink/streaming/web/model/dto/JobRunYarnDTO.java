@@ -30,11 +30,6 @@ public class JobRunYarnDTO {
      */
     private String sqlPath;
 
-    /**
-     * yarn AM 的http 地址
-     */
-    private String yarnRmHttpAsddress;
-
 
     /**
      * checkpointConfig
@@ -46,11 +41,10 @@ public class JobRunYarnDTO {
      */
     private String sysHome;
 
-    public JobRunYarnDTO(String flinkBinPath, String flinkRunParam, String sqlPath, String yarnRmHttpAsddress, String sysHome,String flinkCheckpointConfig) {
+    public JobRunYarnDTO(String flinkBinPath, String flinkRunParam, String sqlPath,  String sysHome,String flinkCheckpointConfig) {
         this.flinkBinPath = flinkBinPath;
         this.flinkRunParam = flinkRunParam;
         this.sqlPath = sqlPath;
-        this.yarnRmHttpAsddress = yarnRmHttpAsddress;
         this.sysHome = sysHome;
         this.flinkCheckpointConfig = flinkCheckpointConfig;
     }
@@ -63,7 +57,7 @@ public class JobRunYarnDTO {
 
         String sysHome = systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
 
-        JobRunYarnDTO jobRunYarnDTO = new JobRunYarnDTO(flinkBinPath, flinkRunParam, sqlPath, systemConfigMap.get(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()), sysHome,jobConfigDTO.getFlinkCheckpointConfig());
+        JobRunYarnDTO jobRunYarnDTO = new JobRunYarnDTO(flinkBinPath, flinkRunParam, sqlPath, sysHome,jobConfigDTO.getFlinkCheckpointConfig());
 
         return jobRunYarnDTO;
 

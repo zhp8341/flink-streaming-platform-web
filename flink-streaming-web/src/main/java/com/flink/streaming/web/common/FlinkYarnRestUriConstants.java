@@ -8,11 +8,12 @@ package com.flink.streaming.web.common;
  */
 public class FlinkYarnRestUriConstants {
 
-    public final static String URI_PROXY = "proxy";
+    public final static String URI_PROXY = "proxy/";
 
-    public final static String URI_JOBS = "/jobs";
+    public final static String URI_JOBS = "jobs";
 
     public final static String URI_YARN_CANCEL = "/yarn-cancel";
+
 
     public final static String URI_YARN_CHECKPOINT = "/checkpoints";
 
@@ -21,8 +22,17 @@ public class FlinkYarnRestUriConstants {
         return rootUriForYarn(appId) + URI_JOBS;
     }
 
+    public static String getUriJobsForStandalone(String appId) {
+        return  URI_JOBS +"/"+appId;
+    }
+
+
     public static String getUriCancelForYarn(String appId,String jobId) {
         return getUriJobsForYarn(appId) +"/"+jobId+ URI_YARN_CANCEL;
+    }
+
+    public static String getUriCancelForStandalone(String jobId) {
+        return URI_JOBS+"/"+jobId+ URI_YARN_CANCEL;
     }
 
     public static String getUriCheckpointForYarn(String appId,String jobId) {

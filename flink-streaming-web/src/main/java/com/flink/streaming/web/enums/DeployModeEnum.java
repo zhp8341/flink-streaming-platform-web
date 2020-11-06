@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * @time 20:41
  */
 public enum DeployModeEnum {
-    YARN_PER,STANDALONE;
+    YARN_PER,STANDALONE,LOCAL;
 
     public static  DeployModeEnum getModel(String model){
         if (StringUtils.isEmpty(model)){

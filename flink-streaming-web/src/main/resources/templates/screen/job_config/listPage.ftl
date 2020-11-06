@@ -113,9 +113,15 @@
                                 <td></td>
                             </#if>
 
-
                             <td>${jobConfigVO.createTime!""}</td>
-                            <td> <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a> </td>
+                            <td>
+                                <#if jobConfigVO.deployMode=="YARN_PER">
+                                  <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a>
+                                </#if>
+                                <#if jobConfigVO.deployMode=="LOCAL">
+                                    本地模式不启用
+                                </#if>
+                            </td>
                             <td>
                                 <#if jobConfigVO.isOpen==1>
 

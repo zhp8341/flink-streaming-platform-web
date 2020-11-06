@@ -39,6 +39,7 @@ public enum SysErrorEnum {
     SYSTEM_CONFIG_IS_NULL("30000", "请先配置系统环境 "),
     SYSTEM_CONFIG_IS_NULL_FLINK_HOME("30001", "请先flink_home环境的目录地址"),
     SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS("30002", "请先配置yarn的http地址"),
+    SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS("30004", "请先配置flink rest 的http地址"),
     SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME("30003", "请先配置web平台的目录地址"),
 
 

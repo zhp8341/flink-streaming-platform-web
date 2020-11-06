@@ -9,10 +9,12 @@ import lombok.Data;
  * @time 23:50
  */
 @Data
-public class JobInfo {
+public class JobYarnInfo {
 
     private String id;
 
     private String status;
+
+
     
 }

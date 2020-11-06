@@ -19,7 +19,9 @@ import java.io.BufferedInputStream;
  */
 @Slf4j
 @Service
-public class CommandAdapterImpl implements CommandAdapter {
+public class CommandAdapterImpl implements CommandAdapter
+
+{
 
     private static long INTERVAL_TIME = 1000 * 5;
 
@@ -57,6 +59,41 @@ public class CommandAdapterImpl implements CommandAdapter {
             localLog.append("pcs.waitFor() 执行异常 rs=").append(rs);
             throw new Exception("pcs.waitFor() is error  rs=" + rs);
         }
+    }
+
+    //TODO
+    @Override
+    public String startForLocal(String command, StringBuilder localLog, Long jobRunLogId) throws Exception {
+        long lastTime = System.currentTimeMillis();
+        byte[] buffer = new byte[1024];
+        log.info(" command ={} ", command);
+        localLog.append("启动命令：").append(command).append("\n");
+        Process pcs = Runtime.getRuntime().exec(command);
+        BufferedInputStream reader = new BufferedInputStream(pcs.getInputStream());
+        int bytesRead = 0;
+
+        String appId=null;
+        while ((bytesRead = reader.read(buffer)) != -1) {
+            String result = new String(buffer, 0, bytesRead, "UTF-8");
+            log.info(result);
+            if (result.contains("Job has been submitted with JobID")){
+                appId=result.replace("Job has been submitted with JobID","").trim();
+            }
+            localLog.append(result).append("\n");
+
+            //每隔1s更新日志
+            if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME) {
+                jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
+                lastTime = System.currentTimeMillis();
+            }
+        }
+        int rs = pcs.waitFor();
+        localLog.append("rs=").append(rs).append("\n");
+        if (rs != 0) {
+            localLog.append("pcs.waitFor() 执行异常 rs=").append(rs);
+            throw new Exception("pcs.waitFor() is error  rs=" + rs);
+        }
+        return appId;
     }
 
     @Override

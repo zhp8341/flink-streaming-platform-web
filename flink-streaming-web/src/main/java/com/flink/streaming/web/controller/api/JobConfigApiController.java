@@ -33,15 +33,18 @@ public class JobConfigApiController extends BaseController {
 
 
     @Autowired
-    private JobServerAO jobServerAO;
+    private JobServerAO jobYarnServerAO;
+
+    @Autowired
+    private JobServerAO jobLocalServerAO;
 
     @Autowired
     private JobConfigService jobConfigService;
 
     @RequestMapping("/start")
-    public RestResult<String> start(Long id,Long savepointId) {
+    public RestResult<String> start(Long id, Long savepointId) {
         try {
-            jobServerAO.start(id,savepointId, this.getUserName());
+            this.getJobServerAO(id).start(id, savepointId, this.getUserName());
         } catch (BizException e) {
             log.error("启动失败 id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -55,7 +58,7 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping("/stop")
     public RestResult<String> stop(Long id) {
         try {
-            jobServerAO.stop(id, this.getUserName());
+            this.getJobServerAO(id).stop(id, this.getUserName());
         } catch (BizException e) {
             log.warn("停止失败 id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -70,7 +73,7 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping("/close")
     public RestResult<String> close(Long id) {
         try {
-            jobServerAO.close(id, this.getUserName());
+            this.getJobServerAO(id).close(id, this.getUserName());
         } catch (BizException e) {
             log.warn("关闭失败 id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -85,7 +88,7 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping("/open")
     public RestResult<String> open(Long id) {
         try {
-            jobServerAO.open(id, this.getUserName());
+            this.getJobServerAO(id).open(id, this.getUserName());
         } catch (BizException e) {
             log.warn("开始失败 id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -99,7 +102,7 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping("/delete")
     public RestResult<String> delete(Long id) {
         try {
-            jobConfigService.deleteJobConfigById(id,this.getUserName());
+            jobConfigService.deleteJobConfigById(id, this.getUserName());
         } catch (BizException e) {
             log.warn("删除失败 id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -114,7 +117,7 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping("/savepoint")
     public RestResult<String> savepoint(Long id) {
         try {
-            jobServerAO.savepoint(id);
+            this.getJobServerAO(id).savepoint(id);
         } catch (BizException e) {
             log.warn("savepoint is error id={}", id, e);
             return RestResult.error(e.getCode(), e.getErrorMsg());
@@ -153,8 +156,8 @@ public class JobConfigApiController extends BaseController {
             return restResult;
         }
         try {
-            JobConfigDTO jobConfigDTO=jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
-            if (jobConfigDTO==null){
+            JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
+            if (jobConfigDTO == null) {
                 return RestResult.error("数据不存在");
             }
             if (YN.getYNByValue(jobConfigDTO.getIsOpen()).getCode()) {
@@ -184,9 +187,6 @@ public class JobConfigApiController extends BaseController {
         if (!upsertJobConfigParam.getJobName().matches("[0-9A-Za-z_]*")) {
             return RestResult.error("任务名称仅能含数字,字母和下划线");
         }
-        if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkRunConfig())) {
-            return RestResult.error("flink运行配置不能为空");
-        }
         if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkSql())) {
             return RestResult.error("sql语句不能为空");
         }
@@ -198,14 +198,16 @@ public class JobConfigApiController extends BaseController {
                     return RestResult.error("checkpointingMode 参数必须是  AT_LEAST_ONCE 或者 EXACTLY_ONCE");
                 }
             }
-
         }
 
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath()) && !HttpUtil.isHttpsOrHttp(upsertJobConfigParam.getUdfJarPath())){
+        if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath()) && !HttpUtil.isHttpsOrHttp(upsertJobConfigParam.getUdfJarPath())) {
             return RestResult.error("udf地址错误： 非法的http或者是https地址");
         }
 
         if (DeployModeEnum.YARN_PER.name().equals(upsertJobConfigParam.getDeployMode())) {
+            if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkRunConfig())) {
+                return RestResult.error("flink运行配置不能为空");
+            }
             RestResult restResult = CliConfigUtil.checkFlinkRunConfig(upsertJobConfigParam.getFlinkRunConfig());
             if (restResult != null) {
                 return restResult;
@@ -216,11 +218,29 @@ public class JobConfigApiController extends BaseController {
     }
 
 
-
-
-
-
-
-
+    /**
+     * 获取JobServerAO
+     *
+     * @author zhuhuipei
+     * @date 2020/11/4
+     * @time 11:19
+     */
+    private JobServerAO getJobServerAO(Long id) {
+        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        if (jobConfigDTO == null) {
+            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
+        }
+        DeployModeEnum deployModeEnum = jobConfigDTO.getDeployModeEnum();
+        switch (deployModeEnum) {
+            case LOCAL:
+                log.info(" 本地模式启动 {}", deployModeEnum);
+                return jobLocalServerAO;
+            case YARN_PER:
+                log.info(" yan per 模式启动 {}", deployModeEnum);
+                return jobYarnServerAO;
+            default:
+                throw new RuntimeException("不支持改模式系统");
+        }
+    }
 
 }

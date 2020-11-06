@@ -16,11 +16,13 @@ import java.util.List;
 @Getter
 public enum SysConfigEnum {
 
-    FLINK_HOME("flink_home", "flink安装目录（必选）否则无法打开其他页面", SysConfigEnumType.SYS.name()),
+    FLINK_HOME("flink_home", "flink客户端目录（必选）", SysConfigEnumType.SYS.name()),
 
-    FLINK_STREAMING_PLATFORM_WEB_HOME("flink_streaming_platform_web_home", "flink-streaming-platform-web应用安装的目录（必选）否则无法打开其他页面", SysConfigEnumType.SYS.name()),
+    FLINK_STREAMING_PLATFORM_WEB_HOME("flink_streaming_platform_web_home", "flink-streaming-platform-web应用安装的目录（必选）", SysConfigEnumType.SYS.name()),
 
-    YARN_RM_HTTP_ADDRESS("yarn_rm_http_address", "yarn的rm Http地址（必选） 否则无法打开其他页面", SysConfigEnumType.SYS.name()),
+    YARN_RM_HTTP_ADDRESS("yarn_rm_http_address", "yarn的rm Http地址（yarn per 模式必须） ", SysConfigEnumType.SYS.name()),
+
+    FLINK_REST_HTTP_ADDRESS("flink_rest_http_address", "flink Rest & web frontend 地址 ）", SysConfigEnumType.SYS.name()),
 
     DINGDING_ALARM_URL("dingding_alart_url", "钉钉告警所需的url（如果不填写将无法告警）", SysConfigEnumType.ALART.name()),
 
@@ -83,7 +85,6 @@ public enum SysConfigEnum {
     public static List<String> getMustKey() {
         List<String> list = new ArrayList<>();
         list.add(SysConfigEnum.FLINK_HOME.getKey());
-        list.add(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
         list.add(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
         return list;
     }
