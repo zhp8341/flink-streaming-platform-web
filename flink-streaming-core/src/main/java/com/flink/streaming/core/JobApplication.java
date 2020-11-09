@@ -29,7 +29,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author zhuhuipei
@@ -83,11 +82,9 @@ public class JobApplication {
             //执行dml
             callDml(tEnv, sqlConfig);
 
-            tEnv.execute("JobApplication-" + UUID.randomUUID().toString());
-
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("任务执行失败:" + e);
+            System.err.println("任务执行失败:" + e.getMessage());
             log.error("任务执行失败：", e);
         }
 
@@ -201,6 +198,8 @@ public class JobApplication {
         if (StringUtils.isEmpty(checkPointParam.getCheckpointDir())) {
             throw new RuntimeException("checkpoint目录不存在");
         }
+
+        log.info("开启checkpoint checkPointParam={}",checkPointParam);
 
         // 默认每60s保存一次checkpoint
         env.enableCheckpointing(checkPointParam.getCheckpointInterval());

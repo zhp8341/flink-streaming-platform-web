@@ -47,6 +47,9 @@
                 <div  id="message"> 没有找到改记录日志</div>
             </#if>
 
+            <div class="form-group ">
+                <button class="btn btn-primary "  onclick="window.location.reload()" >刷新日志</button>
+            </div>
 
 
         </div>
@@ -56,4 +59,5 @@
 <!--sd -->
 <#include "../../layout/bottom.ftl">
 </body>
+
 </html>

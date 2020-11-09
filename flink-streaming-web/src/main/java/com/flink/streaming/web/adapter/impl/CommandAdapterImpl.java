@@ -6,6 +6,7 @@ import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public class CommandAdapterImpl implements CommandAdapter
 {
 
     private static long INTERVAL_TIME = 1000 * 5;
+
+    private static long INTERVAL_TIME_ONE = 1000 * 1;
 
     @Autowired
     private JobRunLogService jobRunLogService;
@@ -82,16 +85,21 @@ public class CommandAdapterImpl implements CommandAdapter
             localLog.append(result).append("\n");
 
             //每隔1s更新日志
-            if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME) {
+            if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME_ONE) {
                 jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
                 lastTime = System.currentTimeMillis();
             }
         }
         int rs = pcs.waitFor();
         localLog.append("rs=").append(rs).append("\n");
+        jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
         if (rs != 0) {
-            localLog.append("pcs.waitFor() 执行异常 rs=").append(rs);
-            throw new Exception("pcs.waitFor() is error  rs=" + rs);
+            localLog.append("pcs.waitFor() 执行异常 rs=").append(rs).append("   appId=").append(appId);
+            throw new RuntimeException("pcs.waitFor() is error  rs=" + rs);
+        }
+        if (StringUtils.isEmpty(appId)){
+            localLog.append("appId 无法获取");
+            throw new RuntimeException("appId无法获取");
         }
         return appId;
     }

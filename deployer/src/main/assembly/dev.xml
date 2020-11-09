@@ -101,6 +101,21 @@
                 <exclude>junit:junit:*</exclude>
                 <exclude>io.dropwizard.*:*</exclude>
 
+                <exclude>com.jamesmurty.*:*</exclude>
+
+
+                <exclude>commons-digester:commons-digester:*</exclude>
+                <exclude>javax.inject:javax.inject:*</exclude>
+                <exclude>aopalliance:aopalliance:*</exclude>
+                <exclude>xmlenc:xmlenc:*</exclude>
+                <exclude>com.jcraft:jsch:*</exclude>
+                <exclude>com.sun.jersey:jersey-client:*</exclude>
+                <exclude>commons-beanutils:commons-beanutils:*</exclude>
+                <exclude>commons-beanutils:commons-beanutils:*</exclude>
+                <exclude>commons-*:*:*</exclude>
+                <exclude>com.sun.*:*:*</exclude>
+                <exclude>javax.*:*:*</exclude>
+
             </excludes>
         </dependencySet>
     </dependencySets>

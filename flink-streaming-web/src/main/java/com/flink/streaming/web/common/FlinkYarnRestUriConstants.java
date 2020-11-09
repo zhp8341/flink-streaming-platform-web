@@ -40,8 +40,12 @@ public class FlinkYarnRestUriConstants {
     }
 
     public static String rootUriForYarn(String appId) {
-        return String.format(URI_PROXY + "/%s", appId);
+        return String.format(URI_PROXY + "%s/", appId);
     }
 
+
+    public static void main(String[] args) {
+       System.out.println(FlinkYarnRestUriConstants.getUriJobsForYarn("xxxx"));
+    }
 
 }

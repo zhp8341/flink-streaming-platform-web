@@ -6,12 +6,13 @@ import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhuhuipei
@@ -70,7 +71,7 @@ public class JobConfigVO {
     private String editTime;
 
 
-    public static JobConfigVO toVO(JobConfigDTO jobConfigDTO,String domain) {
+    public static JobConfigVO toVO(JobConfigDTO jobConfigDTO,Map<DeployModeEnum,String> map) {
         if (jobConfigDTO == null) {
             return null;
         }
@@ -85,8 +86,16 @@ public class JobConfigVO {
         if (jobConfigDTO.getDeployModeEnum()!=null){
             jobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }
-        if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
-            jobConfigVO.setFlinkRunUrl(domain+FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId())+"/#/overview");
+
+        String  domain=map.get(jobConfigDTO.getDeployModeEnum());
+
+        if (StringUtils.isNotEmpty(domain)){
+            if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
+                jobConfigVO.setFlinkRunUrl(domain+ FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId())+"/#/overview");
+            }
+            if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
+                jobConfigVO.setFlinkRunUrl(domain+String.format("#/job/%s/overview",jobConfigDTO.getJobId()));
+            }
         }
 
         jobConfigVO.setLastRunLogId(jobConfigDTO.getLastRunLogId());
@@ -97,7 +106,7 @@ public class JobConfigVO {
     }
 
 
-    public static List<JobConfigVO> toListVO(List<JobConfigDTO> jobConfigDTOList,String domain) {
+    public static List<JobConfigVO> toListVO(List<JobConfigDTO> jobConfigDTOList, Map<DeployModeEnum,String> map) {
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             return Collections.emptyList();
         }
@@ -105,7 +114,7 @@ public class JobConfigVO {
         List<JobConfigVO> list = new ArrayList<JobConfigVO>();
 
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            list.add(JobConfigVO.toVO(jobConfigDTO,domain));
+            list.add(JobConfigVO.toVO(jobConfigDTO,map));
         }
 
         return list;

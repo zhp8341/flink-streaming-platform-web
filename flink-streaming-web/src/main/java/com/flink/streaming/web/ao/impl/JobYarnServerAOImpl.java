@@ -6,7 +6,6 @@ import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
 import com.flink.streaming.web.adapter.HttpRequestAdapter;
 import com.flink.streaming.web.ao.JobServerAO;
-import com.flink.streaming.web.ao.TaskServiceAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
@@ -75,9 +74,6 @@ public class JobYarnServerAOImpl implements JobServerAO {
     @Autowired
     private SavepointBackupService savepointBackupService;
 
-    @Autowired
-    private TaskServiceAO taskServiceAO;
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -98,6 +94,25 @@ public class JobYarnServerAOImpl implements JobServerAO {
         }
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
             httpRequestAdapter.stopJobByJobId(jobConfigDTO.getJobId());
+        }
+        try {
+            String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
+            if (StringUtils.isEmpty(queueName)) {
+                throw new BizException("无法获取队列名称，请检查你的 flink运行配置");
+            }
+            String appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
+            if (StringUtils.isNotEmpty(appId)) {
+                throw new BizException("该任务在yarn上有运行，请取消任务后再运行 任务名称是:" + jobConfigDTO.getJobName() + " 队列名称是:" + queueName);
+            }
+        } catch (BizException e) {
+            if (e != null && SysErrorEnum.YARN_CODE.getCode().equals(e.getCode())) {
+                log.info(e.getErrorMsg());
+            } else {
+                throw e;
+            }
+
+        } catch (Exception e) {
+            throw new BizException(e.getMessage());
         }
 
         RestResult restResult = CliConfigUtil.checkFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
@@ -150,8 +165,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
         //1、停止前做一次savepoint操作
         try {
-           this.savepoint(id);
-        }catch (Exception e){
+            this.savepoint(id);
+        } catch (Exception e) {
             log.error("autoSavePoint is error");
         }
 
@@ -239,6 +254,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
             public void run() {
                 String jobStatus = JobStatusEnum.SUCCESS.name();
                 String appId = "";
+                boolean success = true;
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n")
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
@@ -248,13 +264,18 @@ public class JobYarnServerAOImpl implements JobServerAO {
                     String command = CommandUtil.buildRunCommandForYarnCluster(jobRunYarnDTO, jobConfig, localLog, savepointPath);
                     commandAdapter.startForPerYarn(command, localLog, jobRunLogId);
                     appId = httpRequestAdapter.getAppIdByYarn(jobConfig.getJobName(), YarnUtil.getQueueName(jobConfig.getFlinkRunConfig()));
-
                 } catch (Exception e) {
                     log.error("exe is error", e);
                     localLog.append(e).append(errorInfoDir());
+                    success = false;
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
-                    localLog.append("\n ######启动结束#########:").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    localLog.append("\n启动结束时间: ").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    if (success) {
+                        localLog.append("######启动结果是 成功############################## ");
+                    } else {
+                        localLog.append("######启动结果是 失败############################## ");
+                    }
                     this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), jobRunYarnDTO, appId);
                 }
 
@@ -267,8 +288,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
              * @date 2020-10-19
              * @time 21:47
              */
-            private String errorInfoDir(){
-                StringBuilder errorTips = new StringBuilder("\n\n") ;
+            private String errorInfoDir() {
+                StringBuilder errorTips = new StringBuilder("\n\n");
                 errorTips.append("详细错误日志可以登录服务器:").append(IpUtil.getInstance().getLocalIP()).append("\n");
                 errorTips.append("web系统日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())).append("logs/error.log").append("\n");
                 errorTips.append("flink提交日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey())).append("log/").append("\n");

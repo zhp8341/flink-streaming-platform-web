@@ -189,6 +189,8 @@ public class JobLocalServerAOImpl implements JobServerAO {
         threadPoolExecutor.execute(new Runnable() {
             @Override
             public void run() {
+
+                boolean success=true;
                 String jobStatus = JobStatusEnum.SUCCESS.name();
                 String appId = "";
                 StringBuilder localLog = new StringBuilder()
@@ -203,9 +205,16 @@ public class JobLocalServerAOImpl implements JobServerAO {
                 } catch (Exception e) {
                     log.error("exe is error", e);
                     localLog.append(e).append(errorInfoDir());
+                    success=false;
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
-                    localLog.append("\n ######启动结束#########:").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    localLog.append("\n 启动结束时间 ").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    if (success){
+                        localLog.append("######启动结果是 成功############################## ");
+                    }else{
+                        localLog.append("######启动结果是 失败############################## ");
+                    }
+
                     this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), jobRunYarnDTO, appId);
                 }
 

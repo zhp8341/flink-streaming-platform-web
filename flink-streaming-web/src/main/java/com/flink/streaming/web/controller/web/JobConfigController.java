@@ -1,5 +1,7 @@
 package com.flink.streaming.web.controller.web;
 
+import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.param.JobConfigParam;
@@ -16,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhuhuipei
@@ -38,7 +42,6 @@ public class JobConfigController {
 
     @RequestMapping(value = "/listPage")
     public String listPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
-
         PageModel<JobConfigDTO> pageModel = jobConfigService.queryJobConfig(jobConfigParam);
         PageVO pageVO = new PageVO();
         pageVO.setPageNum(pageModel.getPageNum());
@@ -52,11 +55,12 @@ public class JobConfigController {
         if (CollectionUtils.isEmpty(pageModel.getResult())){
             jobConfigVOList=Collections.emptyList();
         }else{
-            jobConfigVOList=JobConfigVO.toListVO(pageModel.getResult(),systemConfigService.getYarnRmHttpAddress());
+            Map<DeployModeEnum,String> domainKey=new HashMap<>();
+            domainKey.put(DeployModeEnum.YARN_PER,systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()));
+            domainKey.put(DeployModeEnum.LOCAL,systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey()));
+            jobConfigVOList=JobConfigVO.toListVO(pageModel.getResult(), domainKey);
         }
         modelMap.put("jobConfigList",jobConfigVOList );
-
-
         modelMap.put("active", "list");
         return "screen/job_config/listPage";
     }
