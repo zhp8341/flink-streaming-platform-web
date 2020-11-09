@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="form-group">
-                        <a  class="btn btn-lg btn-primary" href="/admin/editPage?id=${jobConfig.id!""}" >修改</a>
+                        <a  class="btn  btn-primary" href="/admin/editPage?id=${jobConfig.id!""}" >修改</a>
                     </div>
                 </#if>
 

@@ -28,17 +28,17 @@
         </#if>
 
         <div class="form-group">
-            <select class="form-control input-lg" name="key">
+            <select class="form-control " name="key">
                 <#list sysConfigVOList as val>
                     <option value="${val.getKey()}">${val.getDesc()}</option>
                 </#list>
             </select>
         </div>
         <div class="form-group">
-            <input class="form-control input-lg" type="text" placeholder="变量值" name="val">
+            <input class="form-control " type="text" placeholder="变量值" name="val">
         </div>
         <div class="form-group">
-            <button class="btn btn-lg btn-primary " type="submit">保存</button>
+            <button class="btn  btn-primary " type="submit">保存</button>
         </div>
 
         </form>

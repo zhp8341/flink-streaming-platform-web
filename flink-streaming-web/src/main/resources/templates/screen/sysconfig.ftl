@@ -30,7 +30,7 @@
         </#if>
 
         <div class="form-group">
-            <select class="form-control input-lg" name="key">
+            <select class="form-control " name="key">
                 <option value="">选择配置项 </option>
                 <#list sysConfigVOList as val>
                     <option value="${val.getKey()}">${val.getDesc()}</option>
@@ -38,10 +38,10 @@
             </select>
         </div>
         <div class="form-group">
-            <input class="form-control input-lg" type="text" placeholder="变量值" name="val">
+            <input class="form-control " type="text" placeholder="变量值" name="val">
         </div>
         <div class="form-group">
-            <button class="btn btn-lg btn-primary " type="submit">提交</button>
+            <button class="btn  btn-primary " type="submit">提交</button>
             <span>备注：如果想修改直接保存就可以覆盖</span>
         </div>
 

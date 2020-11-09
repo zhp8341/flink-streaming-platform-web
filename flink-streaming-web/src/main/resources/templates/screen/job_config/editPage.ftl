@@ -39,45 +39,47 @@
                             <pre>${jobConfig.openStr!""}</pre>
                         </div>
                         <div class="form-group">
-                            <h4>*任务名称：</h4>
-                            <input class="form-control input-lg" type="text" placeholder="任务名称" name="jobName"  value="${jobConfig.jobName!""}"   id="jobName" >
+                            <label for="inputfile">*任务名称：</label>
+                            <input class="form-control " type="text" placeholder="任务名称" name="jobName"  value="${jobConfig.jobName!""}"   id="jobName" >
                         </div>
 
                         <div class="form-group">
-                            <h4>*运行模式：</h4>
-                            <select class="form-control input-lg" id="deployMode">
-                                <option value="${jobConfig.deployMode!""}">${jobConfig.deployMode!""}</option>
+                            <label for="inputfile">*运行模式：</label>
+                            <select class="form-control " id="deployMode">
+                                <option value="YARN_PER"  <#if jobConfig.deployMode??&& jobConfig.deployMode=="YARN_PER" > selected </#if> >YARN_PER</option>
+                                <option value="LOCAL"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="LOCAL" > selected </#if> >LOCAL</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <h4 >*flink运行配置：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="参数只支持 -p -yjm -yn -ytm -ys -yqu(必选)  如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1 "/></h4>
-                            <input class="form-control input-lg" type="text" placeholder="flink运行配置" name="flinkRunConfig" value="${jobConfig.flinkRunConfig!""}"   id="flinkRunConfig" >
+                        <div class="form-group" id="configDiv">
+                            <label for="inputfile" data-toggle="tooltip"   data-placement="bottom" title="参数只支持 -p -yjm -yn -ytm -ys -yqu(必选)  如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1 ">*flink运行配置：</label>
+                            <input class="form-control " type="text" placeholder="flink运行配置" name="flinkRunConfig" value="${jobConfig.flinkRunConfig!""}"   id="flinkRunConfig" >
                         </div>
 
 
                         <div class="form-group">
-                            <h4>Checkpoint信息：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/"/></h4>
-                            <input class="form-control input-lg" type="text" placeholder="Checkpoint信息" name="flinkCheckpointConfig"  value="${jobConfig.flinkCheckpointConfig!""}"  id="flinkCheckpointConfig" >
+                            <label for="inputfile"  data-toggle="tooltip"   data-placement="bottom" title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ ">Checkpoint信息：</label>
+                            <input class="form-control " type="text" placeholder="Checkpoint信息" name="flinkCheckpointConfig"  value="${jobConfig.flinkCheckpointConfig!""}"  id="flinkCheckpointConfig" >
                         </div>
 
                         <div class="form-group">
-                            <h4 >udf地址：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="udf地址 &#10;如 http://xxx.xxx.com/flink-streaming-udf.jar"/></h4>
-                            <input class="form-control input-lg" type="text" placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" value="${jobConfig.udfJarPath!""}"  name="udfJarPath"  id="udfJarPath" >
+                            <label for="inputfile"  data-toggle="tooltip" data-placement="bottom"title="udf地址 &#10;如 http://xxx.xxx.com/flink-streaming-udf.jar">udf地址：</label>
+                            <input class="form-control " type="text" placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" value="${jobConfig.udfJarPath!""}"  name="udfJarPath"  id="udfJarPath" >
                         </div>
 
 
                         <div class="form-group">
-                            <h4>*sql语句：</h4>
+                            <label for="inputfile">*sql语句：</label>
                             <textarea  name="flinkSql" id="flinkSql">${jobConfig.flinkSql!""}</textarea>
                         </div>
-                         <div class="form-group">
-                                 <div  id="message"/>
-                         </div>
 
-                          <div class="form-group">
-                               <button class="btn btn-lg btn-primary " onclick="editConfig()" type="submit">提交</button>
-                          </div>
+                        <div class="form-group">
+                            <label   name="errorMessage" id="errorMessage"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <a class="btn  btn-primary " onclick="editConfig()" href="#errorMessage"> 提交</a>
+                        </div>
 
         </div>
     </div>
@@ -94,7 +96,7 @@
         theme: "mbo"
     });
 
-    editor.setSize('auto','500px');
+    editor.setSize('auto','800px');
 
 
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
@@ -111,18 +113,39 @@
                 udfJarPath:  $('#udfJarPath').val()
             },
             function (data, status) {
-                $("#message").removeClass();
+                $("#errorMessage").removeClass();
                 if (data!=null && data.success){
-                    $("#message").addClass("form-group alert alert-success")
-                    $("#message").html("修改成功");
+                    $("#errorMessage").addClass("form-group alert alert-success")
+                    $("#errorMessage").html("修改成功");
                 }else{
-                    $("#message").addClass("form-group alert alert-danger")
-                    $("#message").html(data.message);
+                    $("#errorMessage").addClass("form-group alert alert-danger")
+                    $("#errorMessage").html(data.message);
 
                 }
 
             }
         );
+    }
+
+
+
+    $(document).ready(function(){
+
+        initDeployMode()
+
+        $('#deployMode').change(function() {
+            initDeployMode()
+        })
+
+
+    });
+
+    function  initDeployMode(){
+        if ("LOCAL" == $('#deployMode').val()){
+            $("#configDiv").hide();
+        } else {
+            $("#configDiv").show();
+        }
     }
 
 </script>

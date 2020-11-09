@@ -21,7 +21,7 @@
         <h2 class="form-signin-heading text-center">请登录帐号</h2>
         <input type="text" id="name" name="name" class="form-control" placeholder="帐号" required autofocus>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="密码" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">提交</button>
+        <button class="btn  btn-primary btn-block" type="submit">提交</button>
 
         <#if  message?? && message != "" >
         <p class="text-center text-primary"> ${message}</p>

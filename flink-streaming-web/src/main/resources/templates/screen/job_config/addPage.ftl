@@ -23,54 +23,51 @@
 <div class="container-fluid">
     <div class="row">
         <#include "../../layout/menu.ftl" >
+
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <div class="form-group">
-                    <h4>*任务名称：</h4>
-                    <input class="form-control input-lg" type="text" placeholder="任务名称" name="jobName" id="jobName" >
+                    <label for="inputfile">*任务名称：</label>
+                    <input class="form-control " type="text" placeholder="任务名称" name="jobName" id="jobName" >
                 </div>
                 <div class="form-group">
-                    <h4>*运行模式(暂时支持YARN_PER)：</h4>
-                    <select class="form-control input-lg" id="deployMode">
-                        <#--<option value="">运行模式</option>-->
+                    <label for="inputfile">*运行模式：</label>
+                    <select class="form-control " id="deployMode" >
+                        <option value="">请选择</option>
                         <option value="YARN_PER">YARN_PER</option>
                         <option value="LOCAL">LOCAL</option>
                         <#--<option value="STANDALONE">STANDALONE</option>-->
                     </select>
                 </div>
-                <div class="form-group">
-                    <h4 >*flink运行配置：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="参数只支持 -p -yjm -yn -ytm -ys -yqu(必选)  如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1 "/></h4>
-                    <input class="form-control input-lg" type="text" placeholder="flink运行配置  如：  -yjm 1024m -ytm 2048m  -p 1  -ys 1 -yqu flink  " name="flinkRunConfig"  id="flinkRunConfig" >
+                <div class="form-group" id="configDiv">
+                    <label for="inputfile" data-toggle="tooltip"   data-placement="bottom" title="参数只支持 -p -yjm -yn -ytm -ys -yqu(必选)  如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1 ">*flink运行配置：</label>
+                    <input class="form-control " type="text" placeholder="flink运行配置  如：  -yjm 1024m -ytm 2048m  -p 1  -ys 1 -yqu flink  " name="flinkRunConfig"  id="flinkRunConfig" >
                 </div>
                 <div class="form-group">
-                    <h4>Checkpoint信息：
-                        <span class="glyphicon glyphicon-question-sign"  data-toggle="tooltip" data-placement="bottom"
-                                           title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/"/>
-                    </h4>
-                    <input class="form-control input-lg" type="text" placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/" name="flinkCheckpointConfig" id="flinkCheckpointConfig" >
+                    <label for="inputfile"  data-toggle="tooltip"   data-placement="bottom" title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ ">Checkpoint信息：</label>
+                    <input class="form-control " type="text" placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/" name="flinkCheckpointConfig" id="flinkCheckpointConfig" >
                 </div>
 
                 <div class="form-group">
-                    <h4 >udf地址：<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom"title="udf地址 &#10;如 http://xxx.xxx.com/flink-streaming-udf.jar"/></h4>
-                    <input class="form-control input-lg" type="text" placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" name="udfJarPath"  id="udfJarPath" >
+                    <label for="inputfile"  data-toggle="tooltip" data-placement="bottom"title="udf地址 &#10;如 http://xxx.xxx.com/flink-streaming-udf.jar">udf地址：</label>
+                    <input class="form-control " type="text" placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" name="udfJarPath"  id="udfJarPath" >
                 </div>
 
-
                 <div class="form-group">
-                    <h4>*sql语句：</h4>
+                    <label for="inputfile">*sql语句：</label>
                     <textarea   name="flinkSql" id="flinkSql"> </textarea>
                 </div>
 
+              <div class="form-group">
+                <label   name="errorMessage" id="errorMessage"></label>
+              </div>
+
                 <div class="form-group">
-                    <a class="btn btn-lg btn-primary " onclick="addConfig()" href="#"> 提交</a>
+                    <a class="btn  btn-primary " onclick="addConfig()" href="#errorMessage"> 提交</a>
                 </div>
-                <div  id="errorMessage"/>
-
             </div>
-
-        </div>
     </div>
-</div>
+ </div>
 <#include "../../layout/bottom.ftl">
 <script>
 
@@ -84,7 +81,7 @@
         theme: "mbo"
     });
 
-    editor.setSize('auto','500px');
+    editor.setSize('auto','800px');
 
 
 
@@ -100,7 +97,7 @@
             udfJarPath:  $('#udfJarPath').val()
             },
             function (data, status) {
-                $("#message").removeClass();
+                $("#errorMessage").removeClass();
                 if (data!=null && data.success){
                     skipUrl("/admin/listPage")
                 }else{
@@ -112,6 +109,14 @@
             }
         );
     }
+
+    $('#deployMode').change(function() {
+        if ("LOCAL" == $(this).val()){
+            $("#configDiv").hide();
+        } else {
+            $("#configDiv").show();
+        }
+    })
 
 
 </script>
