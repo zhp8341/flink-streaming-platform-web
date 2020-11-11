@@ -58,15 +58,19 @@ public class JobConfigController {
             Map<DeployModeEnum,String> domainKey=new HashMap<>();
             domainKey.put(DeployModeEnum.YARN_PER,systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()));
             domainKey.put(DeployModeEnum.LOCAL,systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey()));
+            domainKey.put(DeployModeEnum.STANDALONE,systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey()));
             jobConfigVOList=JobConfigVO.toListVO(pageModel.getResult(), domainKey);
         }
         modelMap.put("jobConfigList",jobConfigVOList );
         modelMap.put("active", "list");
+        modelMap.put("open", "config");
         return "screen/job_config/listPage";
     }
 
     @RequestMapping("/addPage")
     public String addPage(ModelMap modelMap) {
+        modelMap.put("active", "addPage");
+        modelMap.put("open", "config");
         return "screen/job_config/addPage";
     }
 

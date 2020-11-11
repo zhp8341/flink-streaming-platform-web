@@ -36,7 +36,7 @@ public class JobConfigApiController extends BaseController {
     private JobServerAO jobYarnServerAO;
 
     @Autowired
-    private JobServerAO jobLocalServerAO;
+    private JobServerAO jobStandaloneServerAO;
 
     @Autowired
     private JobConfigService jobConfigService;
@@ -234,10 +234,13 @@ public class JobConfigApiController extends BaseController {
         switch (deployModeEnum) {
             case LOCAL:
                 log.info(" 本地模式启动 {}", deployModeEnum);
-                return jobLocalServerAO;
+                return jobStandaloneServerAO;
             case YARN_PER:
                 log.info(" yan per 模式启动 {}", deployModeEnum);
                 return jobYarnServerAO;
+            case STANDALONE:
+                log.info(" STANDALONE模式启动 {}", deployModeEnum);
+                return jobStandaloneServerAO;
             default:
                 throw new RuntimeException("不支持改模式系统");
         }

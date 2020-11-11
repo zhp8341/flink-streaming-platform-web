@@ -9,55 +9,79 @@
     <meta name="author" content="">
     <title>日志详情</title>
     <#include "../../control/public_css_js.ftl">
-    <link href="/static/css/dashboard/dashboard.css" rel="stylesheet">
+
 </head>
 
-<body>
-<#include "../../layout/top.ftl">
+<body class="no-skin">
+<!-- start top-->
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <#include "../../layout/top.ftl">
+</div>
+<!-- end top-->
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
 
-<div class="container-fluid">
-    <div class="row">
-        <#include "../../layout/menu.ftl" >
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-
-            <#if jobRunLogDetail??>
-                <div class="form-group ">
-                    <h4>启动状态：</h4>
-                    <pre>${jobRunLogDetail.jobStatus!""}</pre>
-                </div>
-                <div class="form-group ">
-                    <h4>运行模式：</h4>
-                    <pre>${jobRunLogDetail.deployMode!""}</pre>
-                </div>
-
-                <#if jobRunLogDetail.jobId??>
-                    <div class="form-group ">
-                        <h4>远程日志：</h4>
-                        <pre> <a href="${jobRunLogDetail.remoteLogUrl!""}" target="_blank">${jobRunLogDetail.remoteLogUrl!""}</a>  </pre>
-                    </div>
-                </#if>
+    <#include "../../layout/menu.ftl">
 
 
-                <div class="form-group ">
-                    <h4>日志详情：</h4>
-                    <pre>${jobRunLogDetail.localLog!""}</pre>
-                </div>
-            <#else>
-                <div  id="message"> 没有找到改记录日志</div>
-            </#if>
+    <div class="main-content">
+        <div class="main-content-inner">
 
-            <div class="form-group ">
-                <button class="btn btn-primary "  onclick="window.location.reload()" >刷新日志</button>
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#">日志管理</a>
+                    </li>
+                    <li class="active">日志详情</li>
+                </ul>
             </div>
 
+            <div class="page-content">
 
+                <div class="row">
+                    <div class="col-xs-12">
+
+
+                        <#if jobRunLogDetail??>
+                            <div class="form-group ">
+                                <label for="inputfile">启动状态：</label>
+                                <pre>${jobRunLogDetail.jobStatus!""}</pre>
+                            </div>
+                            <div class="form-group ">
+                                <label for="inputfile">运行模式：</label>
+                                <pre>${jobRunLogDetail.deployMode!""}</pre>
+                            </div>
+
+                            <#if jobRunLogDetail.jobId??>
+                                <div class="form-group ">
+                                    <label for="inputfile">远程日志地址：</label>
+                                    <pre> <a href="${jobRunLogDetail.remoteLogUrl!""}" target="_blank">${jobRunLogDetail.remoteLogUrl!""}</a>  </pre>
+                                </div>
+                            </#if>
+
+
+                            <div class="form-group ">
+                                <label for="inputfile">日志内容：</label>
+                                <pre>${jobRunLogDetail.localLog!""}</pre>
+                            </div>
+                        <#else>
+                            <div  id="message"> 没有找到改记录日志</div>
+                        </#if>
+
+                        <div class="form-group ">
+                            <button class="btn btn-info btn-sm "  onclick="window.location.reload()" >刷新日志</button>
+                        </div>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
         </div>
-    </div>
-</div>
+    </div><!-- /.main-content -->
 
-<!--sd -->
-<#include "../../layout/bottom.ftl">
+    <#include "../../layout/bottom.ftl">
+
+</div><!-- /.main-container -->
 </body>
 
 </html>

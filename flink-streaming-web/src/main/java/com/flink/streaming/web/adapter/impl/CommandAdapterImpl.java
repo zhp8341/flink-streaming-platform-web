@@ -26,7 +26,7 @@ public class CommandAdapterImpl implements CommandAdapter
 
     private static long INTERVAL_TIME = 1000 * 5;
 
-    private static long INTERVAL_TIME_ONE = 1000 * 1;
+    private static long INTERVAL_TIME_ONE = 1000 * 2;
 
     @Autowired
     private JobRunLogService jobRunLogService;

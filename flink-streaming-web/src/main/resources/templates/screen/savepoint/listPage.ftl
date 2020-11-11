@@ -8,65 +8,100 @@
     <meta name="author" content="">
     <title>savepoint历史备份</title>
     <#include "../../control/public_css_js.ftl">
-    <link href="/static/css/dashboard/dashboard.css" rel="stylesheet">
+
 </head>
 
-<body>
-<#include "../../layout/top.ftl">
-
-<div class="container-fluid">
-    <div class="row ">
-        <#include "../../layout/menu.ftl" >
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="panel">
-                <h3 style="text-align:center">只显示最近10次(每个一小时自动备份或者停止任务的时候备份) </h3>
-                <h5 style="text-align:center;color: red">备注：如果sql语句发生变更或者业务逻辑发生变化，此时从savepoint恢复可能导致数据结果错误 </h5>
-            </div>
-
-            <div class="col-md-12 column">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th colspan="4"> <span style="text-align:center"> <button type="button" id="btn_add" class="btn btn-primary"> 手动添加</button></span></th>
-
-                    </tr>
-                    <tr>
-                        <th>编号</th>
-                        <th>地址</th>
-                        <th>备份时间</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    <#if savepointList?size == 0>
-                        <tr>
-                            <td colspan="4" align="center">
-                                <h4>没有数据</h4>
-                            </td>
-                        </tr>
-                    <#else>
-
-                        <#list savepointList as savepointBackupVO>
-                            <tr>
-                                <td>${savepointBackupVO_index+1}</td>
-                                <td>${savepointBackupVO.savepointPath!""}</td>
-                                <td>${savepointBackupVO.backupTime!""}</td>
-                                <td>
-                                   <#if startButton>
-                                       <a href="#" onclick="start(${jobConfigId},${savepointBackupVO.id})">点击恢复任务</a>
-                                   </#if>
-                                </td>
-                            </tr>
-                        </#list>
-
-                    </#if>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<body class="no-skin">
+<!-- start top-->
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <#include "../../layout/top.ftl">
 </div>
+<!-- end top-->
+<div class="main-container ace-save-state" id="main-container">
+    <script type="text/javascript">
+        try{ace.settings.loadState('main-container')}catch(e){}
+    </script>
+
+    <#include "../../layout/menu.ftl">
+
+
+    <div class="main-content">
+        <div class="main-content-inner">
+
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#">savepoint管理</a>
+                    </li>
+                    <li class="active">savepoint</li>
+                </ul>
+            </div>
+
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h3 style="text-align:center">只显示最近10次(每个一小时自动备份或者停止任务的时候备份) </h3>
+                        <h5 style="text-align:center;color: red">备注：如果sql语句发生变更或者业务逻辑发生变化，此时从savepoint恢复可能导致数据结果错误 </h5>
+                    </div><!-- /.col -->
+                </div>
+            </div><!-- /.page-content -->
+
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <button type="button" id="btn_add" class="btn btn-info btn-sm "> 手动添加</button>
+                    </div><!-- /.col -->
+                </div>
+            </div><!-- /.page-content -->
+
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>地址</th>
+                                <th>备份时间</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <#if savepointList?size == 0>
+                                <tr>
+                                    <td colspan="4" align="center">
+                                        <h4>没有数据</h4>
+                                    </td>
+                                </tr>
+                            <#else>
+
+                                <#list savepointList as savepointBackupVO>
+                                    <tr>
+                                        <td>${savepointBackupVO_index+1}</td>
+                                        <td>${savepointBackupVO.savepointPath!""}</td>
+                                        <td>${savepointBackupVO.backupTime!""}</td>
+                                        <td>
+                                            <#if startButton>
+                                                <a href="#" onclick="start(${jobConfigId},${savepointBackupVO.id})">点击恢复任务</a>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                </#list>
+
+                            </#if>
+                            </tbody>
+                        </table>
+                    </div><!-- /.col -->
+                </div>
+            </div><!-- /.page-content -->
+
+        </div>
+    </div><!-- /.main-content -->
+
+    <#include "../../layout/bottom.ftl">
+
+</div><!-- /.main-container -->
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -84,12 +119,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
-                <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                <button type="button" id="btn_submit" class="btn btn-info btn-sm " data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
             </div>
         </div>
     </div>
 </div>
-<#include "../../layout/bottom.ftl">
+
 <script>
     function start(id,savepointId) {
         $.post("../api/start", {

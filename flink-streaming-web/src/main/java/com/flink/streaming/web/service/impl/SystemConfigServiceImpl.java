@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.FileUtils;
+import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.enums.SysErrorEnum;
@@ -37,7 +39,6 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     public void addOrUpdateConfigByKey(String key, String value) {
 
         this.checkParam(key, value);
-
         if (SysConfigEnum.FLINK_HOME.equals(SysConfigEnum.getSysConfigEnum(key))) {
             FileUtils.createSqlHome(value);
         }
@@ -53,7 +54,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     @Override
     public List<SystemConfigDTO> getSystemConfig(SysConfigEnumType sysConfigEnumType) {
-        return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType!=null?sysConfigEnumType.name():null));
+        return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType != null ? sysConfigEnumType.name() : null));
     }
 
     @Override
@@ -72,47 +73,83 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     @Override
     public String getYarnRmHttpAddress() {
-        String http = this.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
-        if (StringUtils.isEmpty(http)) {
+        String url = this.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
+        if (StringUtils.isEmpty(url)) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
         }
-        return http;
+        if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
+            return url.trim();
+        }
+        throw new BizException("网络异常 url=" + url);
     }
 
     @Override
-    public String getFlinkHttpAddress() {
-        String http = this.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey());
-        if (StringUtils.isEmpty(http)) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS);
+    public String getFlinkHttpAddress(DeployModeEnum deployModeEnum) {
+
+        switch (deployModeEnum) {
+            case LOCAL:
+                String urlLocal = this.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey());
+                if (StringUtils.isEmpty(urlLocal)) {
+                    throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS);
+                }
+                if (HttpServiceCheckerUtil.checkUrlConnect(urlLocal)) {
+                    return urlLocal.trim();
+                }
+                throw new BizException("网络异常 url=" + urlLocal);
+            case STANDALONE:
+                String urlHA = this.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey());
+                if (StringUtils.isEmpty(urlHA)) {
+                    throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HA_HTTP_ADDRESS);
+                }
+                String[] urls = urlHA.split(";");
+                for (String http : urls) {
+                    if (HttpServiceCheckerUtil.checkUrlConnect(http)) {
+                        return http.trim();
+                    }
+                }
+                throw new BizException("网络异常 url=" + urlHA);
+            default:
+                throw new BizException("不支持该模式");
         }
-        return http;
+
+
     }
 
     @Override
     public boolean isExist(String key) {
         String value = this.getSystemConfigByKey(key);
-        if (StringUtils.isEmpty(value)){
+        if (StringUtils.isEmpty(value)) {
             return false;
         }
         return true;
     }
 
 
-
     private void checkParam(String key, String value) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
+        SysConfigEnum sysConfigEnum = SysConfigEnum.getSysConfigEnum(key);
 
-        if (SysConfigEnum.YARN_RM_HTTP_ADDRESS.equals(SysConfigEnum.getSysConfigEnum(key))) {
+        if (SysConfigEnum.YARN_RM_HTTP_ADDRESS.equals(sysConfigEnum)
+                || SysConfigEnum.FLINK_REST_HTTP_ADDRESS.equals(sysConfigEnum)
+                || SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.equals(sysConfigEnum)) {
             if (!StrUtil.endWith(value, SystemConstants.SLASH)) {
                 throw new BizException("必须以/结尾");
             }
-            if (!StrUtil.startWith(value, SystemConstants.HTTP_KEY)){
+            if (!StrUtil.startWith(value, SystemConstants.HTTP_KEY)) {
                 throw new BizException("必须以http或者https开头");
             }
         }
-        if (SysConfigEnum.FLINK_HOME.equals(SysConfigEnum.getSysConfigEnum(key))) {
+        if (SysConfigEnum.DINGDING_ALARM_URL.equals(sysConfigEnum)) {
+            if (!StrUtil.startWith(value, SystemConstants.HTTP_KEY)) {
+                throw new BizException("必须以http或者https开头");
+            }
+        }
+
+        this.checkUrlValid(sysConfigEnum, value);
+
+        if (SysConfigEnum.FLINK_HOME.equals(sysConfigEnum)) {
             if (!StrUtil.endWith(value, SystemConstants.SLASH)) {
                 throw new BizException("必须以/结尾");
             }
@@ -120,7 +157,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
                 throw new BizException("必须以/开头");
             }
         }
-        if (SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.equals(SysConfigEnum.getSysConfigEnum(key))) {
+        if (SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.equals(sysConfigEnum)) {
             if (!StrUtil.startWith(value, SystemConstants.SLASH)) {
                 throw new BizException("必须以/开头");
             }
@@ -129,7 +166,32 @@ public class SystemConfigServiceImpl implements SystemConfigService {
             }
 
         }
+    }
 
+    private void checkUrlValid(SysConfigEnum sysConfigEnum, String url) {
+        switch (sysConfigEnum) {
+            case YARN_RM_HTTP_ADDRESS:
+                if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
+                    throw new BizException("网络异常 url=" + url);
+                }
+            case FLINK_REST_HTTP_ADDRESS:
+                if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
+                    throw new BizException("网络异常 url=" + url);
+                }
+            case DINGDING_ALARM_URL:
+                if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
+                    throw new BizException("网络异常 url=" + url);
+                }
+            case FLINK_REST_HA_HTTP_ADDRESS:
+                String[] urls = url.split(";");
+                for (String http : urls) {
+                    if (!HttpServiceCheckerUtil.checkUrlConnect(http)) {
+                        throw new BizException("网络异常 url=" + http);
+                    }
+                }
+            default:
+                break;
+        }
 
     }
 

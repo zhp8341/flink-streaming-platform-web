@@ -26,6 +26,8 @@ public class HttpUtil {
 
     public final static int TIME_OUT_10_S=1000 * 10;
 
+    public final static int TIME_OUT_5_S=1000 * 5;
+
     public final static int TIME_OUT_5_M=1000 * 60 *5;
 
     public final static int TIME_OUT_1_M=1000 * 60 *1;

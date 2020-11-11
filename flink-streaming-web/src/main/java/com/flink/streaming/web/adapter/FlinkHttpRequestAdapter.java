@@ -1,5 +1,6 @@
 package com.flink.streaming.web.adapter;
 
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.model.flink.JobStandaloneInfo;
 import com.flink.streaming.web.model.flink.JobYarnInfo;
 
@@ -28,7 +29,7 @@ public interface FlinkHttpRequestAdapter {
      * @date 2020/11/3
      * @time 23:47
      */
-    JobStandaloneInfo getJobInfoForStandaloneByAppId(String appId);
+    JobStandaloneInfo getJobInfoForStandaloneByAppId(String appId, DeployModeEnum deployModeEnum);
 
 
     /**
@@ -50,7 +51,7 @@ public interface FlinkHttpRequestAdapter {
      * @date 2020/11/3
      * @time 22:50
      */
-    void cancelJobForFlinkByAppId(String jobId);
+    void cancelJobForFlinkByAppId(String jobId,DeployModeEnum deployModeEnum);
 
 
     /**

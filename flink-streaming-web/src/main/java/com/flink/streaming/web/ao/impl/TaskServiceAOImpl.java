@@ -68,6 +68,9 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                 case LOCAL:
                     this.checkStandalone(jobConfigDTO);
                     break;
+                case STANDALONE:
+                    this.checkStandalone(jobConfigDTO);
+                    break;
                 default:
                     break;
             }
@@ -173,7 +176,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             log.error(message);
             return;
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId());
+        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),jobConfigDTO.getDeployModeEnum());
         if (jobStandaloneInfo == null || !"RUNNING".equals(jobStandaloneInfo.getState())) {
             log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobStandaloneInfo={}", jobStandaloneInfo);
             JobConfigDTO jobConfig = new JobConfigDTO();

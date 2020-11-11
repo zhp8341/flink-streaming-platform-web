@@ -70,14 +70,16 @@ public class AlartController {
         modelMap.put("pageVO", pageVO);
         modelMap.put("alartLogParam", alartLogParam);
         modelMap.put("alartLogVOList", AlartLogVO.toListVO(pageModel.getResult()));
-        modelMap.put("active", "list");
+        modelMap.put("active", "alartLog");
+        modelMap.put("open", "alart");
         return "screen/alart/listPage";
     }
 
 
     @RequestMapping(value = "/alartConfig")
     public String alartConfig(ModelMap modelMap) {
-        modelMap.put("active", "synconfig");
+        modelMap.put("active", "alartConfig");
+        modelMap.put("open", "alart");
         modelMap.put("sysConfigVOList", SysConfigEnum.getSysConfigEnumByType(SysConfigEnumType.ALART.name()));
         modelMap.put("systemConfigVOList", SystemConfigVO.toListVO(systemConfigService.getSystemConfig(SysConfigEnumType.ALART)));
         return "screen/alart/alart_config";

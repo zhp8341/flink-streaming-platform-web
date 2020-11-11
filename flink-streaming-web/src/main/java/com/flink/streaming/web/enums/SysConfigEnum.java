@@ -22,7 +22,9 @@ public enum SysConfigEnum {
 
     YARN_RM_HTTP_ADDRESS("yarn_rm_http_address", "yarn的rm Http地址（yarn per 模式必须） ", SysConfigEnumType.SYS.name()),
 
-    FLINK_REST_HTTP_ADDRESS("flink_rest_http_address", "flink Rest & web frontend 地址 ）", SysConfigEnumType.SYS.name()),
+    FLINK_REST_HTTP_ADDRESS("flink_rest_http_address", "flink Rest & web frontend 地址(Local Cluster模式)", SysConfigEnumType.SYS.name()),
+
+    FLINK_REST_HA_HTTP_ADDRESS("flink_rest_ha_http_address", "flink Rest & web frontend HA 地址(Standalone Cluster模式 支持HA 可以填写多个地址 ;用分隔)", SysConfigEnumType.SYS.name()),
 
     DINGDING_ALARM_URL("dingding_alart_url", "钉钉告警所需的url（如果不填写将无法告警）", SysConfigEnumType.ALART.name()),
 

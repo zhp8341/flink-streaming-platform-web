@@ -7,6 +7,7 @@ import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.HttpUtil;
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.model.flink.JobStandaloneInfo;
 import com.flink.streaming.web.model.flink.JobYarnInfo;
@@ -57,14 +58,14 @@ public class FlinkHttpRequestAdapterImpl implements FlinkHttpRequestAdapter {
     }
 
     @Override
-    public JobStandaloneInfo getJobInfoForStandaloneByAppId(String appId) {
+    public JobStandaloneInfo getJobInfoForStandaloneByAppId(String appId, DeployModeEnum deployModeEnum) {
         if (StringUtils.isEmpty(appId)) {
             throw new BizException(SysErrorEnum.HTTP_REQUEST_IS_NULL);
         }
         String res = null;
         JobStandaloneInfo jobStandaloneInfo = null;
         try {
-            String url = systemConfigService.getFlinkHttpAddress() + FlinkYarnRestUriConstants.getUriJobsForStandalone(appId);
+            String url = systemConfigService.getFlinkHttpAddress(deployModeEnum) + FlinkYarnRestUriConstants.getUriJobsForStandalone(appId);
             log.info("[getJobInfoForStandaloneByAppId]请求参数 appId={} url={}", appId, url);
             res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
             log.info("[getJobInfoForStandaloneByAppId]请求参数结果: res={}", res);
@@ -97,11 +98,11 @@ public class FlinkHttpRequestAdapterImpl implements FlinkHttpRequestAdapter {
     }
 
     @Override
-    public void cancelJobForFlinkByAppId(String jobId) {
+    public void cancelJobForFlinkByAppId(String jobId,DeployModeEnum deployModeEnum) {
         if (StringUtils.isEmpty(jobId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
-        String url = systemConfigService.getFlinkHttpAddress() + FlinkYarnRestUriConstants.getUriCancelForStandalone(jobId);
+        String url = systemConfigService.getFlinkHttpAddress(deployModeEnum) + FlinkYarnRestUriConstants.getUriCancelForStandalone(jobId);
         log.info("[cancelJobForFlinkByAppId]请求参数 jobId={} url={}", jobId, url);
         String res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
         log.info("[cancelJobForFlinkByAppId]请求参数结果: res={}", res);

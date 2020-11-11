@@ -2,6 +2,7 @@ package com.flink.streaming.web.model.vo;
 
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.util.DateFormatUtils;
+import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
@@ -95,6 +96,15 @@ public class JobConfigVO {
             }
             if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
                 jobConfigVO.setFlinkRunUrl(domain+String.format("#/job/%s/overview",jobConfigDTO.getJobId()));
+            }
+            if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
+               String[] urls= domain.split(";");
+                for (String url  : urls) {
+                    if (HttpServiceCheckerUtil.checkUrlConnect(url)){
+                        jobConfigVO.setFlinkRunUrl(url.trim()+String.format("#/job/%s/overview",jobConfigDTO.getJobId()));
+                        break;
+                    }
+                }
             }
         }
 

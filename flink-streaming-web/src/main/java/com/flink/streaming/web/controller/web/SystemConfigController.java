@@ -31,6 +31,7 @@ public class SystemConfigController {
     @RequestMapping(value = "/sysConfig")
     public String sysConfig(ModelMap modelMap) {
         modelMap.put("active", "synconfig");
+        modelMap.put("open", "system");
         modelMap.put("sysConfigVOList", SysConfigEnum.getSysConfigEnumByType(SysConfigEnumType.SYS.name()));
         modelMap.put("systemConfigVOList", SystemConfigVO.toListVO(systemConfigService.getSystemConfig(SysConfigEnumType.SYS)));
 

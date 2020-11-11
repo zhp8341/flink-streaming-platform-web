@@ -38,7 +38,8 @@ public class JobRunLogController extends BaseController {
         modelMap.put("pageVO", pageVO);
         modelMap.put("jobRunLogParam", jobRunLogParam);
         modelMap.put("jobRunLogList", JobRunLogVO.toListVO(pageModel.getResult(), YN.N.getCode()));
-        modelMap.put("active", "list");
+        modelMap.put("active", "logList");
+        modelMap.put("open", "log");
         return "screen/job_log/listPage";
     }
 

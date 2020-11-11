@@ -1,5 +1,6 @@
 package com.flink.streaming.web.service;
 
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.model.dto.SystemConfigDTO;
 
@@ -70,7 +71,7 @@ public interface SystemConfigService {
      * @date 2020/11/4
      * @time 10:52
      */
-    String getFlinkHttpAddress();
+    String getFlinkHttpAddress(DeployModeEnum deployModeEnum);
 
 
     /**

@@ -5,7 +5,7 @@ import cn.hutool.core.lang.UUID;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.model.dto.JobRunYarnDTO;
+import com.flink.streaming.web.model.dto.JobRunParamDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;
@@ -33,13 +33,19 @@ public class CommandUtil {
      * @date 2020/11/1
      * @time 09:59
      */
-    public static String buildRunCommandForLocal(JobRunYarnDTO jobRunYarnDTO, JobConfigDTO jobConfig, StringBuilder localLog) throws ParseException {
+    public static String buildRunCommandForLocal(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfig) throws ParseException {
         StringBuilder command = new StringBuilder();
-        command.append(jobRunYarnDTO.getFlinkBinPath()).append(" run -d ");
-        appendUdfJarPath(command, jobConfig, jobRunYarnDTO, localLog, DeployModeEnum.LOCAL);
+        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d ");
+        if (jobConfig.getDeployModeEnum()==DeployModeEnum.STANDALONE){
+            command.append(jobConfig.getFlinkRunConfig());
+        }
+        if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath())){
+            command.append(" -C ").append(jobConfig.getUdfJarPath()).append(" ");
+        }
+
         command.append("-c  com.flink.streaming.core.JobApplication").append(" ");
-        command.append(jobRunYarnDTO.getSysHome()).append(JARVERSION);
-        command.append(" -sql ").append(jobRunYarnDTO.getSqlPath()).append(" ");
+        command.append(jobRunParamDTO.getSysHome()).append(JARVERSION);
+        command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
         if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath())) {
             command.append(" -udfJarPath ").append(jobConfig.getUdfJarPath());
         }
@@ -54,21 +60,21 @@ public class CommandUtil {
      * @date 2020-09-18
      * @time 00:57
      */
-    public static String buildRunCommandForYarnCluster(JobRunYarnDTO jobRunYarnDTO, JobConfigDTO jobConfig, StringBuilder localLog, String savepointPath) throws ParseException {
+    public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfig, StringBuilder localLog, String savepointPath) throws ParseException {
         StringBuilder command = new StringBuilder();
-        command.append(jobRunYarnDTO.getFlinkBinPath()).append(" run ");
+        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run ");
         if (StringUtils.isNotEmpty(savepointPath)) {
             command.append(" -s ").append(savepointPath).append(" ");
         }
-        command.append(jobRunYarnDTO.getFlinkRunParam()).append(" ");
+        command.append(jobRunParamDTO.getFlinkRunParam()).append(" ");
         command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfig.getJobName())).append(" ");
         command.append(" -yd -m yarn-cluster ").append(" ");
-        appendUdfJarPath(command, jobConfig, jobRunYarnDTO, localLog, DeployModeEnum.YARN_PER);
+        appendUdfJarPath(command, jobConfig, jobRunParamDTO, localLog, DeployModeEnum.YARN_PER);
         command.append("-c  com.flink.streaming.core.JobApplication").append(" ");
-        command.append(jobRunYarnDTO.getSysHome()).append(JARVERSION);
-        command.append(" -sql ").append(jobRunYarnDTO.getSqlPath()).append(" ");
-        if (StringUtils.isNotEmpty(jobRunYarnDTO.getFlinkCheckpointConfig())) {
-            command.append(" ").append(jobRunYarnDTO.getFlinkCheckpointConfig());
+        command.append(jobRunParamDTO.getSysHome()).append(JARVERSION);
+        command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
+        if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
+            command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
         }
         if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath())) {
             command.append(" -udfJarPath ").append(jobConfig.getUdfJarPath());
@@ -77,11 +83,11 @@ public class CommandUtil {
     }
 
 
-    private static void appendUdfJarPath(StringBuilder command, JobConfigDTO jobConfig, JobRunYarnDTO jobRunYarnDTO, StringBuilder localLog, DeployModeEnum deployModeEnum) {
+    private static void appendUdfJarPath(StringBuilder command, JobConfigDTO jobConfig, JobRunParamDTO jobRunParamDTO, StringBuilder localLog, DeployModeEnum deployModeEnum) {
 
         if (StringUtils.isNotEmpty(jobConfig.getUdfJarPath())) {
             String fileName = System.currentTimeMillis() + "_udf.jar";
-            String udfJarPath = jobRunYarnDTO.getSysHome() + "tmp/udf_jar/" + DateUtil.formatDate(new Date()) + "/" + UUID.fastUUID();
+            String udfJarPath = jobRunParamDTO.getSysHome() + "tmp/udf_jar/" + DateUtil.formatDate(new Date()) + "/" + UUID.fastUUID();
             localLog.append("生成udf文件目录:").append(udfJarPath).append("\n");
             FileUtils.mkdirs(udfJarPath);
             localLog.append("生成udf文件目录完成").append("\n");
@@ -97,9 +103,7 @@ public class CommandUtil {
             if (DeployModeEnum.YARN_PER.name().equals(deployModeEnum.name())) {
                 command.append("-yt ").append(udfJarPath).append(" ");
             }
-            if (DeployModeEnum.LOCAL.name().equals(deployModeEnum.name())) {
-                command.append("-C ").append("file://"+udfJarPath+"/"+fileName).append(" ");
-            }
+
         }
     }
 }
