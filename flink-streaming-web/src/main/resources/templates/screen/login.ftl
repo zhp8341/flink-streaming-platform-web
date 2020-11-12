@@ -18,7 +18,7 @@
 
             <h4 class="modal-title text-center" id="myModalLabel">登录</h4>
         </div>
-        <form class="form-signin" action="/admin/login" method="post">
+
         <div class="modal-body" id = "model-body">
             <div class="form-group">
                 <input type="text" class="form-control"placeholder="用户名" autocomplete="off"  id="name" name="name">
@@ -29,20 +29,34 @@
         </div>
         <div class="modal-footer">
             <div class="form-group">
-                <button type="submit" class="btn btn-primary form-control">登录</button>
+                <button type="button" class="btn btn-primary form-control" onclick="login()">登录</button>
             </div>
         </div>
-            <#if  message?? && message != "" >
-            <div class="modal-footer" style="background-color: #ddd;">
-                <div class="form-group" >
-                        <p class="text-center text-primary"> ${message}</p>
-                </div>
+            <div class="modal-footer">
+                <div class="form-group " name="errorMessage" id="errorMessage" style="text-align:center"></div>
             </div>
-            </#if>
-        </form>
+
     </div><!-- /.modal-content -->
 </div><!-- /.modal -->
 
 </body>
+<script>
 
+    function login() {
+        $.post("../api/login", {
+                name: $('#name').val(),
+                password: $('#password').val()
+            },
+            function (data, status) {
+                $("#errorMessage").removeClass();
+                if (data != null && data.success) {
+                    skipUrl("/admin/listPage")
+                } else {
+                    $("#errorMessage").addClass("form-group alert alert-danger")
+                    $("#errorMessage").html(data.message);
+                }
+            }
+        );
+    }
+</script>
 </html>

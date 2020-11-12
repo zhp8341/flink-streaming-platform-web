@@ -30,6 +30,8 @@ public enum SysErrorEnum {
     USER_IS_NOT_NULL("10000", "帐号不存在"),
     USER_PASSWORD_ERROR("10001", "帐号密码错误"),
     USER_PASSWORD_EXPIRED("10002", "密码已经被修改"),
+    USER_IS_EXIST("10003", "帐号已存在"),
+    USER_IS_STOP("10004", "帐号已停用"),
 
     JOB_CONFIG_PARAM_IS_NULL("20000", "参数不能为空"),
     JOB_CONFIG_JOB_NAME_IS_EXIST("20001", "任务名称已经存在"),

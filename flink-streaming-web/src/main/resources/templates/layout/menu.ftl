@@ -111,6 +111,24 @@
                 </li>
             </ul>
         </li>
+        <li <#if open??&& open=="user" > class="open" </#if>>
+            <a href="#" class="dropdown-toggle">
+                <i class="menu-icon  fa fa-user" style="color: #444"></i>
+                <span class="menu-text">用户管理</span>
+
+                <b class="arrow fa fa-angle-down"></b>
+            </a>
+            <b class="arrow"></b>
+            <ul class="submenu">
+                <li <#if active??&& active=="userlist" > class="active" </#if>>
+                    <a href="/admin/userList">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        用户列表
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+            </ul>
+        </li>
 
 
     </ul>

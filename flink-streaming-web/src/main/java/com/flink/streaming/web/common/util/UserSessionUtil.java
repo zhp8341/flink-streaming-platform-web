@@ -15,12 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 public class UserSessionUtil {
 
     /**
-     *根据cookie获取登陆信息
+     * 根据cookie获取登陆信息
+     *
      * @author zhuhuipei
      * @date 2020-08-12
      * @time 19:06
      */
-    public static UserSession userSession(HttpServletRequest request){
+    public static UserSession userSession(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;

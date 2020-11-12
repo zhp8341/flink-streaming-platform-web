@@ -42,16 +42,9 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-
-                        <form role="form" action="/admin/upsertSynConfig" method="post">
-                            <#if message??>
-                                <div class="form-group alert alert-danger">
-                                    ${message}
-                                </div>
-                            </#if>
-
+                            <div class="form-group " name="errorMessage" id="errorMessage"></div>
                             <div class="form-group">
-                                <select class="form-control " name="key">
+                                <select class="form-control " name="key" id="key">
                                     <option value="">选择配置项</option>
                                     <#list sysConfigVOList as val>
                                         <option value="${val.getKey()}">${val.getDesc()}</option>
@@ -59,14 +52,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <input class="form-control " type="text" placeholder="变量值" name="val">
+                                <input class="form-control " type="text" placeholder="变量值" name="val" id="val">
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-info btn-sm " type="submit">提交</button>
+                                <button class="btn btn-info btn-sm " type="button" onclick="upsertSynConfig()">保存</button>
                                 <span style="color: red;">备注：如果想修改直接保存就可以覆盖</span>
                             </div>
-
-                        </form>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
 
@@ -98,7 +89,7 @@
                                         <td>${systemConfigVO.key}</td>
                                         <td>${systemConfigVO.val}</td>
                                         <td>${systemConfigVO.desc}</td>
-                                        <td></td>
+                                        <td> <a href="#" onclick="deleteConfig('${systemConfigVO.key}')">删除</a></td>
                                     </tr>
                                 </#list>
 
@@ -117,6 +108,7 @@
 </div><!-- /.main-container -->
 
 
-</body>
 
+</body>
+<script src="/static/js/customer/config.js"></script>
 </html>

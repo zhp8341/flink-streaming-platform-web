@@ -152,7 +152,7 @@
             },
             function (data, status) {
                 if (data!=null && data.success){
-                     ("执行成功");
+                    alert("执行成功");
                     window.location.reload();
                 }else{
                     alert("执行失败："+data.message)

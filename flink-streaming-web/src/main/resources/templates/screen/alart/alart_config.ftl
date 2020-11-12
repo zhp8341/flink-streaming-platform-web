@@ -42,28 +42,22 @@
                 <div class="row">
                     <div class="col-xs-12">
 
-                        <form role="form" action="/admin/upsertAlartConfig" method="post">
-                            <#if message??>
-                                <div class="form-group alert alert-danger">
-                                    ${message}
-                                </div>
-                            </#if>
+
+                            <div class="form-group " name="errorMessage" id="errorMessage"></div>
 
                             <div class="form-group">
-                                <select class="form-control " name="key">
+                                <select class="form-control " name="key" id="key">
                                     <#list sysConfigVOList as val>
                                         <option value="${val.getKey()}">${val.getDesc()}</option>
                                     </#list>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <input class="form-control " type="text" placeholder="变量值" name="val">
+                                <input class="form-control " type="text" placeholder="变量值" name="val" id="val">
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-info btn-sm" type="submit">保存</button>
+                                <button class="btn btn-info btn-sm " type="button" onclick="upsertSynConfig()">保存</button>
                             </div>
-
-                        </form>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.page-content -->
@@ -104,7 +98,7 @@
                                         <td>${systemConfigVO.key}</td>
                                         <td>${systemConfigVO.val}</td>
                                         <td>${systemConfigVO.desc}</td>
-                                        <td><a href="#" id="dingding_test">测试一下</a></td>
+                                        <td><a href="#" id="dingding_test">测试一下</a> <a href="#" onclick="deleteConfig('${systemConfigVO.key}')">删除</a></td>
                                     </tr>
                                 </#list>
 
@@ -142,5 +136,6 @@
         );
     });
 </script>
+<script src="/static/js/customer/config.js"></script>
 </body>
 </html>

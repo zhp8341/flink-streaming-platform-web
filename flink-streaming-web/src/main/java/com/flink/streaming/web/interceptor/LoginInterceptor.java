@@ -32,7 +32,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             throws Exception {
 
 
-        log.debug("进入LoginInterceptor拦截器 {}",request.getRequestURI());
+        log.debug("进入LoginInterceptor拦截器 {}", request.getRequestURI());
         UserSession userSession = UserSessionUtil.userSession(request);
         if (userSession == null) {
             response.sendRedirect("/admin/index?message=nologin");
@@ -48,11 +48,16 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+        UserSession userSession = UserSessionUtil.userSession(request);
+        if (modelAndView!=null && userSession != null) {
+            modelAndView.addObject("user", userSession.getName());
+        }
 
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+
 
     }
 

@@ -25,4 +25,45 @@
     where username = #{username} and  is_deleted=0
   </select>
 
+
+    <insert id="insert" parameterType="com.flink.streaming.web.model.entity.User">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user (username, password, stauts,
+        is_deleted, create_time, edit_time,
+        creator, editor)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{stauts,jdbcType=BIT},
+        0, now(), now(),
+        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR})
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.flink.streaming.web.model.entity.User">
+        update user
+        <set>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="stauts != null">
+                stauts = #{stauts,jdbcType=BIT},
+            </if>
+            <if test="editTime != null">
+                edit_time = #{editTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="editor != null">
+                editor = #{editor,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where username = #{username,jdbcType=VARCHAR} and is_deleted=0
+    </update>
+
+
+    <select id="findAll"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where is_deleted=0
+    </select>
+
 </mapper>

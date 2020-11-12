@@ -1,6 +1,5 @@
 package com.flink.streaming.web.controller.web;
 
-import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.model.vo.SystemConfigVO;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author zhuhuipei
@@ -44,27 +42,4 @@ public class SystemConfigController {
         }
         return "screen/sysconfig";
     }
-
-
-    @RequestMapping(value = "/upsertSynConfig", method = {RequestMethod.POST})
-    public String upsertSynConfig(ModelMap modelMap, SystemConfigVO systemConfigVO) {
-        if (systemConfigVO == null) {
-            modelMap.put("message", "参数不能空");
-            return this.sysConfig(modelMap);
-        }
-        try {
-            systemConfigService.addOrUpdateConfigByKey(systemConfigVO.getKey(), systemConfigVO.getVal().trim());
-        } catch (BizException biz) {
-            modelMap.put("message", biz.getErrorMsg());
-            log.warn("upsertSynConfig is error ", biz);
-            return this.sysConfig(modelMap);
-        } catch (Exception e) {
-            modelMap.put("message", "未知异常");
-            log.error("upsertSynConfig is error", e);
-            return this.sysConfig(modelMap);
-        }
-        return "redirect:/admin/sysConfig";
-    }
-
-
 }

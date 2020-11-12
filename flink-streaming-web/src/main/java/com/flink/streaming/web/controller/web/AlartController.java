@@ -1,6 +1,5 @@
 package com.flink.streaming.web.controller.web;
 
-import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.model.dto.AlartLogDTO;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author zhuhuipei
@@ -35,26 +33,6 @@ public class AlartController {
     @Autowired
     private AlartLogService alartLogService;
 
-    @RequestMapping(value = "/upsertAlartConfig", method = {RequestMethod.POST})
-    public String upsertAlartConfig(ModelMap modelMap, SystemConfigVO systemConfigVO) {
-        if (systemConfigVO == null) {
-            modelMap.put("message", "参数不能空");
-            return this.alartConfig(modelMap);
-        }
-        try {
-            systemConfigService.addOrUpdateConfigByKey(systemConfigVO.getKey(), systemConfigVO.getVal().trim());
-        } catch (BizException biz) {
-            modelMap.put("message", biz.getErrorMsg());
-            log.warn("upsertAlartConfig is error ", biz);
-            return this.alartConfig(modelMap);
-        } catch (Exception e) {
-            modelMap.put("message", "未知异常");
-            log.error("upsertAlartConfig is error", e);
-            return this.alartConfig(modelMap);
-        }
-        return "redirect:/admin/alartConfig";
-
-    }
 
 
     @RequestMapping(value = "/alartLogList")

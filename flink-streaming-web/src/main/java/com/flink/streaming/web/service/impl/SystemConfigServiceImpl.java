@@ -42,12 +42,11 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         if (SysConfigEnum.FLINK_HOME.equals(SysConfigEnum.getSysConfigEnum(key))) {
             FileUtils.createSqlHome(value);
         }
-
         SystemConfig systemConfig = systemConfigMapper.selectConfigByKey(key);
         if (systemConfig == null) {
-            systemConfigMapper.insert(new SystemConfig(key, value));
+            systemConfigMapper.insert(new SystemConfig(key, value.trim()));
         } else {
-            systemConfigMapper.updateByKey(new SystemConfig(key, value));
+            systemConfigMapper.updateByKey(new SystemConfig(key, value.trim()));
         }
 
     }
