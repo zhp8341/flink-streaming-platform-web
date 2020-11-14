@@ -26,6 +26,14 @@ public class WebController extends BaseController {
         return "screen/login";
     }
 
+
+    @RequestMapping("/qrcode")
+    public String qrcode(ModelMap modelMap) {
+        modelMap.put("open","qrcode");
+        modelMap.put("active","qrcode");
+        return "screen/qrcode";
+    }
+
     private String message() {
         String message = this.getServletRequest().getParameter("message");
         try {

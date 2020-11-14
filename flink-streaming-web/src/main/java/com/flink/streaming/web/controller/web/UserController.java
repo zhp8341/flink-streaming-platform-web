@@ -1,18 +1,14 @@
 package com.flink.streaming.web.controller.web;
 
-import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.common.exceptions.BizException;
+
 import com.flink.streaming.web.model.vo.UserVO;
 import com.flink.streaming.web.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -37,7 +33,7 @@ public class UserController {
         modelMap.put("userList", UserVO.toListVO(userService.queryAll()));
         modelMap.put("active", "userlist");
         modelMap.put("open", "user");
-        return "screen/user/userList";
+        return "screen/user/userlist";
     }
 
 

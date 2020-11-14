@@ -129,6 +129,23 @@
                 </li>
             </ul>
         </li>
+        <li <#if open??&& open=="qrcode" > class="open" </#if>>
+            <a href="#" class="dropdown-toggle">
+                <i class="menu-icon  fa fa-search" ></i>
+                <span class="menu-text">联系方式</span>
+                <b class="arrow fa fa-angle-down"></b>
+            </a>
+            <b class="arrow"></b>
+            <ul class="submenu">
+                <li <#if active??&& active=="qrcode"  > class="active" </#if>>
+                    <a href="/admin/qrcode" target="_blank">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        联系方式
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+            </ul>
+        </li>
 
 
     </ul>

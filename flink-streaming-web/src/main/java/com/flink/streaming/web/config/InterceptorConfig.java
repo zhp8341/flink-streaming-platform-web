@@ -31,7 +31,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         //所有路径都被拦截
         registration.addPathPatterns("/**");
         //添加不拦截路径
-        registration.excludePathPatterns("/static/**","/static/*","/admin/index","/api/login");
+        registration.excludePathPatterns("/static/**","/static/*","/admin/index","/admin/qrcode","/api/login");
 
 
 //        InterceptorRegistration  sysConfigRegistration= registry.addInterceptor(sysConfigInterceptor);
