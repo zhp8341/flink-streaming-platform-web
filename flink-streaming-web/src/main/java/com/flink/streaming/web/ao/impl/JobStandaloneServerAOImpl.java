@@ -12,6 +12,7 @@ import com.flink.streaming.web.common.thread.AsyncThreadPool;
 import com.flink.streaming.web.common.util.CommandUtil;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.IpUtil;
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.web.enums.JobStatusEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
@@ -86,7 +87,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 //        }
 
         Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
-        this.checkSysConfig(systemConfigMap);
+        this.checkSysConfig(systemConfigMap,jobConfigDTO.getDeployModeEnum());
 
 
         //生产文件并且将sql写入次文件
@@ -287,7 +288,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
     }
 
 
-    private void checkSysConfig(Map<String, String> systemConfigMap) {
+    private void checkSysConfig(Map<String, String> systemConfigMap, DeployModeEnum deployModeEnum) {
         if (systemConfigMap == null) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL);
         }
@@ -297,8 +298,13 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         if (!systemConfigMap.containsKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
         }
-        if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME);
+
+        if (DeployModeEnum.LOCAL==deployModeEnum && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey())) {
+            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS);
+        }
+
+        if (DeployModeEnum.STANDALONE==deployModeEnum && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey())) {
+            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HA_HTTP_ADDRESS);
         }
     }
 }

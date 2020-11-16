@@ -28,7 +28,7 @@ public class ConfigApiController extends BaseController {
     @RequestMapping(value = "/upsertSynConfig",method = RequestMethod.POST)
     public RestResult upsertSynConfig(String key ,String val) {
         try {
-            systemConfigService.addOrUpdateConfigByKey(key, val);
+            systemConfigService.addOrUpdateConfigByKey(key, val.trim());
         } catch (BizException biz) {
             log.warn("upsertSynConfig is error ", biz);
             return RestResult.error(biz.getMessage());

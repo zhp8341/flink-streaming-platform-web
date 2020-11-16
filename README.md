@@ -1,9 +1,13 @@
 
 文章备用地址 https://blog.csdn.net/zhp8341/article/details/109107408
 
+
+
+
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
+  <font color=red size=5>支持本地模式、yarn-per模式、STANDALONE模式 </font >
 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
  
  效果图 
@@ -31,7 +35,7 @@
 
 hadoop版本 2+ 
 
-flink 版本 1.10.0  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.10/
+flink 版本 1.11.1  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.11/
 
 jdk版本 jdk1.8
 
@@ -48,28 +52,41 @@ mysql版本 5.6+
 #### 1、flink客户端安装
 
 下载对应版本 
-https://archive.apache.org/dist/flink/flink-1.10.0/flink-1.10.0-bin-scala_2.11.tgz 然后解压
+https://archive.apache.org/dist/flink/flink-1.11.1/flink-1.11.1-bin-scala_2.11.tgz 然后解压
 
 
-a: /flink-1.10.0/conf  文件下面放入hadoop客户端配置文件
+a: /flink-1.11.1/conf  
 
+<font color=red size=5>1、YARN_PER模式 </font>
+
+文件下面放入hadoop客户端配置文件
 `
 core-site.xml 
 yarn-site.xml 
 hdfs-site.xml
 `
+<font color=red size=5>2、LOCAL模式 </font>
 
-`
-修改flink-conf.yaml 开启 classloader.resolve-order 并且设置  classloader.resolve-order: parent-first
-`
+无
 
-b: /flink-1.10.0/lib  hadoop集成
+<font color=red size=5>3、STANDALONE模式 </font>
+
+无
+
+以上三种模式都需要修改 <font color=red size=5> flink-conf.yaml</font> 开启 classloader.resolve-order 并且设置   <font color=red size=5>classloader.resolve-order: parent-first</font> 
+
+
+
+b: /flink-1.11.1/lib  hadoop集成
+
+
 
 ~~~~
 下载 flink-shaded-hadoop-2-uber-${xxx}.jar 到lib 
 地址  https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.7.5-10.0/flink-shaded-hadoop-2-uber-2.7.5-10.0.jar
-完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`
 ~~~~
+
+<font color=red size=5> 完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`</font>
 
 #### 2、flink-streaming-platform-web安装
 
@@ -146,11 +163,25 @@ a: 任务名称（*必选）
 任务名称不能超过50个字符 并且 任务名称仅能含数字,字母和下划线
  ~~~~
  
-b: 运行模式（*必选）暂时支持YARN_PER
+b: 运行模式
+
+   YARN_PER( yarn独立模式 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/yarn_setup.html#run-a-single-flink-job-on-yarn)
+   
+   
+   STANDALONE（独立集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/cluster_setup.html）
+   
+   
+   LOCAL(本地集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/local.html )
+   
+   <font color=red size=5>LOCAL 需要在本地单机启动flink 服务  ./bin/start-cluster.sh </font>
 
 
-c: flink运行配置（*必选） 
+c: flink运行配置
+
+<font color=red size=5>1、YARN_PER模式 </font>
+
 ~~~~
+
 参数（和官方保持一致）但是只支持 -p -yjm -yn -ytm -ys -yqu(必选)  
  -ys slot个数。
  -yn task manager 数量。
@@ -160,7 +191,34 @@ c: flink运行配置（*必选）
  -p 并行度
  详见官方文档
 如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1
+
 ~~~~
+
+<font color=red size=5>2、LOCAL模式 </font>
+~~~~
+无需配置
+~~~~
+
+
+<font color=red size=5>3、STANDALONE模式 </font>
+~~~~
+-d,--detached                        If present, runs the job in detached
+                                          mode
+
+-p,--parallelism <parallelism>       The parallelism with which to run the
+                                          program. Optional flag to override the
+                                          default value specified in the
+                                          configuration.
+
+-s,--fromSavepoint <savepointPath>   Path to a savepoint to restore the job
+                                          from (for example
+                                          hdfs:///flink/savepoint-1537).
+
+其他运行参数可通过 flink -h查看
+~~~~
+
+
+
 
 d: Checkpoint信息
 ~~~~
@@ -199,6 +257,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 
 
+
 ### 2、系统设置
 
 ~~~~
@@ -207,26 +266,35 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
     1、flink-streaming-platform-web应用安装的目录（必选） 
      这个是应用的安装目录
       如 /root/flink-streaming-platform-web/
+
     2、flink安装目录（必选）
-      --flink客户端的目录 如： /usr/local/flink-1.10.0/
-    3、yarn的rm Http地址（必选）
+      --flink客户端的目录 如： /usr/local/flink-1.11.1/
+
+    3、yarn的rm Http地址
      --hadoop yarn的rm Http地址  http://hadoop003:8088/
 
+    4、flink_rest_http_address
+     LOCAL模式使用 flink http的地址
+
+    5、flink_rest_ha_http_address
+     STANDALONE模式 支持HA的   可以填写多个地址 ;用分隔
 
 ~~~~
-   ![图片](https://img-blog.csdnimg.cn/20201018110845622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+
+![图片](http://img.ccblog.cn/flink/5.png)
+
 
 ### 3、报警设置
 
 ~~~~
     报警设置用于: 当运行的任务挂掉的时候会告警
-    
-  
-    安全设置 关键词必须填写：告警
-
+   
     资料：钉钉报警设置官方文档：https://help.aliyun.com/knowledge_detail/106247.html
-    
+ 
 ~~~~
+
+安全设置 关键词必须填写： <font color=red size=5> 告警 </font>
+
 
 ![图片](https://img-blog.csdnimg.cn/20201018110534482.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 ![图片](https://img-blog.csdnimg.cn/20201018112359232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
@@ -249,6 +317,41 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 [demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
 
+
+```sql
+ CREATE  FUNCTION UTC2Local AS 'com.streaming.flink.udf.UTC2Local';
+ 
+ CREATE TABLE source_table (
+ f0 INT,
+ f1 INT,
+ f2 STRING,
+ proctime AS PROCTIME ()  
+) WITH (
+ 'connector' = 'datagen',
+ 'rows-per-second'='5',
+ 'fields.f_sequence.kind'='sequence',
+ 'fields.f_sequence.start'='1',
+ 'fields.f_sequence.end'='1000',
+ 'fields.f_random.min'='1',
+ 'fields.f_random.max'='1000',
+ 'fields.f_random_str.length'='10'
+);
+ 
+ 
+CREATE TABLE print_table (
+ f0 INT,
+ f1 INT,
+ f2 STRING,
+ t2  TIMESTAMP(6),
+ t1  TIMESTAMP(6)
+) WITH (
+ 'connector' = 'print'
+);
+ 
+ 
+ insert into print_table select f0,f1,f2, proctime as t2, UTC2Local(proctime) as t1 from source_table;
+ 
+```
 
 
 
@@ -329,9 +432,9 @@ GROUP BY day_time;
 ##  四、支持flink sql官方语法
 
 
- 完全按照flink1.10.0的连接器相关的配置
+ 完全按照flink1.11.1的连接器相关的配置
       详见
-[http://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/table/connect.html](http://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/table/connect.html)
+[http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html](http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html)
 
 
 ##  五、其他
@@ -339,10 +442,13 @@ GROUP BY day_time;
 
 2、由于es 、hbase等版本不一样可能需要下载源码重新选择对应版本 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
 
-微信交流和解答
-最新二维码 [二维码地址 http://img.ccblog.cn/fimg/2wm.jpeg](http://img.ccblog.cn/fimg/2wm.jpeg)
+交流和解答
 
-![图片](http://ccblog.oss-cn-hangzhou.aliyuncs.com/fimg/2wm.jpeg)
+
+
+钉钉  http://img.ccblog.cn/flink/dd2.png 
+
+微信二维码 http://img.ccblog.cn/flink/wx2.png
 
 ##  六、问题
 
@@ -447,25 +553,33 @@ conf/flink-conf.yaml
 主要日志目录
 
 1、web系统日志
+
 /{安装目录}/flink-streaming-platform-web/logs/
 
 2 、flink客户端命令
+
 ${FLINK_HOME}/log/flink-${USER}-client-.log
 
-##  七、roadMap
-
-1、升级flink版本到1.11
-
-2、支持STANDALONE、LOCAL 模式
-
-3、完善登录（退出、修改密码 添加帐号）
+##  七、RoadMap
 
 
-另外寻觅一起做开源flink-sql流平台的码友 
+1、支持除官方以外的连接器  如：阿里云的sls
 
-微信二维码
+2、 支持Flink Session模式
 
 
-[二维码地址 http://img.ccblog.cn/fimg/2wm.jpeg](http://img.ccblog.cn/fimg/2wm.jpeg)
+
+
+联系方式 
+
+钉钉 
+ [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
+ 
+http://img.ccblog.cn/flink/dd2.png 
+
+微信二维码 http://img.ccblog.cn/flink/wx2.png
+
+ [微信二维码](http://img.ccblog.cn/flink/wx2.png)
+
 
 

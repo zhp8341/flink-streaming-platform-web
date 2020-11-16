@@ -30,7 +30,7 @@ public class JobConfigDTO implements Serializable {
     private String jobName;
 
     /**
-     * flink的本地目录
+     * flink的模式
      */
     private DeployModeEnum deployModeEnum;
 
