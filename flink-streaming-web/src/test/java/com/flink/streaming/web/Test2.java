@@ -28,10 +28,11 @@ public class Test2 {
             options.addOption("yn", false, "");
             options.addOption("ytm", false, "");
             options.addOption("ys", false, "");
+            options.addOption("yD", false, "");
             new DefaultParser().parse(options, config);
         } catch (UnrecognizedOptionException e) {
             e.printStackTrace();
-            return RestResult.error("flink运行配置参数校验通不过,不允许使用参数：" + e.getOption() + " 参数只支持 -p -yjm -yn -ytm -ys");
+            return RestResult.error("flink运行配置参数校验通不过,不允许使用参数：" + e.getOption() + " 参数只支持 -p -yjm -yn -ytm -ys -yD");
         } catch (Exception e) {
             e.printStackTrace();
             return RestResult.error("flink运行配置参数校验通不过");

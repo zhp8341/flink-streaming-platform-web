@@ -180,13 +180,14 @@ c: flink运行配置
 
 ~~~~
 
-参数（和官方保持一致）但是只支持 -p -yjm -yn -ytm -ys -yqu(必选)  
+参数（和官方保持一致）但是只支持 -yD -p -yjm -yn -ytm -ys -yqu(必选)  
  -ys slot个数。
  -yn task manager 数量。
  -yjm job manager 的堆内存大小。
  -ytm task manager 的堆内存大小。
  -yqu yarn队列明
  -p 并行度
+ -yD 如-yD  taskmanager.heap.mb=518
  详见官方文档
 如： -yqu flink   -yjm 1024m -ytm 2048m  -p 1  -ys 1
 

@@ -24,11 +24,6 @@ public class TestHttpRequestAdapter extends TestRun {
     }
 
     @Test
-    public void stopJobByJobId() {
-        httpRequestAdapter.stopJobByJobId("application_1592398631005_10004");
-    }
-
-    @Test
     public void getJobStateByJobId() {
         YarnStateEnum yarnStateEnum = httpRequestAdapter.getJobStateByJobId("application_1592398631005_10004");
         System.out.println(yarnStateEnum);

@@ -100,13 +100,17 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                         if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
                             continue;
                         }
-                        log.error("getAppIdByYarn is error ", be);
+                        log.error("[BizException]getAppIdByYarn  is error ", be);
                     } catch (Exception e) {
-                        log.error("getAppIdByYarn is error ", e);
+                        log.error("[Exception]getAppIdByYarn is error ", e);
                         continue;
                     }
                     if (!StringUtils.isEmpty(appId)) {
-                        httpRequestAdapter.stopJobByJobId(appId);
+                        JobYarnInfo jobYarnInfo=  flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(appId);
+                        if (jobYarnInfo != null  && "RUNNING".equals(jobYarnInfo.getStatus())) {
+                            log.info("执行停止操作 jobYarnInfo={} id={}",jobYarnInfo,appId);
+                            flinkHttpRequestAdapter.cancelJobForYarnByAppId(appId, jobYarnInfo.getId());
+                        }
                         alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
                                 jobConfigDTO.getJobName()), jobConfigDTO.getId());
                     }

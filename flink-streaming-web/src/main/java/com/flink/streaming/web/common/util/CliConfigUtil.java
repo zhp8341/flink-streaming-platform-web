@@ -40,7 +40,7 @@ public class CliConfigUtil {
             }
         } catch (UnrecognizedOptionException e) {
             log.error("checkFlinkRunConfig is error", e);
-            return RestResult.error("flink运行配置参数校验通不过,不允许使用参数：" + e.getOption() + " 参数只支持 -p -yjm -yn -ytm -ys -yqu");
+            return RestResult.error("flink运行配置参数校验通不过,不允许使用参数：" + e.getOption() + " 参数只支持 -p -yjm -yn -ytm -ys -yqu -yD");
         } catch (Exception e) {
             log.error("checkFlinkRunConfig is error", e);
             return RestResult.error("flink运行配置参数校验通不过");
@@ -124,6 +124,7 @@ public class CliConfigUtil {
         options.addOption("yn", false, "");
         options.addOption("ytm", false, "");
         options.addOption("ys", false, "");
+        options.addOption("yD", false, "");
         options.addOption(SystemConstants.YQU, true, "");
         CommandLineParser parser = new DefaultParser();
         return parser.parse(options, config);

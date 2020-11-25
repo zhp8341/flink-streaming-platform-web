@@ -52,6 +52,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class JobYarnServerAOImpl implements JobServerAO {
 
+    //最大重试次数
+    private static final Integer tryTimes = 3;
 
     @Autowired
     private JobConfigService jobConfigService;
@@ -93,7 +95,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
             throw new BizException("请先开启任务");
         }
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
-            httpRequestAdapter.stopJobByJobId(jobConfigDTO.getJobId());
+            this.stop(jobConfigDTO);
         }
         try {
             String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
@@ -171,7 +173,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
         }
 
         //2、停止任务
-        httpRequestAdapter.stopJobByJobId(jobConfigDTO.getJobId());
+        this.stop(jobConfigDTO);
 
         JobConfigDTO jobConfig = new JobConfigDTO();
         jobConfig.setStauts(JobConfigStatus.STOP);
@@ -190,7 +192,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
         if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
-            log.warn(" FlinkCheckpointConfig is error jobConfigDTO={}", jobConfigDTO);
+            log.warn(" FlinkCheckpointConfig is null jobConfigDTO={}", jobConfigDTO);
             return;
         }
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
@@ -352,6 +354,22 @@ public class JobYarnServerAOImpl implements JobServerAO {
         }
         if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME);
+        }
+    }
+
+
+    private  void stop(JobConfigDTO jobConfigDTO){
+        Integer retryNum = 1;
+        while (retryNum <= tryTimes) {
+            JobYarnInfo jobYarnInfo=  flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+            if (jobYarnInfo != null  && "RUNNING".equals(jobYarnInfo.getStatus())) {
+                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}",jobYarnInfo,retryNum,jobConfigDTO.getJobId());
+                flinkHttpRequestAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobYarnInfo.getId());
+            }else {
+                log.info("任务已经停止 jobYarnInfo={} id={}",jobYarnInfo,jobConfigDTO.getJobId());
+                break;
+            }
+            retryNum++;
         }
     }
 }

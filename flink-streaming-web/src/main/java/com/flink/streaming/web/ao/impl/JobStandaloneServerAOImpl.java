@@ -83,7 +83,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         }
         //TODO
 //        if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
-//            httpRequestAdapter.stopJobByJobId(jobConfigDTO.getJobId());
+//
 //        }
 
         Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
