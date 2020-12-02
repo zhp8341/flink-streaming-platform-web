@@ -53,7 +53,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class JobYarnServerAOImpl implements JobServerAO {
 
     //最大重试次数
-    private static final Integer tryTimes = 3;
+    private static final Integer tryTimes = 2;
 
     @Autowired
     private JobConfigService jobConfigService;

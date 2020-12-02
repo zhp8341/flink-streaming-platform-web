@@ -317,46 +317,46 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 [demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
 
 
+请使用一下sql进行环境测试
+
 ```sql
- CREATE  FUNCTION UTC2Local AS 'com.streaming.flink.udf.UTC2Local';
- 
- CREATE TABLE source_table (
- f0 INT,
- f1 INT,
- f2 STRING,
- proctime AS PROCTIME ()  
-) WITH (
- 'connector' = 'datagen',
- 'rows-per-second'='5',
- 'fields.f_sequence.kind'='sequence',
- 'fields.f_sequence.start'='1',
- 'fields.f_sequence.end'='1000',
- 'fields.f_random.min'='1',
- 'fields.f_random.max'='1000',
- 'fields.f_random_str.length'='10'
-);
- 
- 
-CREATE TABLE print_table (
- f0 INT,
- f1 INT,
- f2 STRING,
- t2  TIMESTAMP(6),
- t1  TIMESTAMP(6)
-) WITH (
- 'connector' = 'print'
-);
- 
- 
- insert into print_table select f0,f1,f2, proctime as t2, UTC2Local(proctime) as t1 from source_table;
+
+  CREATE TABLE source_table (
+  f0 INT,
+  f1 INT,
+  f2 STRING
+ ) WITH (
+  'connector' = 'datagen',
+  'rows-per-second'='5',
+  'fields.f_sequence.kind'='sequence',
+  'fields.f_sequence.start'='1',
+  'fields.f_sequence.end'='1000',
+  'fields.f_random.min'='1',
+  'fields.f_random.max'='1000',
+  'fields.f_random_str.length'='10'
+ );
+  
+  
+ CREATE TABLE print_table (
+  f0 INT,
+  f1 INT,
+  f2 STRING
+ ) WITH (
+  'connector' = 'print'
+ );
+  
+  
+  insert into print_table select f0,f1,f2 from source_table;
  
 ```
 
 
 
+
 ```sql
 
-CREATE   FUNCTION jsonHasKey as com.xx.udf.JsonHasKeyUDF;
+CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
+
 -- 如果使用udf 函数必须配置 udf地址
 
      create table flink_test_6 ( 

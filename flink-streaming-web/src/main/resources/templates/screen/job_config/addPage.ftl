@@ -158,9 +158,6 @@
         }
     })
 
-    $(window).bind('beforeunload',function(){
-        return '确定要离开当前页面吗';
-    });
 </script>
 </body>
 </html>
