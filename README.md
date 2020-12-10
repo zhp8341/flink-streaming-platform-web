@@ -20,6 +20,7 @@
  ![图片](http://img.ccblog.cn/flink/5.png)
  ![图片](http://img.ccblog.cn/flink/6.png)
  ![图片](http://img.ccblog.cn/flink/7.png)
+ ![图片](http://img.ccblog.cn/flink/8.png)
 
 
 
@@ -117,6 +118,8 @@ c:修改数据库连接配置
 /flink-streaming-platform-web/conf/application.properties  
 改成上面建好的mysql地址
 ~~~~
+
+**关于数据库连接配置 需要看清楚你 useSSL=true 你的mysql是否支持**
 
 
 d:启动web
@@ -305,18 +308,6 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ##  三、配置demo
 
 
-
-[demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
-
-[demo2 双流kafka写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_2.md)
-
-[demo3 kafka和mysql维表实时关联写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_3.md)
-
-[demo4 滚动窗口 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_4.md)
-
-[demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
-
-
 请使用一下sql进行环境测试
 
 ```sql
@@ -349,6 +340,21 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
   insert into print_table select f0,f1,f2 from source_table;
  
 ```
+
+
+
+
+[demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
+
+[demo2 双流kafka写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_2.md)
+
+[demo3 kafka和mysql维表实时关联写入mysql 参考](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_3.md)
+
+[demo4 滚动窗口 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_4.md)
+
+[demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
+
+
 
 
 
@@ -434,6 +440,15 @@ GROUP BY day_time;
  完全按照flink1.11.1的连接器相关的配置
       详见
 [http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html](http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html)
+
+
+如果需要使用到连接器请去官方下载
+如：kafka 连接器 https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connectors/kafka.html
+
+**下载连接器后直接放到 flink/lib/目录下就可以使用了**
+
+
+**自定义连接器打包的时候需要打成shade 并且解决jar的冲突**
 
 
 ##  五、其他
@@ -564,7 +579,11 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 1、支持除官方以外的连接器  如：阿里云的sls
 
-2、 支持Flink Session模式
+2、 升级flink1.11.2
+
+3、 任务告警自动拉起
+
+4、 支持Application模式
 
 
 
