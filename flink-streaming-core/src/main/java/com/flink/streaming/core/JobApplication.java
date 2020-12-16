@@ -13,10 +13,10 @@ import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -50,7 +50,6 @@ public class JobApplication {
 
             StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-            env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
             EnvironmentSettings settings = EnvironmentSettings.newInstance()
                     .useBlinkPlanner()
@@ -73,6 +72,7 @@ public class JobApplication {
             TableConfig tableConfig = tEnv.getConfig();
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
 
+
             //加载配置
             setConfiguration(tEnv, sqlConfig);
 
@@ -81,6 +81,7 @@ public class JobApplication {
 
             //执行dml
             callDml(tEnv, sqlConfig);
+            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +91,7 @@ public class JobApplication {
 
 
     }
+
 
     /**
      * 设置Configuration
@@ -114,6 +116,7 @@ public class JobApplication {
         if (sqlConfig == null || sqlConfig.getDdlList() == null) {
             return;
         }
+        StatementSet statementSet= tEnv.createStatementSet();
         for (String ddl : sqlConfig.getDdlList()) {
             System.out.println("#############ddl############# \n" + ddl);
             log.info("#############ddl############# \n {}", ddl);

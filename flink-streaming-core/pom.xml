@@ -18,9 +18,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <scala.binary.version>2.11</scala.binary.version>
-        <scala.version>2.11.12</scala.version>
         <httpclient.version>4.5.6</httpclient.version>
-        <hive.version>1.1.0</hive.version>
         <java.version>1.8</java.version>
     </properties>
 
@@ -163,6 +161,10 @@
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>scala-parser-combinators_2.11</artifactId>
+                    <groupId>org.scala-lang.modules</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

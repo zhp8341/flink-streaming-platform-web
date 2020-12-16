@@ -24,7 +24,7 @@ public class CommandUtil {
 
 
     //TODO 不能写死
-    private final  static  String JARVERSION="lib/flink-streaming-core_flink_1.11.1-1.1.0.RELEASE.jar";
+    private final  static  String JARVERSION="lib/flink-streaming-core_flink_1.12.0-1.1.1.RELEASE.jar";
 
     /**
      * 本地模式
