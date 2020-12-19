@@ -55,9 +55,9 @@ public class JobConfig{
 
 
     /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
+     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  udfJarPath;
+    private String  extJarPath;
 
     /**
      * 最后一次启动时间

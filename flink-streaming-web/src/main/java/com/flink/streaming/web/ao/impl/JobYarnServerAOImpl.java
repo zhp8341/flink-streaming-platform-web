@@ -1,6 +1,5 @@
 package com.flink.streaming.web.ao.impl;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
@@ -127,7 +126,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
 
         //生产文件并且将sql写入次文件
-        String sqlPath = FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())) + FileUtils.createFileName(String.valueOf(id));
+        String sqlPath = FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
+                + FileUtils.createFileName(String.valueOf(id));
         FileUtils.writeText(sqlPath, jobConfigDTO.getFlinkSql(), Boolean.FALSE);
 
         JobRunParamDTO jobRunParamDTO = JobRunParamDTO.getJobRunYarnDTO(systemConfigMap, jobConfigDTO, sqlPath);
@@ -207,7 +207,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
         }
         //1、 执行savepoint
         try {
-            commandAdapter.savepointForPerYarn(jobYarnInfo.getId(), SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
+            commandAdapter.savepointForPerYarn(jobYarnInfo.getId(),
+                    SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
         } catch (Exception e) {
             log.error("savepointForPerYarn is error", e);
             return;
@@ -247,7 +248,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
      * @date 2020-08-07
      * @time 19:18
      */
-    private void aSyncExec(final JobRunParamDTO jobRunParamDTO, final JobConfigDTO jobConfig, final Long jobRunLogId, final String savepointPath) {
+    private void aSyncExec(final JobRunParamDTO jobRunParamDTO, final JobConfigDTO jobConfig,
+                           final Long jobRunLogId, final String savepointPath) {
 
 
         ThreadPoolExecutor threadPoolExecutor = AsyncThreadPool.getInstance().getThreadPoolExecutor();
@@ -258,14 +260,15 @@ public class JobYarnServerAOImpl implements JobServerAO {
                 String appId = "";
                 boolean success = true;
                 StringBuilder localLog = new StringBuilder()
-                        .append("开始提交任务：").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n")
+                        .append("开始提交任务：")
+                        .append(DateUtil.now()).append("\n")
+                        .append("三方jar:").append(jobConfig.getExtJarPath())
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
 
                 try {
-
                     String command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig, localLog, savepointPath);
                     commandAdapter.startForPerYarn(command, localLog, jobRunLogId);
-                    Thread.sleep(1000*10);
+                    Thread.sleep(1000 * 10);
                     appId = httpRequestAdapter.getAppIdByYarn(jobConfig.getJobName(), YarnUtil.getQueueName(jobConfig.getFlinkRunConfig()));
                 } catch (Exception e) {
                     log.error("exe is error", e);
@@ -273,13 +276,13 @@ public class JobYarnServerAOImpl implements JobServerAO {
                     success = false;
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
-                    localLog.append("\n启动结束时间: ").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    localLog.append("\n启动结束时间: ").append(DateUtil.now()).append("\n\n");
                     if (success) {
                         localLog.append("######启动结果是 成功############################## ");
                     } else {
                         localLog.append("######启动结果是 失败############################## ");
                     }
-                    this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), jobRunParamDTO, appId);
+                    this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), appId);
                 }
 
             }
@@ -292,12 +295,18 @@ public class JobYarnServerAOImpl implements JobServerAO {
              * @time 21:47
              */
             private String errorInfoDir() {
-                StringBuilder errorTips = new StringBuilder("\n\n");
-                errorTips.append("详细错误日志可以登录服务器:").append(IpUtil.getInstance().getLocalIP()).append("\n");
-                errorTips.append("web系统日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())).append("logs/error.log").append("\n");
-                errorTips.append("flink提交日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey())).append("log/").append("\n");
-                errorTips.append("\n");
-                errorTips.append("\n");
+                StringBuilder errorTips = new StringBuilder("\n\n")
+                        .append("详细错误日志可以登录服务器:")
+                        .append(IpUtil.getInstance().getLocalIP()).append("\n")
+                        .append("web系统日志目录：")
+                        .append(systemConfigService
+                                .getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
+                        .append("logs/error.log").append("\n")
+                        .append("flink提交日志目录：")
+                        .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
+                        .append("log/").append("\n")
+                        .append("\n")
+                        .append("\n");
                 return errorTips.toString();
             }
 
@@ -308,10 +317,10 @@ public class JobYarnServerAOImpl implements JobServerAO {
              * @param jobRunLogId
              * @param jobStatus
              * @param localLog
-             * @param jobRunParamDTO
              * @param appId
              */
-            private void updateStatusAndLog(JobConfigDTO jobConfig, Long jobRunLogId, String jobStatus, String localLog, JobRunParamDTO jobRunParamDTO, String appId) {
+            private void updateStatusAndLog(JobConfigDTO jobConfig, Long jobRunLogId,
+                                            String jobStatus, String localLog, String appId) {
                 try {
                     JobConfigDTO jobConfigDTO = new JobConfigDTO();
                     jobConfigDTO.setId(jobConfig.getId());
@@ -322,7 +331,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
                         jobConfigDTO.setLastStartTime(new Date());
                         jobConfigDTO.setJobId(appId);
                         jobRunLogDTO.setJobId(appId);
-                        jobRunLogDTO.setRemoteLogUrl(systemConfigService.getYarnRmHttpAddress() + SystemConstants.HTTP_YARN_CLUSTER_APPS + jobConfigDTO.getJobId());
+                        jobRunLogDTO.setRemoteLogUrl(systemConfigService.getYarnRmHttpAddress()
+                                + SystemConstants.HTTP_YARN_CLUSTER_APPS + jobConfigDTO.getJobId());
                     } else {
                         jobConfigDTO.setStauts(JobConfigStatus.FAIL);
                     }
@@ -358,15 +368,15 @@ public class JobYarnServerAOImpl implements JobServerAO {
     }
 
 
-    private  void stop(JobConfigDTO jobConfigDTO){
+    private void stop(JobConfigDTO jobConfigDTO) {
         Integer retryNum = 1;
         while (retryNum <= tryTimes) {
-            JobYarnInfo jobYarnInfo=  flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-            if (jobYarnInfo != null  && "RUNNING".equals(jobYarnInfo.getStatus())) {
-                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}",jobYarnInfo,retryNum,jobConfigDTO.getJobId());
+            JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+            if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobYarnInfo, retryNum, jobConfigDTO.getJobId());
                 flinkHttpRequestAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobYarnInfo.getId());
-            }else {
-                log.info("任务已经停止 jobYarnInfo={} id={}",jobYarnInfo,jobConfigDTO.getJobId());
+            } else {
+                log.info("任务已经停止 jobYarnInfo={} id={}", jobYarnInfo, jobConfigDTO.getJobId());
                 break;
             }
             retryNum++;

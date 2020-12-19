@@ -22,10 +22,6 @@ public class JobRunParam {
     private CheckPointParam checkPointParam;
 
 
-    /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
-     */
-    private String  udfJarPath;
 
 
 

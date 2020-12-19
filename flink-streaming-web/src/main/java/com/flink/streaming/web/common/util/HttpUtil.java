@@ -56,9 +56,10 @@ public class HttpUtil {
 
 
     public static boolean isHttpsOrHttp(String url){
+
         String regUrl="^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\\\/])+$";
         Pattern p = Pattern.compile(regUrl);
-        Matcher m = p.matcher(url);
+        Matcher m = p.matcher(url.trim());
         if(!m.matches()){
             return false;
         }
@@ -81,5 +82,9 @@ public class HttpUtil {
         }
     }
 
+
+    public static void main(String[] args){
+       System.out.println(isHttpsOrHttp(" http://cloud.yangtuojia.com/bigdata/flink-sql-connector-elasticsearch6_2.11-1.12.0.jar "));
+    }
 
 }

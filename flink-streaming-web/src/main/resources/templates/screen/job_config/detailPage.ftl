@@ -68,8 +68,8 @@
                                 <pre>${jobConfig.flinkCheckpointConfig!"无"}</pre>
                             </div>
                             <div class="form-group">
-                                <h4>udf地址：</h4>
-                                <pre>${jobConfig.udfJarPath!"无"}</pre>
+                                <h4>三方jar地址：</h4>
+                                <pre>${jobConfig.extJarPath!"无"}</pre>
                             </div>
                             <div class="form-group">
                                 <h4>sql语句：</h4>

@@ -76,11 +76,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"
-                                       title="udf地址 &#10;如 http://xxx.xxx.com/flink-streaming-udf.jar">udf地址：</label>
-                                <input class="form-control " type="text"
-                                       placeholder="udf地址 如：http://xxx.xxx.com/flink-streaming-udf.jar" name="udfJarPath"
-                                       id="udfJarPath">
+                                <label for="inputfile" >三方jar地址 (自定义udf、连接器等jar地址 多个用换行(如 http://xxxx.com/udf.jar) )</label>
+                                <textarea class="form-control"  name="extJarPath" id="extJarPath" rows="5" ></textarea>
                             </div>
 
                             <div class="form-group">
@@ -134,7 +131,7 @@
                 flinkRunConfig: $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
-                udfJarPath: $('#udfJarPath').val()
+                extJarPath: $('#extJarPath').val()
             },
             function (data, status) {
                 $("#errorMessage").removeClass();

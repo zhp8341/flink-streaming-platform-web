@@ -32,11 +32,11 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ### 1、环境
 
-操作系统：linux
+操作系统：linux  (不支持win系统)
 
 hadoop版本 2+ 
 
-flink 版本 1.11.1  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.11/
+flink 版本 1.12.0  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.12/
 
 jdk版本 jdk1.8
 
@@ -53,7 +53,7 @@ mysql版本 5.6+
 #### 1、flink客户端安装
 
 下载对应版本 
-https://archive.apache.org/dist/flink/flink-1.11.1/flink-1.11.1-bin-scala_2.11.tgz 然后解压
+https://www.apache.org/dyn/closer.lua/flink/flink-1.12.0/flink-1.12.0-bin-scala_2.11.tgz 然后解压
 
 
 a: /flink-1.11.1/conf  
@@ -66,6 +66,7 @@ core-site.xml
 yarn-site.xml 
 hdfs-site.xml
 `
+
 <font color=red size=5>2、LOCAL模式 </font>
 
 无
@@ -74,7 +75,9 @@ hdfs-site.xml
 
 无
 
-以上三种模式都需要修改 <font color=red size=5> flink-conf.yaml</font> 开启 classloader.resolve-order 并且设置   <font color=red size=5>classloader.resolve-order: parent-first</font> 
+以上三种模式都需要修改  **flink-conf.yaml**   开启 classloader.resolve-order 并且设置   
+
+**classloader.resolve-order: parent-first**
 
 
 
@@ -87,13 +90,17 @@ b: /flink-1.11.1/lib  hadoop集成
 地址  https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.7.5-10.0/flink-shaded-hadoop-2-uber-2.7.5-10.0.jar
 ~~~~
 
-<font color=red size=5> 完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`</font>
+
+**完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`**
+
+
+
 
 #### 2、flink-streaming-platform-web安装
 
 技术选型 springboot2.2.8.RELEASE
 
-a:下载最新版本 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
+a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
 
 ~~~~
  tar -xvf   flink-streaming-platform-web.tar.gz
@@ -129,6 +136,7 @@ d:启动web
 ~~~~
 cd  /XXXX/flink-streaming-platform-web/bin 
 
+一定要到bin目录下再执行
 
 启动 : sh deploy.sh  start
 
@@ -175,6 +183,7 @@ b: 运行模式
    
    
    LOCAL(本地集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/local.html )
+   
    
    <font color=red size=5>LOCAL 需要在本地单机启动flink 服务  ./bin/start-cluster.sh </font>
 
@@ -249,14 +258,23 @@ d: Checkpoint信息
 
 
 
-e: udf地址
+e: 三方地址
 ~~~~
-udf地址 只支持http并且填写一个 
- 如： http://xxx.xxx.com/flink-streaming-udf.jar 
+填写连接器或者udf等jar 
+ 如： 
+http://ccblog.cn/jars/flink-connector-jdbc_2.11-1.12.0.jar
+http://ccblog.cn/jars/flink-sql-connector-kafka_2.11-1.12.0.jar
+http://ccblog.cn/jars/flink-streaming-udf.jar
+http://ccblog.cn/jars/mysql-connector-java-5.1.25.jar
  
- 地址填写后 可以在sql语句里面直接写
- CREATE   FUNCTION jsonHasKey as ascom.yt.udf.JsonHasKeyUDF;
+ 地址填写后 udf可以在sql语句里面直接写
+CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
 ~~~~
+![图片](http://img.ccblog.cn/flink/9.png)
+ 
+ 多个url使用换行
+
+
 udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://github.com/zhp8341/flink-streaming-udf)
 
 
@@ -272,7 +290,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
       如 /root/flink-streaming-platform-web/
 
     2、flink安装目录（必选）
-      --flink客户端的目录 如： /usr/local/flink-1.11.1/
+      --flink客户端的目录 如： /usr/local/flink-1.12.0/
 
     3、yarn的rm Http地址
      --hadoop yarn的rm Http地址  http://hadoop003:8088/
@@ -310,7 +328,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ##  三、配置demo
 
 
-请使用一下sql进行环境测试
+**请使用一下sql进行环境测试**
 
 ```sql
 
@@ -320,13 +338,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
   f2 STRING
  ) WITH (
   'connector' = 'datagen',
-  'rows-per-second'='5',
-  'fields.f_sequence.kind'='sequence',
-  'fields.f_sequence.start'='1',
-  'fields.f_sequence.end'='1000',
-  'fields.f_random.min'='1',
-  'fields.f_random.max'='1000',
-  'fields.f_random_str.length'='10'
+  'rows-per-second'='5'
  );
   
   
@@ -344,7 +356,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ```
 
 
-
+##以下语法是按照flink1.10写的 有时间重新写
 
 [demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
 
@@ -355,9 +367,6 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 [demo4 滚动窗口 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_4.md)
 
 [demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
-
-
-
 
 
 
@@ -435,22 +444,53 @@ GROUP BY day_time;
 
 
 
+**官方相关预发和连接下载** 
+
+请移步 https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/ 
+
+
+
+
+
+
+
 
 ##  四、支持flink sql官方语法
 
 
- 完全按照flink1.11.1的连接器相关的配置
+ 完全按照flink1.12的连接器相关的配置
       详见
-[http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html](http://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connect.html)
+
+https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/ 
+
 
 
 如果需要使用到连接器请去官方下载
-如：kafka 连接器 https://ci.apache.org/projects/flink/flink-docs-release-1.11/dev/table/connectors/kafka.html
+如：kafka 连接器 https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/kafka.html
 
-**下载连接器后直接放到 flink/lib/目录下就可以使用了**
+**第一种下载连接器后直接放到 flink/lib/目录下就可以使用了**
 
+    该方案存在jar冲突可能，特别是连接器多了以后
+
+
+**第二种放到http的服务下填写到三方地址**
+
+    公司内部建议放到内网的某个http服务
+    http://ccblog.cn/jars/flink-connector-jdbc_2.11-1.12.0.jar
+    http://ccblog.cn/jars/flink-sql-connector-kafka_2.11-1.12.0.jar
+    http://ccblog.cn/jars/flink-streaming-udf.jar
+    http://ccblog.cn/jars/mysql-connector-java-5.1.25.jar
+
+
+ ![图片](http://img.ccblog.cn/flink/9.png)
+ 
+ 多个url使用换行
 
 **自定义连接器打包的时候需要打成shade 并且解决jar的冲突**
+
+
+**个人建议使用第二种方式，每个任务之间jar独立，如果把所有连接器放到lib 可能会和其他任务的jar冲突**
+
 
 
 ##  五、其他
@@ -491,7 +531,7 @@ Use the help option (-h or --help) to get help on the command.
 
 ```java
 
-2020-10-09 14:48:22,060 ERROR com.flink.streaming.core.JobApplication                       - 任务执行失败：
+2020-10-02 14:48:22,060 ERROR com.flink.streaming.core.JobApplication                       - 任务执行失败：
 java.lang.IllegalStateException: Unable to instantiate java compiler
         at org.apache.calcite.rel.metadata.JaninoRelMetadataProvider.compile(JaninoRelMetadataProvider.java:434)
         at org.apache.calcite.rel.metadata.JaninoRelMetadataProvider.load3(JaninoRelMetadataProvider.java:375)
@@ -561,12 +601,14 @@ Caused by: java.lang.ClassCastException: org.codehaus.janino.CompilerFactory can
         ... 60 more
 
 conf/flink-conf.yaml 
-配置里面 设置  classloader.resolve-order: parent-first
 
 ```
+**配置里面 设置  classloader.resolve-order: parent-first**
 
 
-主要日志目录
+
+
+**主要日志目录**
 
 1、web系统日志
 
@@ -576,16 +618,18 @@ conf/flink-conf.yaml
 
 ${FLINK_HOME}/log/flink-${USER}-client-.log
 
+
+
 ##  七、RoadMap
 
 
 1、支持除官方以外的连接器  如：阿里云的sls
 
-2、 升级flink1.11.2
+2、 任务告警自动拉起
 
-3、 任务告警自动拉起
+3、 支持Application模式
 
-4、 支持Application模式
+4、完善文档
 
 
 

@@ -48,9 +48,9 @@ public class UpsertJobConfigParam {
 
 
     /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
+     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  udfJarPath;
+    private String  extJarPath;
 
 
     /**
@@ -78,8 +78,8 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setFlinkSql(upsertJobConfigParam.getFlinkSql());
         jobConfigDTO.setIsOpen(upsertJobConfigParam.getIsOpen());
         jobConfigDTO.setStauts(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()) );
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath())){
-            jobConfigDTO.setUdfJarPath(upsertJobConfigParam.getUdfJarPath().trim());
+        if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())){
+            jobConfigDTO.setExtJarPath(upsertJobConfigParam.getExtJarPath().trim());
         }
 
         return jobConfigDTO;

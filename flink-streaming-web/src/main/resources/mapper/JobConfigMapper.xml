@@ -10,7 +10,7 @@
         <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
         <result column="is_open" jdbcType="BIT" property="isOpen"/>
         <result column="stauts" jdbcType="BIT" property="stauts"/>
-        <result column="udf_jar_path" jdbcType="VARCHAR" property="udfJarPath"/>
+        <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
         <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
         <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
@@ -34,7 +34,7 @@
         job_id,
         is_open,
         stauts,
-        udf_jar_path,
+        ext_jar_path,
         last_start_time,
         last_run_log_id,
         version,
@@ -56,7 +56,7 @@
         flink_checkpoint_config, job_id, is_open,
         stauts, last_start_time, version,
         is_deleted, create_time, edit_time,
-        creator, editor, flink_sql,udf_jar_path
+        creator, editor, flink_sql,ext_jar_path
         )
         values (#{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
         #{flinkRunConfig,jdbcType=VARCHAR},
@@ -64,7 +64,7 @@
         #{stauts,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,
         0, now(), now(),
         #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
-        #{udfJarPath,jdbcType=VARCHAR}
+        #{extJarPath,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -176,8 +176,8 @@
                 stauts = #{stauts,jdbcType=BIT},
             </if>
 
-            <if test="udfJarPath != null">
-                udf_jar_path = #{udfJarPath,jdbcType=VARCHAR},
+            <if test="extJarPath != null">
+                ext_jar_path = #{extJarPath,jdbcType=VARCHAR},
             </if>
 
             <if test="lastStartTime != null">

@@ -71,9 +71,9 @@ public class DetailJobConfigVO {
 
 
     /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
+     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  udfJarPath;
+    private String  extJarPath;
 
     /**
      * sql语句
@@ -103,7 +103,7 @@ public class DetailJobConfigVO {
         detailJobConfigVO.setEditTime(DateFormatUtils.toFormatString(jobConfigDTO.getEditTime()));
         detailJobConfigVO.setFlinkSql(jobConfigDTO.getFlinkSql());
         detailJobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
-        detailJobConfigVO.setUdfJarPath(jobConfigDTO.getUdfJarPath());
+        detailJobConfigVO.setExtJarPath(jobConfigDTO.getExtJarPath());
         return detailJobConfigVO;
     }
 

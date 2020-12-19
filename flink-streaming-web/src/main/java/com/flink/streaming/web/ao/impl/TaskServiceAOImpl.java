@@ -106,9 +106,9 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                         continue;
                     }
                     if (!StringUtils.isEmpty(appId)) {
-                        JobYarnInfo jobYarnInfo=  flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(appId);
-                        if (jobYarnInfo != null  && "RUNNING".equals(jobYarnInfo.getStatus())) {
-                            log.info("执行停止操作 jobYarnInfo={} id={}",jobYarnInfo,appId);
+                        JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(appId);
+                        if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+                            log.info("执行停止操作 jobYarnInfo={} id={}", jobYarnInfo, appId);
                             flinkHttpRequestAdapter.cancelJobForYarnByAppId(appId, jobYarnInfo.getId());
                         }
                         alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
@@ -131,7 +131,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
                     JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-                    if (jobYarnInfo != null && "RUNNING".equals(jobYarnInfo.getStatus())) {
+                    if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
                         jobYarnServerAO.savepoint(jobConfigDTO.getId());
                     }
                     this.sleep();
@@ -153,13 +153,14 @@ public class TaskServiceAOImpl implements TaskServiceAO {
 
     private void checkYarn(JobConfigDTO jobConfigDTO) {
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称：" + jobConfigDTO.getJobName());
+            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称："
+                    + jobConfigDTO.getJobName());
             this.alart(message, jobConfigDTO.getId());
             log.error(message);
             return;
         }
         JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-        if (jobYarnInfo == null || !"RUNNING".equals(jobYarnInfo.getStatus())) {
+        if (jobYarnInfo == null || !SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
             log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobYarnInfo);
             JobConfigDTO jobConfig = new JobConfigDTO();
             jobConfig.setStauts(JobConfigStatus.STOP);
@@ -175,13 +176,14 @@ public class TaskServiceAOImpl implements TaskServiceAO {
 
     private void checkStandalone(JobConfigDTO jobConfigDTO) {
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称：" + jobConfigDTO.getJobName());
+            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称："
+                    + jobConfigDTO.getJobName());
             this.alart(message, jobConfigDTO.getId());
             log.error(message);
             return;
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),jobConfigDTO.getDeployModeEnum());
-        if (jobStandaloneInfo == null || !"RUNNING".equals(jobStandaloneInfo.getState())) {
+        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
+        if (jobStandaloneInfo == null || !SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
             log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobStandaloneInfo={}", jobStandaloneInfo);
             JobConfigDTO jobConfig = new JobConfigDTO();
             jobConfig.setStauts(JobConfigStatus.STOP);

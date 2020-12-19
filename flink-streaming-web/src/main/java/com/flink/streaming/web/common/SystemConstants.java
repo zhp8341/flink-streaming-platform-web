@@ -17,6 +17,9 @@ public class SystemConstants {
     public static final String COOKIE_NAME_SESSION_ID = "sessionid";
 
 
+    public static final String STATUS_RUNNING = "RUNNING";
+
+
     public static final String DEFAULT_SAVEPOINT_ROOT_PATH = "hdfs:///flink/savepoint/flink-streaming-platform-web/";
 
     public static final String SLASH = "/";

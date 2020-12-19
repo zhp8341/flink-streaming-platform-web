@@ -5,7 +5,6 @@ import com.flink.streaming.core.model.CheckPointParam;
 import com.flink.streaming.core.model.JobRunParam;
 import com.flink.streaming.core.model.SqlConfig;
 import com.flink.streaming.core.sql.SqlParser;
-import com.flink.streaming.core.udf.UdfFunctionManager;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -16,7 +15,6 @@ import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -58,12 +56,14 @@ public class JobApplication {
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
+
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
             SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
 
+
             //注册自定义的udf
-            UdfFunctionManager.registerTableUDF(tEnv, jobRunParam.getUdfJarPath(),sqlConfig.getUdfMap());
+            setUdf(tEnv, sqlConfig);
 
             //设置checkPoint
             setCheckpoint(env, jobRunParam.getCheckPointParam());
@@ -75,6 +75,7 @@ public class JobApplication {
 
             //加载配置
             setConfiguration(tEnv, sqlConfig);
+
 
             //执行ddl
             callDdl(tEnv, sqlConfig);
@@ -116,13 +117,27 @@ public class JobApplication {
         if (sqlConfig == null || sqlConfig.getDdlList() == null) {
             return;
         }
-        StatementSet statementSet= tEnv.createStatementSet();
+
         for (String ddl : sqlConfig.getDdlList()) {
             System.out.println("#############ddl############# \n" + ddl);
             log.info("#############ddl############# \n {}", ddl);
             tEnv.executeSql(ddl);
         }
     }
+
+
+    private static void setUdf(TableEnvironment tEnv, SqlConfig sqlConfig) {
+        if (sqlConfig == null || sqlConfig.getDdlList() == null) {
+            return;
+        }
+
+        for (String udf : sqlConfig.getUdfList()) {
+            System.out.println("#############udf############# \n" + udf);
+            log.info("#############udf############# \n {}", udf);
+            tEnv.executeSql(udf);
+        }
+    }
+
 
     private static void callDml(TableEnvironment tEnv, SqlConfig sqlConfig) {
         if (sqlConfig == null || sqlConfig.getDmlList() == null) {
@@ -138,12 +153,10 @@ public class JobApplication {
     private static JobRunParam buildParam(String[] args) throws Exception {
         ParameterTool parameterTool= ParameterTool.fromArgs(args);
         String sqlPath =parameterTool.get("sql") ;
-        String udfJarPath =parameterTool.get("udfJarPath");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(buildCheckPointParam(parameterTool));
-        jobRunParam.setUdfJarPath(udfJarPath);
         return jobRunParam;
     }
 

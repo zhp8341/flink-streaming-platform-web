@@ -1,6 +1,5 @@
 package com.flink.streaming.web.ao.impl;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
@@ -87,7 +86,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 //        }
 
         Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
-        this.checkSysConfig(systemConfigMap,jobConfigDTO.getDeployModeEnum());
+        this.checkSysConfig(systemConfigMap, jobConfigDTO.getDeployModeEnum());
 
 
         //生产文件并且将sql写入次文件
@@ -125,13 +124,13 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),jobConfigDTO.getDeployModeEnum());
+        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
         if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
             log.warn("getJobInfoForStandaloneByAppId is error jobStandaloneInfo={}", jobStandaloneInfo);
         } else {
             //停止任务
-            if ("RUNNING".equals(jobStandaloneInfo.getState())) {
-                flinkHttpRequestAdapter.cancelJobForFlinkByAppId(jobConfigDTO.getJobId(),jobConfigDTO.getDeployModeEnum());
+            if (SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+                flinkHttpRequestAdapter.cancelJobForFlinkByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
             }
         }
         JobConfigDTO jobConfig = new JobConfigDTO();
@@ -188,23 +187,24 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                 String appId = "";
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
-                        .append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n")
+                        .append(DateUtil.now()).append("\n")
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n")
                         .append("运行模式:").append(jobConfig.getDeployModeEnum().name())
+                        .append("三方jar:").append(jobConfig.getExtJarPath())
                         .append("\n");
 
                 try {
 
-                    String command = CommandUtil.buildRunCommandForLocal(jobRunParamDTO, jobConfig);
+                    String command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfig);
                     appId = commandAdapter.startForLocal(command, localLog, jobRunLogId);
-                    Thread.sleep(1000*10);
-                    JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(appId,jobConfig.getDeployModeEnum());
+                    Thread.sleep(1000 * 10);
+                    JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(appId, jobConfig.getDeployModeEnum());
                     if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
                         log.error("getJobInfoForStandaloneByAppId is error jobStandaloneInfo={}", jobStandaloneInfo);
                         localLog.append("\n 任务失败 appId=" + appId);
                         throw new BizException("任务失败");
                     } else {
-                        if (!"RUNNING".equals(jobStandaloneInfo.getState())) {
+                        if (!SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
                             localLog.append("\n 任务失败 appId=" + appId).append("状态是：" + jobStandaloneInfo.getState());
                             throw new BizException("任务失败");
                         }
@@ -216,14 +216,14 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                     success = false;
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
-                    localLog.append("\n 启动结束时间 ").append(DateUtil.format(new Date(), DatePattern.NORM_DATETIME_PATTERN)).append("\n\n");
+                    localLog.append("\n 启动结束时间 ").append(DateUtil.now()).append("\n\n");
                     if (success) {
                         localLog.append("######启动结果是 成功############################## ");
                     } else {
                         localLog.append("######启动结果是 失败############################## ");
                     }
 
-                    this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), jobRunParamDTO, appId);
+                    this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), appId);
                 }
 
             }
@@ -236,12 +236,19 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
              * @time 21:47
              */
             private String errorInfoDir() {
-                StringBuilder errorTips = new StringBuilder("\n\n");
-                errorTips.append("详细错误日志可以登录服务器:").append(IpUtil.getInstance().getLocalIP()).append("\n");
-                errorTips.append("web系统日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())).append("logs/error.log").append("\n");
-                errorTips.append("flink提交日志目录：").append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey())).append("log/").append("\n");
-                errorTips.append("\n");
-                errorTips.append("\n");
+                StringBuilder errorTips = new StringBuilder("\n\n")
+                        .append("详细错误日志可以登录服务器:")
+                        .append(IpUtil.getInstance().getLocalIP()).append("\n")
+                        .append("web系统日志目录：")
+                        .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
+                        .append("logs/error.log")
+                        .append("\n")
+                        .append("flink提交日志目录：")
+                        .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
+                        .append("log/")
+                        .append("\n")
+                        .append("\n")
+                        .append("\n");
                 return errorTips.toString();
             }
 
@@ -255,7 +262,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
              * @param jobRunParamDTO
              * @param appId
              */
-            private void updateStatusAndLog(JobConfigDTO jobConfig, Long jobRunLogId, String jobStatus, String localLog, JobRunParamDTO jobRunParamDTO, String appId) {
+            private void updateStatusAndLog(JobConfigDTO jobConfig, Long jobRunLogId, String jobStatus, String localLog, String appId) {
                 try {
                     JobConfigDTO jobConfigDTO = new JobConfigDTO();
                     jobConfigDTO.setId(jobConfig.getId());
@@ -268,7 +275,8 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                         jobConfigDTO.setLastStartTime(new Date());
                         jobConfigDTO.setJobId(appId);
                         jobRunLogDTO.setJobId(appId);
-                        jobRunLogDTO.setRemoteLogUrl(systemConfigService.getFlinkHttpAddress(jobConfig.getDeployModeEnum()) + SystemConstants.HTTP_STANDALONE_APPS + jobConfigDTO.getJobId());
+                        jobRunLogDTO.setRemoteLogUrl(systemConfigService.getFlinkHttpAddress(jobConfig.getDeployModeEnum())
+                                + SystemConstants.HTTP_STANDALONE_APPS + jobConfigDTO.getJobId());
                     } else {
                         jobConfigDTO.setStauts(JobConfigStatus.FAIL);
                     }
@@ -299,11 +307,13 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
         }
 
-        if (DeployModeEnum.LOCAL==deployModeEnum && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey())) {
+        if (DeployModeEnum.LOCAL == deployModeEnum
+                && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HTTP_ADDRESS);
         }
 
-        if (DeployModeEnum.STANDALONE==deployModeEnum && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey())) {
+        if (DeployModeEnum.STANDALONE == deployModeEnum
+                && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HA_HTTP_ADDRESS);
         }
     }

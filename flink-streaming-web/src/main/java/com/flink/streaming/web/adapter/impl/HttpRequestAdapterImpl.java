@@ -57,7 +57,7 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
         }
 
         for (AppTO appTO : yarnAppInfo.getApps().getApp()) {
-            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) && "RUNNING".equals(appTO.getState())) {
+            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) && SystemConstants.STATUS_RUNNING.equals(appTO.getState())) {
                 log.info("任务信息 appTO={}", appTO);
                 return appTO.getId();
             }

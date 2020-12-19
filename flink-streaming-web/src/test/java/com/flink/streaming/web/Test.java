@@ -25,8 +25,8 @@ public class Test {
 //        String input="a_123123_flink-";
 //        System.out.println(input.matches("[0-9A-Za-z_]*"));
 
-//        String udfJarPath = "/u123123/" + "udf/lib/" + DateUtil.formatDate(new Date()) + "/" + UUID.fastUUID();
-//        System.out.println(udfJarPath);
+//        String extJarPath = "/u123123/" + "udf/lib/" + DateUtil.formatDate(new Date()) + "/" + UUID.fastUUID();
+//        System.out.println(extJarPath);
 //
 //
 //        //String a = "Sun Nov 13 21:56:41 +0800 2011";

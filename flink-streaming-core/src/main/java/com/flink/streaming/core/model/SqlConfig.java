@@ -3,7 +3,6 @@ package com.flink.streaming.core.model;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +27,9 @@ public class SqlConfig implements Serializable {
     private Map<String, String> mapConfig = new HashMap<>();
 
 
-    private Map<String,String> udfMap= new HashMap<>();
+    private Map<String, String> udfMap = new HashMap<>();
+
+    private List<String> udfList=  new ArrayList<>();
 
 
     public static SqlConfig toSqlConfig(List<SqlCommandCall> sqlCommandCallList) {
@@ -45,7 +46,7 @@ public class SqlConfig implements Serializable {
                     sqlConfig.getMapConfig().put(sqlCommandCall.operands[0], sqlCommandCall.operands[1]);
                     break;
                 case CREATE_FUNCTION:
-                    sqlConfig.getUdfMap().put(sqlCommandCall.operands[0], sqlCommandCall.operands[1].replace("'","").trim());
+                    sqlConfig.getUdfList().add(sqlCommandCall.operands[0]);
                     break;
                 case CREATE_TABLE:
                     sqlConfig.getDdlList().add(sqlCommandCall.operands[0]);
@@ -59,7 +60,6 @@ public class SqlConfig implements Serializable {
         }
         return sqlConfig;
     }
-
 
 
 }
