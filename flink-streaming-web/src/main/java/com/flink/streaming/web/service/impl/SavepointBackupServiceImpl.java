@@ -38,9 +38,9 @@ public class SavepointBackupServiceImpl implements SavepointBackupService {
 
     @Override
     public String getSavepointPathById(Long jobConfigId, Long id) {
-        SavepointBackup savepointBackup= savepointBackupMapper.getSavepointBackupById(jobConfigId, id);
-        if (savepointBackup!=null){
-            return  savepointBackup.getSavepointPath();
+        SavepointBackup savepointBackup = savepointBackupMapper.getSavepointBackupById(jobConfigId, id);
+        if (savepointBackup != null) {
+            return savepointBackup.getSavepointPath();
         }
         return null;
     }

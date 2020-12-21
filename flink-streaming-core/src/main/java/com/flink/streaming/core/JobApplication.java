@@ -82,7 +82,7 @@ public class JobApplication {
 
             //执行dml
             callDml(tEnv, sqlConfig);
-            
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,7 +107,7 @@ public class JobApplication {
         }
         Configuration configuration = tEnv.getConfig().getConfiguration();
         for (Map.Entry<String, String> entry : sqlConfig.getMapConfig().entrySet()) {
-            log.info("#############setConfiguration#############\n  {} {}", entry.getKey(),entry.getValue());
+            log.info("#############setConfiguration#############\n  {} {}", entry.getKey(), entry.getValue());
             configuration.setString(entry.getKey(), entry.getValue());
         }
     }
@@ -151,8 +151,8 @@ public class JobApplication {
     }
 
     private static JobRunParam buildParam(String[] args) throws Exception {
-        ParameterTool parameterTool= ParameterTool.fromArgs(args);
-        String sqlPath =parameterTool.get("sql") ;
+        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+        String sqlPath = parameterTool.get("sql");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
@@ -181,7 +181,7 @@ public class JobApplication {
 
         String checkpointTimeout = parameterTool.get("checkpointTimeout");
 
-        String tolerableCheckpointFailureNumber =parameterTool.get("tolerableCheckpointFailureNumber");
+        String tolerableCheckpointFailureNumber = parameterTool.get("tolerableCheckpointFailureNumber");
 
         String asynchronousSnapshots = parameterTool.get("asynchronousSnapshots");
 
@@ -215,7 +215,7 @@ public class JobApplication {
             throw new RuntimeException("checkpoint目录不存在");
         }
 
-        log.info("开启checkpoint checkPointParam={}",checkPointParam);
+        log.info("开启checkpoint checkPointParam={}", checkPointParam);
 
         // 默认每60s保存一次checkpoint
         env.enableCheckpointing(checkPointParam.getCheckpointInterval());
@@ -223,10 +223,10 @@ public class JobApplication {
         CheckpointConfig checkpointConfig = env.getCheckpointConfig();
 
         //开始一致性模式是：精确一次 exactly-once
-        if (StringUtils.isEmpty(checkPointParam.getCheckpointingMode())||
-                CheckpointingMode.EXACTLY_ONCE.name().equalsIgnoreCase(checkPointParam.getCheckpointingMode())){
+        if (StringUtils.isEmpty(checkPointParam.getCheckpointingMode()) ||
+                CheckpointingMode.EXACTLY_ONCE.name().equalsIgnoreCase(checkPointParam.getCheckpointingMode())) {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-        }else{
+        } else {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE);
         }
 

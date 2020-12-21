@@ -68,18 +68,15 @@ public class DetailJobConfigVO {
     private String flinkCheckpointConfig;
 
 
-
-
     /**
      * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  extJarPath;
+    private String extJarPath;
 
     /**
      * sql语句
      */
     private String flinkSql;
-
 
 
     public static DetailJobConfigVO toVO(JobConfigDTO jobConfigDTO) {
@@ -90,8 +87,8 @@ public class DetailJobConfigVO {
         detailJobConfigVO.setId(jobConfigDTO.getId());
         detailJobConfigVO.setJobName(jobConfigDTO.getJobName());
         detailJobConfigVO.setFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
-        if (StringUtils.isNotEmpty(jobConfigDTO.getFlinkCheckpointConfig())){
-            detailJobConfigVO.setFlinkCheckpointConfig(jobConfigDTO.getFlinkCheckpointConfig().replaceAll("\"","&quot;"));
+        if (StringUtils.isNotEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
+            detailJobConfigVO.setFlinkCheckpointConfig(jobConfigDTO.getFlinkCheckpointConfig().replaceAll("\"", "&quot;"));
         }
         detailJobConfigVO.setJobId(jobConfigDTO.getJobId());
         detailJobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
@@ -106,7 +103,6 @@ public class DetailJobConfigVO {
         detailJobConfigVO.setExtJarPath(jobConfigDTO.getExtJarPath());
         return detailJobConfigVO;
     }
-
 
 
 }

@@ -25,8 +25,8 @@ public class ConfigApiController extends BaseController {
     @Autowired
     private SystemConfigService systemConfigService;
 
-    @RequestMapping(value = "/upsertSynConfig",method = RequestMethod.POST)
-    public RestResult upsertSynConfig(String key ,String val) {
+    @RequestMapping(value = "/upsertSynConfig", method = RequestMethod.POST)
+    public RestResult upsertSynConfig(String key, String val) {
         try {
             systemConfigService.addOrUpdateConfigByKey(key, val.trim());
         } catch (BizException biz) {
@@ -40,7 +40,7 @@ public class ConfigApiController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/deleteConfig",method = RequestMethod.POST)
+    @RequestMapping(value = "/deleteConfig", method = RequestMethod.POST)
     public RestResult deleteConfig(String key) {
         try {
             systemConfigService.deleteConfigByKey(key);

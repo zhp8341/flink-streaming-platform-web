@@ -24,7 +24,7 @@ public class CommandUtil {
 
 
     //TODO 不能写死
-    private final  static  String JARVERSION="lib/flink-streaming-core_flink_1.12.0-1.1.1.RELEASE.jar";
+    private final static String JARVERSION = "lib/flink-streaming-core_flink_1.12.0-1.1.1.RELEASE.jar";
 
     /**
      * 本地/Standalone Cluster模式
@@ -36,12 +36,12 @@ public class CommandUtil {
     public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfig) throws ParseException {
         StringBuilder command = new StringBuilder();
         command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d ");
-        if (jobConfig.getDeployModeEnum()==DeployModeEnum.STANDALONE){
+        if (jobConfig.getDeployModeEnum() == DeployModeEnum.STANDALONE) {
             command.append(jobConfig.getFlinkRunConfig());
         }
-        if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())){
-            String[] urls=jobConfig.getExtJarPath().split("\n");
-            for (String url  : urls) {
+        if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())) {
+            String[] urls = jobConfig.getExtJarPath().split("\n");
+            for (String url : urls) {
                 command.append(" -C ").append(url.trim()).append(" ");
             }
         }
@@ -74,9 +74,9 @@ public class CommandUtil {
         command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfig.getJobName())).append(" ");
         command.append(" -yd -m yarn-cluster ").append(" ");
 
-        if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())){
-            String[] urls=jobConfig.getExtJarPath().split("\n");
-            for (String url  : urls) {
+        if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())) {
+            String[] urls = jobConfig.getExtJarPath().split("\n");
+            for (String url : urls) {
                 command.append(" -C ").append(url.trim()).append(" ");
             }
         }
@@ -106,10 +106,10 @@ public class CommandUtil {
             FileUtils.mkdirs(extJarPath);
             localLog.append("生成udf文件目录完成").append("\n");
 
-            if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())){
-                String[] urls=jobConfig.getExtJarPath().split("\n");
-                for (String url  : urls) {
-                    if (StringUtils.isEmpty(url)){
+            if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())) {
+                String[] urls = jobConfig.getExtJarPath().split("\n");
+                for (String url : urls) {
+                    if (StringUtils.isEmpty(url)) {
                         continue;
                     }
                     String fileName = System.currentTimeMillis() + "_udf.jar";

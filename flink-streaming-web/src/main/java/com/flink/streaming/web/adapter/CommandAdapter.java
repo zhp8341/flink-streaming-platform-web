@@ -19,7 +19,8 @@ public interface CommandAdapter {
 
 
     /**
-     *启动本地模式
+     * 启动本地模式
+     *
      * @author zhuhuipei
      * @date 2020/11/1
      * @time 10:15

@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public enum AlartLogTypeEnum {
 
-    DINGDING(1,"钉钉");
+    DINGDING(1, "钉钉");
 
     private int code;
 

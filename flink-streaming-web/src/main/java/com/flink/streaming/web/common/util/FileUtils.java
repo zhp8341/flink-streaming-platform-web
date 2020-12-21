@@ -102,9 +102,9 @@ public class FileUtils {
     }
 
 
-    public static void mkdirs(String path){
+    public static void mkdirs(String path) {
         File dir = new File(path);
-        if(!dir.exists()) {
+        if (!dir.exists()) {
             dir.mkdirs();
         }
     }

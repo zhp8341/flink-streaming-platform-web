@@ -40,14 +40,15 @@ public class HttpServiceCheckerUtil {
         } catch (Exception e) {
             log.warn("url={} 出错了 {}", e.getMessage());
         }
-        log.info("网络检查正常 url={}",url);
+        log.info("网络检查正常 url={}", url);
         return true;
     }
 
     public static void main(String[] args) {
 //        String url = "https://youtube.com/";
         String url = "http://hadoop001:8081/";
-        System.out.println(HttpServiceCheckerUtil.checkUrlConnect(url));;
+        System.out.println(HttpServiceCheckerUtil.checkUrlConnect(url));
+        ;
 
     }
 

@@ -27,7 +27,6 @@ public class AlartLogVO {
     private String jobName;
 
 
-
     /**
      * 消息内容
      */

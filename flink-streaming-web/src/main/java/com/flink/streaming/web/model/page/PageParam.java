@@ -14,10 +14,10 @@ public class PageParam {
     /**
      * 当前页码
      */
-    private int pageNum=1;
+    private int pageNum = 1;
     /**
      * 每页数量
      */
-    private int pageSize=10;
+    private int pageSize = 10;
 
 }

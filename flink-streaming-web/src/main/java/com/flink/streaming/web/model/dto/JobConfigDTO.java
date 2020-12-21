@@ -61,11 +61,10 @@ public class JobConfigDTO implements Serializable {
     private JobConfigStatus stauts;
 
 
-
     /**
      * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  extJarPath;
+    private String extJarPath;
 
     /**
      * 最后一次启动时间
@@ -107,7 +106,7 @@ public class JobConfigDTO implements Serializable {
         JobConfig jobConfig = new JobConfig();
         jobConfig.setId(jobConfigDTO.getId());
         jobConfig.setJobName(jobConfigDTO.getJobName());
-        if (jobConfigDTO.getDeployModeEnum()!=null){
+        if (jobConfigDTO.getDeployModeEnum() != null) {
             jobConfig.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }
         jobConfig.setFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
@@ -170,9 +169,9 @@ public class JobConfigDTO implements Serializable {
     }
 
 
-    public static String buildRunName(String jobName){
+    public static String buildRunName(String jobName) {
 
-        return "flink@"+jobName;
+        return "flink@" + jobName;
     }
 
 

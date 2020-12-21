@@ -57,7 +57,7 @@ public class JobRunParamDTO {
 
         String sysHome = systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
 
-        JobRunParamDTO jobRunParamDTO = new JobRunParamDTO(flinkBinPath, flinkRunParam, sqlPath, sysHome,jobConfigDTO.getFlinkCheckpointConfig());
+        JobRunParamDTO jobRunParamDTO = new JobRunParamDTO(flinkBinPath, flinkRunParam, sqlPath, sysHome, jobConfigDTO.getFlinkCheckpointConfig());
 
         return jobRunParamDTO;
 

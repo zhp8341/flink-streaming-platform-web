@@ -21,7 +21,4 @@ public interface JobRunLogMapper {
     int deleteByJobConfigId(@Param("jobConfigId") Long jobConfigId);
 
 
-
-
-
 }

@@ -11,11 +11,11 @@ import lombok.Getter;
 @Getter
 public enum UserStatusEnum {
 
-    CLOSE(0,"停用"),
+    CLOSE(0, "停用"),
 
-    OPEN(1,"启用"),
+    OPEN(1, "启用"),
 
-    UNKNOWN(-1,"未知"),
+    UNKNOWN(-1, "未知"),
     ;
 
     private Integer code;
@@ -27,9 +27,9 @@ public enum UserStatusEnum {
         this.desc = desc;
     }
 
-    public static  UserStatusEnum getStatus(Integer code){
-        for (UserStatusEnum userStatusEnum  : UserStatusEnum.values()) {
-            if (userStatusEnum.getCode().equals(code)){
+    public static UserStatusEnum getStatus(Integer code) {
+        for (UserStatusEnum userStatusEnum : UserStatusEnum.values()) {
+            if (userStatusEnum.getCode().equals(code)) {
                 return userStatusEnum;
             }
         }

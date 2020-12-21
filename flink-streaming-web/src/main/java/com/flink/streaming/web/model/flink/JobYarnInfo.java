@@ -16,5 +16,4 @@ public class JobYarnInfo {
     private String status;
 
 
-    
 }

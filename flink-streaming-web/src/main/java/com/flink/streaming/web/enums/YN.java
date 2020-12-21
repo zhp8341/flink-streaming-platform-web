@@ -47,7 +47,5 @@ public enum YN {
     }
 
 
-
-
 }
 

@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new BizException(SysErrorEnum.USER_IS_NOT_NULL);
         }
-        if (UserStatusEnum.CLOSE.getCode().equals(user.getStauts())){
+        if (UserStatusEnum.CLOSE.getCode().equals(user.getStauts())) {
             throw new BizException(SysErrorEnum.USER_IS_STOP);
         }
         if (!Md5Utils.getMD5String(password).equalsIgnoreCase(user.getPassword())) {
@@ -80,15 +80,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassword(String userName, String oldPassword,String password, String operator) {
+    public void updatePassword(String userName, String oldPassword, String password, String operator) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
-        User userMp= userMapper.selectByUsername(userName);
-        if ( userMp== null) {
+        User userMp = userMapper.selectByUsername(userName);
+        if (userMp == null) {
             throw new BizException(SysErrorEnum.USER_IS_NOT_NULL);
         }
-        if (!userMp.getPassword().equals(Md5Utils.getMD5String(oldPassword))){
+        if (!userMp.getPassword().equals(Md5Utils.getMD5String(oldPassword))) {
             throw new BizException("老的密码不正确");
         }
 

@@ -51,7 +51,7 @@ public interface FlinkHttpRequestAdapter {
      * @date 2020/11/3
      * @time 22:50
      */
-    void cancelJobForFlinkByAppId(String jobId,DeployModeEnum deployModeEnum);
+    void cancelJobForFlinkByAppId(String jobId, DeployModeEnum deployModeEnum);
 
 
     /**

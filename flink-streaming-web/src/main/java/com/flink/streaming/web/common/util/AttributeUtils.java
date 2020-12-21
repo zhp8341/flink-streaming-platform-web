@@ -1,4 +1,3 @@
-
 package com.flink.streaming.web.common.util;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,8 +14,6 @@ public class AttributeUtils {
      * attributes字段中的属性之间的分隔符
      */
     private static final String SEMICOLON = ";";
-
-
 
 
     public static Set<String> toSet(String attributes) {

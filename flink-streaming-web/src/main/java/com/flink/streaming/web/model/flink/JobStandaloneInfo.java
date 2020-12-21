@@ -18,5 +18,4 @@ public class JobStandaloneInfo {
     private String errors;
 
 
-    
 }

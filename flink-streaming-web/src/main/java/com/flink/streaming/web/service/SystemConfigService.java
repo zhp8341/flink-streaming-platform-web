@@ -66,7 +66,8 @@ public interface SystemConfigService {
 
 
     /**
-     *获取flink地址
+     * 获取flink地址
+     *
      * @author zhuhuipei
      * @date 2020/11/4
      * @time 10:52

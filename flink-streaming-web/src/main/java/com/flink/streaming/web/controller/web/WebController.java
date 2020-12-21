@@ -29,8 +29,8 @@ public class WebController extends BaseController {
 
     @RequestMapping("/qrcode")
     public String qrcode(ModelMap modelMap) {
-        modelMap.put("open","qrcode");
-        modelMap.put("active","qrcode");
+        modelMap.put("open", "qrcode");
+        modelMap.put("active", "qrcode");
         return "screen/qrcode";
     }
 

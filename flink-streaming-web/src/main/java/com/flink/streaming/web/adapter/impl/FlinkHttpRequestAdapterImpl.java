@@ -98,7 +98,7 @@ public class FlinkHttpRequestAdapterImpl implements FlinkHttpRequestAdapter {
     }
 
     @Override
-    public void cancelJobForFlinkByAppId(String jobId,DeployModeEnum deployModeEnum) {
+    public void cancelJobForFlinkByAppId(String jobId, DeployModeEnum deployModeEnum) {
         if (StringUtils.isEmpty(jobId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }

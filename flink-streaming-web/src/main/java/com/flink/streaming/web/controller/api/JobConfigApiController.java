@@ -205,14 +205,14 @@ public class JobConfigApiController extends BaseController {
         }
 
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
-            String[] urls=upsertJobConfigParam.getExtJarPath().split("\n");
-            for (String url  : urls) {
-                if (StringUtils.isEmpty(url)){
+            String[] urls = upsertJobConfigParam.getExtJarPath().split("\n");
+            for (String url : urls) {
+                if (StringUtils.isEmpty(url)) {
                     continue;
                 }
-               if (!HttpUtil.isHttpsOrHttp(url)){
-                   return RestResult.error("udf地址错误： 非法的http或者是https地址 url="+url);
-               }
+                if (!HttpUtil.isHttpsOrHttp(url)) {
+                    return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
+                }
             }
         }
 

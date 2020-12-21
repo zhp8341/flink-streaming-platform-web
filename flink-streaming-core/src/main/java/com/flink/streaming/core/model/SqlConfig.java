@@ -29,7 +29,7 @@ public class SqlConfig implements Serializable {
 
     private Map<String, String> udfMap = new HashMap<>();
 
-    private List<String> udfList=  new ArrayList<>();
+    private List<String> udfList = new ArrayList<>();
 
 
     public static SqlConfig toSqlConfig(List<SqlCommandCall> sqlCommandCallList) {

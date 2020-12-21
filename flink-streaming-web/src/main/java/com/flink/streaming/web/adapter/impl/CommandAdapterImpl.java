@@ -20,9 +20,7 @@ import java.io.BufferedInputStream;
  */
 @Slf4j
 @Service
-public class CommandAdapterImpl implements CommandAdapter
-
-{
+public class CommandAdapterImpl implements CommandAdapter {
 
     private static long INTERVAL_TIME = 1000 * 5;
 
@@ -75,12 +73,12 @@ public class CommandAdapterImpl implements CommandAdapter
         BufferedInputStream reader = new BufferedInputStream(pcs.getInputStream());
         int bytesRead = 0;
 
-        String appId=null;
+        String appId = null;
         while ((bytesRead = reader.read(buffer)) != -1) {
             String result = new String(buffer, 0, bytesRead, "UTF-8");
             log.info(result);
-            if (result.contains("Job has been submitted with JobID")){
-                appId=result.replace("Job has been submitted with JobID","").trim();
+            if (result.contains("Job has been submitted with JobID")) {
+                appId = result.replace("Job has been submitted with JobID", "").trim();
             }
             localLog.append(result).append("\n");
 
@@ -97,7 +95,7 @@ public class CommandAdapterImpl implements CommandAdapter
             localLog.append("pcs.waitFor() 执行异常 rs=").append(rs).append("   appId=").append(appId);
             throw new RuntimeException("pcs.waitFor() is error  rs=" + rs);
         }
-        if (StringUtils.isEmpty(appId)){
+        if (StringUtils.isEmpty(appId)) {
             localLog.append("appId 无法获取");
             throw new RuntimeException("appId无法获取");
         }
