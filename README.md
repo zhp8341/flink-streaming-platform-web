@@ -8,6 +8,13 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   flink-streaming-platform-web系统是基于flink封装的一个可视化的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
   <font color=red size=5>支持本地模式、yarn-per模式、STANDALONE模式 </font >
+  
+  
+  **支持udf、自定义连接器等,完全兼容官方连接器** 
+  
+  **目前flink版本已经升级到1.12**
+  
+    
 源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
  
  效果图 
@@ -23,6 +30,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
  ![图片](http://img.ccblog.cn/flink/6.png)
  ![图片](http://img.ccblog.cn/flink/7.png)
  ![图片](http://img.ccblog.cn/flink/8.png)
+ ![图片](http://img.ccblog.cn/flink/9.png)
 
 
 
@@ -56,7 +64,7 @@ mysql版本 5.6+
 https://www.apache.org/dyn/closer.lua/flink/flink-1.12.0/flink-1.12.0-bin-scala_2.11.tgz 然后解压
 
 
-a: /flink-1.11.1/conf  
+a: /flink-1.12.0/conf  
 
 <font color=red size=5>1、YARN_PER模式 </font>
 
@@ -68,6 +76,7 @@ hdfs-site.xml
 `
 
 <font color=red size=5>2、LOCAL模式 </font>
+
 
 无
 
@@ -98,7 +107,7 @@ b: /flink-1.11.1/lib  hadoop集成
 
 #### 2、flink-streaming-platform-web安装
 
-技术选型 springboot2.2.8.RELEASE
+
 
 a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
 
