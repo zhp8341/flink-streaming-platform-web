@@ -1,5 +1,5 @@
 
-**国内文章备用地址（因为github上面图片效果可能看不到）**
+**国内文章备用地址（因为github上面 图片效果可能看不到，原因你懂的 哈哈）**
 
 https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b 
 
@@ -14,9 +14,11 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   
   **目前flink版本已经升级到1.12**
   
+  
+  **如果您觉得还不错请在右上角点一下star 谢谢 🙏 大家的支持是开源最大动力**
     
-源码地址 [https://github.com/zhp8341/flink-streaming-platform-web](https://github.com/zhp8341/flink-streaming-platform-web)
- 
+
+
  效果图 
  
  ![图片](http://img.ccblog.cn/flink/0.png)
@@ -40,7 +42,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ### 1、环境
 
-操作系统：linux  (不支持win系统)
+操作系统：linux  **(不支持win系统)**
 
 hadoop版本 2+ 
 
@@ -66,23 +68,27 @@ https://www.apache.org/dyn/closer.lua/flink/flink-1.12.0/flink-1.12.0-bin-scala_
 
 a: /flink-1.12.0/conf  
 
-<font color=red size=5>1、YARN_PER模式 </font>
+**1、YARN_PER模式** 
 
 文件下面放入hadoop客户端配置文件
-`
+
+
+~~~~
 core-site.xml 
 yarn-site.xml 
 hdfs-site.xml
-`
+~~~~
 
-<font color=red size=5>2、LOCAL模式 </font>
+**2、LOCAL模式** 
 
+
+无
+
+
+**3、STANDALONE模式**
 
 无
 
-<font color=red size=5>3、STANDALONE模式 </font>
-
-无
 
 以上三种模式都需要修改  **flink-conf.yaml**   开启 classloader.resolve-order 并且设置   
 
@@ -102,7 +108,7 @@ b: /flink-1.11.1/lib  hadoop集成
 
 **完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`**
 
-
+export HADOOP_CLASSPATH=`hadoop classpath`
 
 
 #### 2、flink-streaming-platform-web安装
