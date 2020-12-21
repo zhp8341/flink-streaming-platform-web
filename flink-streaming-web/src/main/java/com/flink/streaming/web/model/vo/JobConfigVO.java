@@ -72,7 +72,7 @@ public class JobConfigVO {
     private String editTime;
 
 
-    public static JobConfigVO toVO(JobConfigDTO jobConfigDTO,Map<DeployModeEnum,String> map) {
+    public static JobConfigVO toVO(JobConfigDTO jobConfigDTO, Map<DeployModeEnum, String> map) {
         if (jobConfigDTO == null) {
             return null;
         }
@@ -84,24 +84,24 @@ public class JobConfigVO {
         jobConfigVO.setIsOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
         jobConfigVO.setStauts(jobConfigDTO.getStauts().getCode());
         jobConfigVO.setStautsStr(jobConfigDTO.getStauts().getDesc());
-        if (jobConfigDTO.getDeployModeEnum()!=null){
+        if (jobConfigDTO.getDeployModeEnum() != null) {
             jobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }
 
-        String  domain=map.get(jobConfigDTO.getDeployModeEnum());
+        String domain = map.get(jobConfigDTO.getDeployModeEnum());
 
-        if (StringUtils.isNotEmpty(domain)){
-            if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
-                jobConfigVO.setFlinkRunUrl(domain+ FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId())+"/#/overview");
+        if (StringUtils.isNotEmpty(domain)) {
+            if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId()) + "/#/overview");
             }
-            if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
-                jobConfigVO.setFlinkRunUrl(domain+String.format("#/job/%s/overview",jobConfigDTO.getJobId()));
+            if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+                jobConfigVO.setFlinkRunUrl(domain + String.format("#/job/%s/overview", jobConfigDTO.getJobId()));
             }
-            if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())){
-               String[] urls= domain.split(";");
-                for (String url  : urls) {
-                    if (HttpServiceCheckerUtil.checkUrlConnect(url)){
-                        jobConfigVO.setFlinkRunUrl(url.trim()+String.format("#/job/%s/overview",jobConfigDTO.getJobId()));
+            if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+                String[] urls = domain.split(";");
+                for (String url : urls) {
+                    if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
+                        jobConfigVO.setFlinkRunUrl(url.trim() + String.format("#/job/%s/overview", jobConfigDTO.getJobId()));
                         break;
                     }
                 }
@@ -116,7 +116,7 @@ public class JobConfigVO {
     }
 
 
-    public static List<JobConfigVO> toListVO(List<JobConfigDTO> jobConfigDTOList, Map<DeployModeEnum,String> map) {
+    public static List<JobConfigVO> toListVO(List<JobConfigDTO> jobConfigDTOList, Map<DeployModeEnum, String> map) {
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             return Collections.emptyList();
         }
@@ -124,7 +124,7 @@ public class JobConfigVO {
         List<JobConfigVO> list = new ArrayList<JobConfigVO>();
 
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            list.add(JobConfigVO.toVO(jobConfigDTO,map));
+            list.add(JobConfigVO.toVO(jobConfigDTO, map));
         }
 
         return list;

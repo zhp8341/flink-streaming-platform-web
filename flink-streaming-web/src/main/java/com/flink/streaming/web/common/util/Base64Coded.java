@@ -35,13 +35,13 @@ public class Base64Coded {
 
 
     public static void main(String[] args) {
-        String string = UserSession.toJsonString("zhuhuipei","123456");
+        String string = UserSession.toJsonString("zhuhuipei", "123456");
         //编码
         String encode = encode(string.getBytes());
         System.out.println(string + "\t编码后的字符串为：" + encode);
         //解码
         String decode = decode(encode.getBytes());
-        System.out.println(encode + "\t字符串解码后为：" + decode+" "+UserSession.toUserSession(decode));
+        System.out.println(encode + "\t字符串解码后为：" + decode + " " + UserSession.toUserSession(decode));
 
     }
 

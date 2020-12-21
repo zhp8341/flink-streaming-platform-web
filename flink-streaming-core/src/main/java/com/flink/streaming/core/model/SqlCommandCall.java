@@ -13,9 +13,9 @@ import lombok.Data;
 @Data
 public class SqlCommandCall {
 
-    public  SqlCommand sqlCommand;
+    public SqlCommand sqlCommand;
 
-    public  String[] operands;
+    public String[] operands;
 
     public SqlCommandCall(SqlCommand sqlCommand, String[] operands) {
         this.sqlCommand = sqlCommand;

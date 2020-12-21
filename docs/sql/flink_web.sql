@@ -55,7 +55,7 @@ CREATE TABLE `job_config` (
   `job_id` varchar(64) DEFAULT NULL COMMENT '运行后的任务id',
   `is_open` tinyint(1) NOT NULL COMMENT '1:开启 0: 关闭',
   `stauts` tinyint(1) NOT NULL COMMENT '1:运行中 0: 停止中 -1:运行失败',
-  `udf_jar_path` varchar(1024) DEFAULT NULL COMMENT 'udf地址 如remote|http://xxx.xxx.com/flink-streaming-udf.jar',
+  `ext_jar_path` varchar(2048) DEFAULT NULL COMMENT 'udf地址已经连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar',
   `last_start_time` datetime DEFAULT NULL COMMENT '最后一次启动时间',
   `last_run_log_id` bigint(11) DEFAULT NULL COMMENT '最后一次日志',
   `version` int(11) NOT NULL DEFAULT '0' COMMENT '更新版本号 用于乐观锁',

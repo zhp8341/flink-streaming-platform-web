@@ -54,6 +54,7 @@
         AND STATUS = 1   and  last_time >= DATE_ADD(NOW(),INTERVAL -61 SECOND)
         ORDER BY
         id DESC
+        limit 1
     </select>
 
 

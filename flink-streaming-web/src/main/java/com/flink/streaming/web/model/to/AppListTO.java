@@ -14,4 +14,4 @@ import java.util.List;
 public class AppListTO {
 
     private List<AppTO> app;
- }
+}

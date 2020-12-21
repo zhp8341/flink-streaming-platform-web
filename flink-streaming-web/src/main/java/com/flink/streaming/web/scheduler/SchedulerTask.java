@@ -75,7 +75,8 @@ public class SchedulerTask {
 
 
     /**
-     *每隔20分钟进行一次对停止任务进行是否在yarn上运行的检查
+     * 每隔20分钟进行一次对停止任务进行是否在yarn上运行的检查
+     *
      * @author zhuhuipei
      * @date 2020-10-25
      * @time 18:34

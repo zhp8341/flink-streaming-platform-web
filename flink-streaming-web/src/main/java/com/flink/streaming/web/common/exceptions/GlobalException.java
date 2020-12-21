@@ -21,41 +21,44 @@ public class GlobalException {
 
     /**
      * 处理自定义的业务异常
+     *
      * @param req
      * @param e
      * @return
      */
     @ExceptionHandler(value = BizException.class)
     @ResponseBody
-    public RestResult bizExceptionHandler(HttpServletRequest req, BizException e){
-        log.error("发生业务异常！原因是：{}",e);
-        return RestResult.error(e.getCode(),e.getErrorMsg());
+    public RestResult bizExceptionHandler(HttpServletRequest req, BizException e) {
+        log.error("发生业务异常！原因是：{}", e);
+        return RestResult.error(e.getCode(), e.getErrorMsg());
     }
 
     /**
      * 处理空指针的异常
+     *
      * @param req
      * @param e
      * @return
      */
-    @ExceptionHandler(value =NullPointerException.class)
+    @ExceptionHandler(value = NullPointerException.class)
     @ResponseBody
-    public RestResult exceptionHandler(HttpServletRequest req, NullPointerException e){
-        log.error("发生空指针异常！原因是:",e);
+    public RestResult exceptionHandler(HttpServletRequest req, NullPointerException e) {
+        log.error("发生空指针异常！原因是:", e);
         return RestResult.error(SysErrorEnum.BODY_NOT_MATCH);
     }
 
 
     /**
      * 处理其他异常
+     *
      * @param req
      * @param e
      * @return
      */
-    @ExceptionHandler(value =Exception.class)
+    @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public RestResult exceptionHandler(HttpServletRequest req, Exception e){
-        log.error("未知异常！原因是:",e);
+    public RestResult exceptionHandler(HttpServletRequest req, Exception e) {
+        log.error("未知异常！原因是:", e);
         return RestResult.error(SysErrorEnum.INTERNAL_SERVER_ERROR);
     }
 }

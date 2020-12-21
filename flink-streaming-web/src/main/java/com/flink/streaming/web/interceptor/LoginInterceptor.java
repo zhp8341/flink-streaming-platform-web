@@ -49,7 +49,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
         UserSession userSession = UserSessionUtil.userSession(request);
-        if (modelAndView!=null && userSession != null) {
+        if (modelAndView != null && userSession != null) {
             modelAndView.addObject("user", userSession.getName());
         }
 

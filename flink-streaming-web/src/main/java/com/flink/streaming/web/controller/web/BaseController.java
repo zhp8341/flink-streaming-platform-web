@@ -22,11 +22,10 @@ public class BaseController {
      */
     protected HttpServletRequest getServletRequest() {
 
-        ServletRequestAttributes attrs = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attrs.getRequest();
         return request;
     }
-
 
 
     public String getUserName() {

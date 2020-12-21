@@ -34,11 +34,10 @@ public class AlartController {
     private AlartLogService alartLogService;
 
 
-
     @RequestMapping(value = "/alartLogList")
-    public String queryAlartLogList(ModelMap modelMap, AlartLogParam alartLogParam){
+    public String queryAlartLogList(ModelMap modelMap, AlartLogParam alartLogParam) {
 
-        PageModel<AlartLogDTO> pageModel=alartLogService.queryAlartLog(alartLogParam);
+        PageModel<AlartLogDTO> pageModel = alartLogService.queryAlartLog(alartLogParam);
         PageVO pageVO = new PageVO();
         pageVO.setPageNum(pageModel.getPageNum());
         pageVO.setPages(pageModel.getPages());

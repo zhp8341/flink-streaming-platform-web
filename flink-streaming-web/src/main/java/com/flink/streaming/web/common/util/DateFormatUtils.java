@@ -22,6 +22,7 @@ public class DateFormatUtils {
         DateTime dateTime = dateTimeFormatter.parseDateTime(dateTimeStr);
         return dateTime.toDate();
     }
+
     public static String toFormatString(Date date) {
         return new DateTime(date).toString(FORMAT_FULL_TIME_NO_ZONE);
     }

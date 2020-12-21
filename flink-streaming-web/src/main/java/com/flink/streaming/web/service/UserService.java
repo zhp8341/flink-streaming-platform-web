@@ -51,7 +51,7 @@ public interface UserService {
      * @date 2020/11/11
      * @time 23:00
      */
-    void updatePassword(String userName,String oldPassword, String newPassword, String operator);
+    void updatePassword(String userName, String oldPassword, String newPassword, String operator);
 
     /**
      * 开启或者关闭

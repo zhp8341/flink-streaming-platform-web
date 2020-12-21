@@ -46,23 +46,22 @@ public class UpsertJobConfigParam {
     private String flinkSql;
 
 
-
     /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
+     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  udfJarPath;
+    private String extJarPath;
 
 
     /**
      * 1:开启 0: 关闭
      */
-    private Integer isOpen= YN.N.getValue();
+    private Integer isOpen = YN.N.getValue();
 
     /**
-     * @see  com.flink.streaming.web.enums.JobConfigStatus
+     * @see com.flink.streaming.web.enums.JobConfigStatus
      * 1:运行中 0: 停止中 -1:运行失败
      */
-    private Integer stauts= JobConfigStatus.STOP.getCode();
+    private Integer stauts = JobConfigStatus.STOP.getCode();
 
 
     public static JobConfigDTO toDTO(UpsertJobConfigParam upsertJobConfigParam) {
@@ -77,14 +76,13 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setFlinkCheckpointConfig(upsertJobConfigParam.getFlinkCheckpointConfig());
         jobConfigDTO.setFlinkSql(upsertJobConfigParam.getFlinkSql());
         jobConfigDTO.setIsOpen(upsertJobConfigParam.getIsOpen());
-        jobConfigDTO.setStauts(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()) );
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath())){
-            jobConfigDTO.setUdfJarPath(upsertJobConfigParam.getUdfJarPath().trim());
+        jobConfigDTO.setStauts(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()));
+        if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
+            jobConfigDTO.setExtJarPath(upsertJobConfigParam.getExtJarPath().trim());
         }
 
         return jobConfigDTO;
     }
-
 
 
 }

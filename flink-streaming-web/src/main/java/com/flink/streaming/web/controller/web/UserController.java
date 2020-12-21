@@ -4,11 +4,11 @@ package com.flink.streaming.web.controller.web;
 import com.flink.streaming.web.model.vo.UserVO;
 import com.flink.streaming.web.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -24,8 +24,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-
 
 
     @RequestMapping("/userList")

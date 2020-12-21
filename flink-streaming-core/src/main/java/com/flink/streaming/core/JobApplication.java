@@ -5,7 +5,6 @@ import com.flink.streaming.core.model.CheckPointParam;
 import com.flink.streaming.core.model.JobRunParam;
 import com.flink.streaming.core.model.SqlConfig;
 import com.flink.streaming.core.sql.SqlParser;
-import com.flink.streaming.core.udf.UdfFunctionManager;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -13,7 +12,6 @@ import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
@@ -50,7 +48,6 @@ public class JobApplication {
 
             StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-            env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
             EnvironmentSettings settings = EnvironmentSettings.newInstance()
                     .useBlinkPlanner()
@@ -59,12 +56,14 @@ public class JobApplication {
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
+
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
             SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
 
+
             //注册自定义的udf
-            UdfFunctionManager.registerTableUDF(tEnv, jobRunParam.getUdfJarPath(),sqlConfig.getUdfMap());
+            setUdf(tEnv, sqlConfig);
 
             //设置checkPoint
             setCheckpoint(env, jobRunParam.getCheckPointParam());
@@ -73,14 +72,17 @@ public class JobApplication {
             TableConfig tableConfig = tEnv.getConfig();
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
 
+
             //加载配置
             setConfiguration(tEnv, sqlConfig);
+
 
             //执行ddl
             callDdl(tEnv, sqlConfig);
 
             //执行dml
             callDml(tEnv, sqlConfig);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +92,7 @@ public class JobApplication {
 
 
     }
+
 
     /**
      * 设置Configuration
@@ -104,7 +107,7 @@ public class JobApplication {
         }
         Configuration configuration = tEnv.getConfig().getConfiguration();
         for (Map.Entry<String, String> entry : sqlConfig.getMapConfig().entrySet()) {
-            log.info("#############setConfiguration#############\n  {} {}", entry.getKey(),entry.getValue());
+            log.info("#############setConfiguration#############\n  {} {}", entry.getKey(), entry.getValue());
             configuration.setString(entry.getKey(), entry.getValue());
         }
     }
@@ -114,12 +117,27 @@ public class JobApplication {
         if (sqlConfig == null || sqlConfig.getDdlList() == null) {
             return;
         }
+
         for (String ddl : sqlConfig.getDdlList()) {
             System.out.println("#############ddl############# \n" + ddl);
             log.info("#############ddl############# \n {}", ddl);
             tEnv.executeSql(ddl);
         }
     }
+
+
+    private static void setUdf(TableEnvironment tEnv, SqlConfig sqlConfig) {
+        if (sqlConfig == null || sqlConfig.getDdlList() == null) {
+            return;
+        }
+
+        for (String udf : sqlConfig.getUdfList()) {
+            System.out.println("#############udf############# \n" + udf);
+            log.info("#############udf############# \n {}", udf);
+            tEnv.executeSql(udf);
+        }
+    }
+
 
     private static void callDml(TableEnvironment tEnv, SqlConfig sqlConfig) {
         if (sqlConfig == null || sqlConfig.getDmlList() == null) {
@@ -133,14 +151,12 @@ public class JobApplication {
     }
 
     private static JobRunParam buildParam(String[] args) throws Exception {
-        ParameterTool parameterTool= ParameterTool.fromArgs(args);
-        String sqlPath =parameterTool.get("sql") ;
-        String udfJarPath =parameterTool.get("udfJarPath");
+        ParameterTool parameterTool = ParameterTool.fromArgs(args);
+        String sqlPath = parameterTool.get("sql");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(buildCheckPointParam(parameterTool));
-        jobRunParam.setUdfJarPath(udfJarPath);
         return jobRunParam;
     }
 
@@ -165,7 +181,7 @@ public class JobApplication {
 
         String checkpointTimeout = parameterTool.get("checkpointTimeout");
 
-        String tolerableCheckpointFailureNumber =parameterTool.get("tolerableCheckpointFailureNumber");
+        String tolerableCheckpointFailureNumber = parameterTool.get("tolerableCheckpointFailureNumber");
 
         String asynchronousSnapshots = parameterTool.get("asynchronousSnapshots");
 
@@ -199,7 +215,7 @@ public class JobApplication {
             throw new RuntimeException("checkpoint目录不存在");
         }
 
-        log.info("开启checkpoint checkPointParam={}",checkPointParam);
+        log.info("开启checkpoint checkPointParam={}", checkPointParam);
 
         // 默认每60s保存一次checkpoint
         env.enableCheckpointing(checkPointParam.getCheckpointInterval());
@@ -207,10 +223,10 @@ public class JobApplication {
         CheckpointConfig checkpointConfig = env.getCheckpointConfig();
 
         //开始一致性模式是：精确一次 exactly-once
-        if (StringUtils.isEmpty(checkPointParam.getCheckpointingMode())||
-                CheckpointingMode.EXACTLY_ONCE.name().equalsIgnoreCase(checkPointParam.getCheckpointingMode())){
+        if (StringUtils.isEmpty(checkPointParam.getCheckpointingMode()) ||
+                CheckpointingMode.EXACTLY_ONCE.name().equalsIgnoreCase(checkPointParam.getCheckpointingMode())) {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-        }else{
+        } else {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE);
         }
 

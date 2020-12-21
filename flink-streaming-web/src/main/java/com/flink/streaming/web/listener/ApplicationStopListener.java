@@ -31,7 +31,7 @@ public class ApplicationStopListener implements ApplicationListener<ContextClose
 
         } catch (Throwable e) {
             log.warn("##something goes wrong when stopping ApplicationStopListener:", e);
-            
+
         } finally {
             log.info("## ApplicationStopListener client is down.");
         }

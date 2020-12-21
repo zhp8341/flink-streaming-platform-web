@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
  */
 public class SystemConstant {
 
-    public final static String COMMENT_SYMBOL="--";
+    public final static String COMMENT_SYMBOL = "--";
 
-    public final static String SEMICOLON=";";
+    public final static String SEMICOLON = ";";
 
     public static final int DEFAULT_PATTERN_FLAGS = Pattern.CASE_INSENSITIVE | Pattern.DOTALL;
 }

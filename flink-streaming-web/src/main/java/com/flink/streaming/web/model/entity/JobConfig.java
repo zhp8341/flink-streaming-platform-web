@@ -5,14 +5,12 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- *
  * @author zhuhuipei
  * @date 2020-07-10
  * @time 01:46
  */
 @Data
-public class JobConfig{
-
+public class JobConfig {
 
 
     private Long id;
@@ -48,16 +46,16 @@ public class JobConfig{
     private Integer isOpen;
 
     /**
-     * @see  com.flink.streaming.web.enums.JobConfigStatus
+     * @see com.flink.streaming.web.enums.JobConfigStatus
      * 1:运行中 0: 停止中 -1:运行失败
      */
     private Integer stauts;
 
 
     /**
-     * udf地址 如http://xxx.xxx.com/flink-streaming-udf.jar
+     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private String  udfJarPath;
+    private String extJarPath;
 
     /**
      * 最后一次启动时间
@@ -91,7 +89,6 @@ public class JobConfig{
      * sql语句
      */
     private String flinkSql;
-
 
 
 }

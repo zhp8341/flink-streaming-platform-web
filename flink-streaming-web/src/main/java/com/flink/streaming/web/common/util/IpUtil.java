@@ -15,29 +15,28 @@ public class IpUtil {
 
     private static String ip;
 
-    private static IpUtil ipUtil=new IpUtil();
+    private static IpUtil ipUtil = new IpUtil();
 
-    private IpUtil(){
+    private IpUtil() {
         ip = getIp();
     }
 
-    public static IpUtil getInstance(){
+    public static IpUtil getInstance() {
         return ipUtil;
     }
-
 
 
     /**
      * 获取本机的ip地址
      */
-    public  String getLocalIP() {
+    public String getLocalIP() {
         if (StringUtils.isEmpty(ip)) {
             return getIp();
         }
         return ip;
     }
 
-    private  String getIp() {
+    private String getIp() {
         InetAddress addr = null;
         try {
             addr = InetAddress.getLocalHost();
@@ -55,9 +54,9 @@ public class IpUtil {
         return ipAddrStr;
     }
 
-    public static void main(String[] args){
-     System.out.println(IpUtil.getInstance().getLocalIP());
-     System.out.println(IpUtil.getInstance().getLocalIP());
-     //System.out.println(IpUtil.getInstance().getLocalIP());
+    public static void main(String[] args) {
+        System.out.println(IpUtil.getInstance().getLocalIP());
+        System.out.println(IpUtil.getInstance().getLocalIP());
+        //System.out.println(IpUtil.getInstance().getLocalIP());
     }
 }

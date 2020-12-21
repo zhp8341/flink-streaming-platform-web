@@ -131,11 +131,12 @@ public class JobConfigApiController extends BaseController {
 
     @RequestMapping(value = "/addConfig", method = {RequestMethod.POST})
     public RestResult addConfig(UpsertJobConfigParam upsertJobConfigParam) {
-        RestResult restResult = checkUpsertJobConfigParam(upsertJobConfigParam);
-        if (restResult != null) {
-            return restResult;
-        }
+
         try {
+            RestResult restResult = checkUpsertJobConfigParam(upsertJobConfigParam);
+            if (restResult != null) {
+                return restResult;
+            }
             jobConfigService.addJobConfig(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
         } catch (BizException biz) {
             log.warn("addJobConfig is error ", biz);
@@ -151,11 +152,12 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping(value = "/editConfig", method = {RequestMethod.POST})
     public RestResult editConfig(UpsertJobConfigParam upsertJobConfigParam) {
 
-        RestResult restResult = checkUpsertJobConfigParam(upsertJobConfigParam);
-        if (restResult != null) {
-            return restResult;
-        }
+
         try {
+            RestResult restResult = checkUpsertJobConfigParam(upsertJobConfigParam);
+            if (restResult != null) {
+                return restResult;
+            }
             JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
             if (jobConfigDTO == null) {
                 return RestResult.error("数据不存在");
@@ -192,16 +194,26 @@ public class JobConfigApiController extends BaseController {
         }
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getFlinkCheckpointConfig())) {
 
-            CheckPointParam checkPointParam = CliConfigUtil.checkFlinkCheckPoint(upsertJobConfigParam.getFlinkCheckpointConfig());
+            CheckPointParam checkPointParam = CliConfigUtil.
+                    checkFlinkCheckPoint(upsertJobConfigParam.getFlinkCheckpointConfig());
             if (checkPointParam != null && StringUtils.isNotEmpty(checkPointParam.getCheckpointingMode())) {
-                if (!("EXACTLY_ONCE".equals(checkPointParam.getCheckpointingMode().toUpperCase()) || "AT_LEAST_ONCE".equals(checkPointParam.getCheckpointingMode().toUpperCase()))) {
+                if (!("EXACTLY_ONCE".equals(checkPointParam.getCheckpointingMode().toUpperCase())
+                        || "AT_LEAST_ONCE".equals(checkPointParam.getCheckpointingMode().toUpperCase()))) {
                     return RestResult.error("checkpointingMode 参数必须是  AT_LEAST_ONCE 或者 EXACTLY_ONCE");
                 }
             }
         }
 
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getUdfJarPath()) && !HttpUtil.isHttpsOrHttp(upsertJobConfigParam.getUdfJarPath())) {
-            return RestResult.error("udf地址错误： 非法的http或者是https地址");
+        if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
+            String[] urls = upsertJobConfigParam.getExtJarPath().split("\n");
+            for (String url : urls) {
+                if (StringUtils.isEmpty(url)) {
+                    continue;
+                }
+                if (!HttpUtil.isHttpsOrHttp(url)) {
+                    return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
+                }
+            }
         }
 
         if (DeployModeEnum.YARN_PER.name().equals(upsertJobConfigParam.getDeployMode())) {

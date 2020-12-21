@@ -23,6 +23,4 @@ public interface SystemConfigMapper {
     int updateByKey(SystemConfig systemConfig);
 
 
-
-
 }

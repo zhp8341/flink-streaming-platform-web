@@ -95,9 +95,9 @@ public class SqlParser {
         return str.substring(start, end);
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
-        String stmt="CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF'";
+        String stmt = "CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF'";
 
         final Matcher matcher = SqlCommand.CREATE_FUNCTION.getPattern().matcher(stmt);
         if (matcher.matches()) {
@@ -107,7 +107,7 @@ public class SqlParser {
                 groups[i] = matcher.group(i + 1);
             }
             System.out.println(groups);
-        }else {
+        } else {
             System.out.println(false);
         }
 

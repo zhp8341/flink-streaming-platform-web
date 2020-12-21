@@ -17,7 +17,7 @@ public interface HttpRequestAdapter {
      * @date 2020-08-06
      * @time 20:18
      */
-    String getAppIdByYarn(String jobName,String queueName);
+    String getAppIdByYarn(String jobName, String queueName);
 
     /**
      * 通过http杀掉一个任务

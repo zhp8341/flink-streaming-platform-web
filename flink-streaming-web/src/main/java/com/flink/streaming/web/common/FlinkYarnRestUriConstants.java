@@ -23,20 +23,20 @@ public class FlinkYarnRestUriConstants {
     }
 
     public static String getUriJobsForStandalone(String appId) {
-        return  URI_JOBS +"/"+appId;
+        return URI_JOBS + "/" + appId;
     }
 
 
-    public static String getUriCancelForYarn(String appId,String jobId) {
-        return getUriJobsForYarn(appId) +"/"+jobId+ URI_YARN_CANCEL;
+    public static String getUriCancelForYarn(String appId, String jobId) {
+        return getUriJobsForYarn(appId) + "/" + jobId + URI_YARN_CANCEL;
     }
 
     public static String getUriCancelForStandalone(String jobId) {
-        return URI_JOBS+"/"+jobId+ URI_YARN_CANCEL;
+        return URI_JOBS + "/" + jobId + URI_YARN_CANCEL;
     }
 
-    public static String getUriCheckpointForYarn(String appId,String jobId) {
-        return getUriJobsForYarn(appId) +"/"+jobId+ URI_YARN_CHECKPOINT;
+    public static String getUriCheckpointForYarn(String appId, String jobId) {
+        return getUriJobsForYarn(appId) + "/" + jobId + URI_YARN_CHECKPOINT;
     }
 
     public static String rootUriForYarn(String appId) {
@@ -45,7 +45,7 @@ public class FlinkYarnRestUriConstants {
 
 
     public static void main(String[] args) {
-       System.out.println(FlinkYarnRestUriConstants.getUriJobsForYarn("xxxx"));
+        System.out.println(FlinkYarnRestUriConstants.getUriJobsForYarn("xxxx"));
     }
 
 }
