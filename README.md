@@ -7,6 +7,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
+  
+  flink任务支持单流 双流 单流与维表等
+  
   <font color=red size=5>支持本地模式、yarn-per模式、STANDALONE模式 </font >
   
   
@@ -178,6 +181,17 @@ f:集群
 如果需要集群部署模式 简单参考图
 
 ![图片](https://img-blog.csdnimg.cn/20201018111339635.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
+
+
+
+
+ **备注：flink客户端必须和flink-streaming-platform-web应用部署在一起**
+
+
+
+
+
+
 
 
 ## 三、功能介绍
@@ -485,7 +499,8 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connector
 
 **第一种下载连接器后直接放到 flink/lib/目录下就可以使用了**
 
-    该方案存在jar冲突可能，特别是连接器多了以后
+    1、该方案存在jar冲突可能，特别是连接器多了以后
+    2、在非yarn模式下每次新增jar需要重启flink集群服务器
 
 
 **第二种放到http的服务下填写到三方地址**
@@ -505,6 +520,7 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connector
 
 
 **个人建议使用第二种方式，每个任务之间jar独立，如果把所有连接器放到lib 可能会和其他任务的jar冲突**
+**公用的可以放到flink/lib目录里面  如：mysql驱动 kafka连接器等**
 
 
 
