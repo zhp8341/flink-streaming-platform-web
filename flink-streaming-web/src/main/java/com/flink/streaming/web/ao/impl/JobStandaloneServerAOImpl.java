@@ -303,9 +303,6 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_HOME.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_HOME);
         }
-        if (!systemConfigMap.containsKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey())) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
-        }
 
         if (DeployModeEnum.LOCAL == deployModeEnum
                 && !systemConfigMap.containsKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey())) {

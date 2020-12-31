@@ -262,7 +262,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
                         .append(DateUtil.now()).append("\n")
-                        .append("三方jar:").append(jobConfig.getExtJarPath())
+                        .append("三方jar:").append(jobConfig.getExtJarPath()).append("\n")
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
 
                 try {

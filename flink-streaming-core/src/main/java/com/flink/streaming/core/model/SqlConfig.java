@@ -26,11 +26,11 @@ public class SqlConfig implements Serializable {
 
     private Map<String, String> mapConfig = new HashMap<>();
 
-
     private Map<String, String> udfMap = new HashMap<>();
 
     private List<String> udfList = new ArrayList<>();
 
+    private List<String> viewList = new ArrayList<>();
 
     public static SqlConfig toSqlConfig(List<SqlCommandCall> sqlCommandCallList) {
         if (CollectionUtils.isEmpty(sqlCommandCallList)) {
@@ -47,6 +47,9 @@ public class SqlConfig implements Serializable {
                     break;
                 case CREATE_FUNCTION:
                     sqlConfig.getUdfList().add(sqlCommandCall.operands[0]);
+                    break;
+                case CREATE_VIEW:
+                    sqlConfig.getViewList().add(sqlCommandCall.operands[0]);
                     break;
                 case CREATE_TABLE:
                     sqlConfig.getDdlList().add(sqlCommandCall.operands[0]);

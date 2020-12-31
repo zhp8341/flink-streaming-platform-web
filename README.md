@@ -49,7 +49,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 hadoop版本 2+ 
 
-flink 版本 1.12.0  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.12/
+**flink 版本 1.12.0**  官方地址: https://ci.apache.org/projects/flink/flink-docs-release-1.12/
 
 jdk版本 jdk1.8
 
@@ -99,7 +99,7 @@ hdfs-site.xml
 
 
 
-b: /flink-1.11.1/lib  hadoop集成
+b: /flink-1.12.0/lib  hadoop集成
 
 
 
@@ -146,7 +146,7 @@ c:修改数据库连接配置
 改成上面建好的mysql地址
 ~~~~
 
-**关于数据库连接配置 需要看清楚你 useSSL=true 你的mysql是否支持**
+**关于数据库连接配置 需要看清楚你 useSSL=true 你的mysql是否支持 如果不支持可以直接 useSSL=false**
 
 
 d:启动web
@@ -154,7 +154,7 @@ d:启动web
 ~~~~
 cd  /XXXX/flink-streaming-platform-web/bin 
 
-一定要到bin目录下再执行
+
 
 启动 : sh deploy.sh  start
 
@@ -163,6 +163,7 @@ cd  /XXXX/flink-streaming-platform-web/bin
 日志目录地址： /XXXX/flink-streaming-platform-web/logs/
 
 ~~~~
+**一定 一定 一定 要到bin目录下再执行deploy.sh  否则无法启动**
 
 
 e:登录
@@ -185,7 +186,7 @@ f:集群
 
 
 
- **备注：flink客户端必须和flink-streaming-platform-web应用部署在一起**
+ **备注：flink客户端必须和flink-streaming-platform-web应用部署在同一服务器**
 
 
 
@@ -385,7 +386,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ```
 
 
-##以下语法是按照flink1.10写的 有时间重新写
+##以下语法是按照flink1.10写的  有时间重新写
 
 [demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
 
@@ -654,13 +655,19 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 ##  七、RoadMap
 
 
-1、支持除官方以外的连接器  如：阿里云的sls
+1、 支持除官方以外的连接器  如：阿里云的sls
 
 2、 任务告警自动拉起
 
 3、 支持Application模式
 
-4、完善文档
+4、 完善文档
+
+5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验
+
+6、 checkpoint支持rocksDB
+
+7、 支持jar模式提交任务
 
 
 

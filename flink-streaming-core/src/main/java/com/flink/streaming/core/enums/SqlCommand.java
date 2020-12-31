@@ -28,6 +28,10 @@ public enum SqlCommand {
             "(CREATE\\s+FUNCTION.*)",
             (operands) -> Optional.of(new String[]{operands[0]})),
 
+    CREATE_VIEW(
+            "(CREATE\\s+VIEW.*)",
+            (operands) -> Optional.of(new String[]{operands[0]})),
+
 
     SET(
             "SET(\\s+(\\S+)\\s*=(.*))?",

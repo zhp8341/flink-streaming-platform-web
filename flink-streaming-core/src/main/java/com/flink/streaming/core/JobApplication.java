@@ -48,7 +48,6 @@ public class JobApplication {
 
             StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-
             EnvironmentSettings settings = EnvironmentSettings.newInstance()
                     .useBlinkPlanner()
                     .inStreamingMode()
@@ -56,11 +55,9 @@ public class JobApplication {
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
-
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
             SqlConfig sqlConfig = SqlParser.parseToSqlConfig(sql);
-
 
             //注册自定义的udf
             setUdf(tEnv, sqlConfig);
@@ -68,17 +65,18 @@ public class JobApplication {
             //设置checkPoint
             setCheckpoint(env, jobRunParam.getCheckPointParam());
 
-            //设置tableConfig
+            //设置tableConfig 用户可以通过 table.local-time-zone 自行设置
             TableConfig tableConfig = tEnv.getConfig();
             tableConfig.setLocalTimeZone(ZoneId.of("Asia/Shanghai"));
-
 
             //加载配置
             setConfiguration(tEnv, sqlConfig);
 
-
             //执行ddl
             callDdl(tEnv, sqlConfig);
+
+            //执行view
+            callView(tEnv, sqlConfig);
 
             //执行dml
             callDml(tEnv, sqlConfig);
@@ -126,8 +124,21 @@ public class JobApplication {
     }
 
 
+    private static void callView(TableEnvironment tEnv, SqlConfig sqlConfig) {
+        if (sqlConfig == null || sqlConfig.getViewList()== null) {
+            return;
+        }
+
+        for (String view : sqlConfig.getViewList()) {
+            System.out.println("#############view############# \n" + view);
+            log.info("#############view############# \n {}", view);
+            tEnv.executeSql(view);
+        }
+    }
+
+
     private static void setUdf(TableEnvironment tEnv, SqlConfig sqlConfig) {
-        if (sqlConfig == null || sqlConfig.getDdlList() == null) {
+        if (sqlConfig == null || sqlConfig.getUdfList() == null) {
             return;
         }
 
@@ -175,7 +186,8 @@ public class JobApplication {
         if (StringUtils.isEmpty(checkpointDir)) {
             return null;
         }
-        String checkpointingMode = parameterTool.get("checkpointingMode", CheckpointingMode.EXACTLY_ONCE.name());
+        String checkpointingMode = parameterTool.get("checkpointingMode",
+                CheckpointingMode.EXACTLY_ONCE.name());
 
         String checkpointInterval = parameterTool.get("checkpointInterval");
 
@@ -240,7 +252,8 @@ public class JobApplication {
         checkpointConfig.setTolerableCheckpointFailureNumber(checkPointParam.getTolerableCheckpointFailureNumber());
 
         if (checkPointParam.getAsynchronousSnapshots() != null) {
-            env.setStateBackend(new FsStateBackend(checkPointParam.getCheckpointDir(), checkPointParam.getAsynchronousSnapshots()));
+            env.setStateBackend(new FsStateBackend(checkPointParam.getCheckpointDir(),
+                    checkPointParam.getAsynchronousSnapshots()));
         } else {
             env.setStateBackend(new FsStateBackend(checkPointParam.getCheckpointDir()));
         }
