@@ -59,7 +59,7 @@ kafka版本 1.0+
 
 mysql版本 5.6+
 
-
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行 **
 
 ### 2、应用安装
 
@@ -118,7 +118,7 @@ export HADOOP_CLASSPATH=`hadoop classpath`
 
 
 
-a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
+  ##### a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
 
 ~~~~
  tar -xvf   flink-streaming-platform-web.tar.gz
@@ -126,7 +126,7 @@ a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming
 ~~~~
 
 
-b:执行mysql语句
+ ##### b:执行mysql语句
 
 ~~~~
 
@@ -139,7 +139,7 @@ mysql 版本5.6+以上
 
 ~~~~
 
-c:修改数据库连接配置
+  ##### c:修改数据库连接配置
 
 ~~~~
 /flink-streaming-platform-web/conf/application.properties  
@@ -149,7 +149,7 @@ c:修改数据库连接配置
 **关于数据库连接配置 需要看清楚你 useSSL=true 你的mysql是否支持 如果不支持可以直接 useSSL=false**
 
 
-d:启动web
+  ##### d:启动web
 
 ~~~~
 cd  /XXXX/flink-streaming-platform-web/bin 
@@ -166,7 +166,7 @@ cd  /XXXX/flink-streaming-platform-web/bin
 **一定 一定 一定 要到bin目录下再执行deploy.sh  否则无法启动**
 
 
-e:登录
+  ##### e:登录
 
 ~~~~
 http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/
@@ -177,7 +177,7 @@ http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/
 ~~~~
 
 
-f:集群
+  ##### f:集群
 
 如果需要集群部署模式 简单参考图
 
@@ -187,7 +187,24 @@ f:集群
 
 
  **备注：flink客户端必须和flink-streaming-platform-web应用部署在同一服务器**
+ 
+ 
+  ##### g:端口/内存修改
+ 
+ web端口修改 在conf下面的 application.properties 
+ 
+ **server.port参数 默认是9084**
+ 
+ jmx端口 在启动脚本 deploy.sh 里面
+ 
+ **默认是8999**
+ 
+ **debug端口 9901**
+ 
 
+jvm内存修改 都在deploy.sh
+
+**默认是按2G物理内存在分配jvm的  -Xmx1888M -Xms1888M -Xmn1536M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M**
 
 
 
@@ -661,7 +678,7 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 3、 支持Application模式
 
-4、 完善文档
+4、 完善文档 （持续过程）
 
 5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验
 
@@ -682,6 +699,8 @@ http://img.ccblog.cn/flink/dd2.png
 微信二维码 http://img.ccblog.cn/flink/wx2.png
 
  [微信二维码](http://img.ccblog.cn/flink/wx2.png)
+ 
+ 
 
 
 
