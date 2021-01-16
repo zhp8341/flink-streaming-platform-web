@@ -5,15 +5,16 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 
 ## 一、简介 
-  flink-streaming-platform-web系统是基于flink封装的一个可视化的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
+  flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
   
-  flink任务支持单流 双流 单流与维表等
+  **flink任务支持单流 、双流、 单流与维表等**
   
-  <font color=red size=5>支持本地模式、yarn-per模式、STANDALONE模式 </font >
+  **支持本地模式、yarn-per模式、STANDALONE模式**
   
   
   **支持udf、自定义连接器等,完全兼容官方连接器** 
+  
   
   **目前flink版本已经升级到1.12**
   
@@ -163,6 +164,8 @@ cd  /XXXX/flink-streaming-platform-web/bin
 日志目录地址： /XXXX/flink-streaming-platform-web/logs/
 
 ~~~~
+
+
 **一定 一定 一定 要到bin目录下再执行deploy.sh  否则无法启动**
 
 
@@ -403,7 +406,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ```
 
 
-##以下语法是按照flink1.10写的  有时间重新写
+
 
 [demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
 
@@ -415,79 +418,12 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 [demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
 
+[demo6 JDBC CDC的使用示例](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_6.md)
+
+[demo7 datagen简介](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/sql_demo/demo_datagen.md)
 
 
-```sql
 
-CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
-
--- 如果使用udf 函数必须配置 udf地址
-
-     create table flink_test_6 ( 
-  id BIGINT,
-  day_time VARCHAR,
-  amnount BIGINT,
-  proctime AS PROCTIME ()
-)
- with ( 
- 'connector.properties.zookeeper.connect'='hadoop001:2181',
-  'connector.version'='universal',
-  'connector.topic'='flink_test_6',
-  'connector.startup-mode'='earliest-offset',
-  'format.derive-schema'='true',
-  'connector.type'='kafka',
-  'update-mode'='append',
-  'connector.properties.bootstrap.servers'='hadoop003:9092',
-  'connector.properties.group.id'='flink_gp_test1',
-  'format.type'='json'
- );
-
-
-create table flink_test_6_dim ( 
-  id BIGINT,
-  coupon_amnount BIGINT
-)
- with ( 
-   'connector.type' = 'jdbc',
-   'connector.url' = 'jdbc:mysql://127.0.0.1:3306/flink_web?characterEncoding=UTF-8',
-   'connector.table' = 'test_dim',
-   'connector.username' = 'flink_web_test',
-   'connector.password' = 'flink_web_test_123',
-   'connector.lookup.max-retries' = '3'
- );
-
-
-CREATE TABLE sync_test_3 (
-                   day_time string,
-                   total_gmv bigint
- ) WITH (
-   'connector.type' = 'jdbc',
-   'connector.url' = 'jdbc:mysql://127.0.0.1:3306/flink_web?characterEncoding=UTF-8',
-   'connector.table' = 'sync_test_3',
-   'connector.username' = 'flink_web_test',
-   'connector.password' = 'flink_web_test_123'
-
- );
-
-
-INSERT INTO sync_test_3 
-SELECT 
-  day_time, 
-  SUM(amnount - coupon_amnount) AS total_gmv 
-FROM 
-  (
-    SELECT 
-      a.day_time as day_time, 
-      a.amnount as amnount, 
-      b.coupon_amnount as coupon_amnount 
-    FROM 
-      flink_test_6 as a 
-      LEFT JOIN flink_test_6_dim  FOR SYSTEM_TIME AS OF  a.proctime  as b
-     ON b.id = a.id
-  ) 
-GROUP BY day_time;
-
-```
 
 
 
