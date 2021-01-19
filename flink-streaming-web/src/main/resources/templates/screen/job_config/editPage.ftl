@@ -11,9 +11,13 @@
     <#include "../../control/public_css_js.ftl">
     <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css"/>
     <link rel="stylesheet" type="text/css" href="/static/codemirror/theme/mbo.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/hint/show-hint.css"/>
     <script type="text/javascript" src="/static/codemirror/js/codemirror.js"></script>
     <script type="text/javascript" src="/static/codemirror/js/css.js"></script>
     <script type="text/javascript" src="/static/codemirror/js/sql.js"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/show-hint.js"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/sql-hint.js"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/formatting.js"></script>
 
 </head>
 
@@ -103,6 +107,11 @@
 
                             <div class="form-group">
                                 <a class="btn btn-info btn-sm " onclick="editConfig()" href="#errorMessage"> 提交</a>
+                                <a class="btn btn-success btn-sm" onclick="autoFormatSelection()"> 格式化代码</a>
+                            </div>
+                            <div class="form-group">
+                                <h5  style="color: blue"> 备注：代码格式化 需要选中对应的代码再点击"格式化代码" 按钮 才有效果  </h5>
+                                <h5 style="color: red">tips: win系统 CTRL+A 全选     mac系统 command+A  全选</h5>
                             </div>
                         </div>
 
@@ -123,14 +132,42 @@
     var flinkSqlVal;
     myTextarea = document.getElementById("flinkSql");
     var editor = CodeMirror.fromTextArea(myTextarea, {
-        mode: "text/x-sql",
+        mode: "flink/x-fsql",
         lineNumbers: false,//显示行数
         matchBrackets: true,  // 括号匹配（这个需要导入codemirror的matchbrackets.js文件）
         indentUnit: 4,//缩进块用多少个空格表示 默认是2
-        theme: "mbo"
+        theme: "mbo",
+        extraKeys: {'Ctrl': 'autocomplete'},//自定义快捷键
+        hintOptions: {//自定义提示选项
+            completeSingle: false, // 当匹配只有一项的时候是否自动补全
+        }
     });
     editor.setSize('auto','800px');
+
+    //代码自动提示功能，记住使用cursorActivity事件不要使用change事件，这是一个坑，那样页面直接会卡死
+    editor.on('keypress', function () {
+        editor.showHint()
+    });
+
+
+    function getSelectedRange() {
+        return { from: editor.getCursor(true), to: editor.getCursor(false) };
+    }
+
+    function autoFormatSelection() {
+        var range = getSelectedRange();
+        editor.autoFormatRange(range.from, range.to);
+    }
+
+    function commentSelection(isComment) {
+        var range = getSelectedRange();
+        editor.commentRange(isComment, range.from, range.to);
+    }
+
+
+
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
+
     function editConfig() {
         flinkSqlVal=editor.getValue();
         $.post("../api/editConfig", {

@@ -6,7 +6,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
-  主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
+  主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示。 目的是减少开发，完全实现flink-sql 流计算任务
   
   **flink任务支持单流 、双流、 单流与维表等**
   
@@ -21,6 +21,25 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   
   **如果您觉得还不错请在右上角点一下star 谢谢 🙏 大家的支持是开源最大动力**
     
+    
+~~~~ 
+打不开图片可以绑定一下hosts 试试
+# GitHub Start
+151.101.184.133     assets-cdn.github.com
+151.101.184.133     raw.githubusercontent.com
+151.101.184.133     gist.githubusercontent.com
+151.101.184.133     cloud.githubusercontent.com
+151.101.184.133     camo.githubusercontent.com
+151.101.184.133     avatars0.githubusercontent.com
+151.101.184.133     avatars1.githubusercontent.com
+151.101.184.133     avatars2.githubusercontent.com
+151.101.184.133     avatars3.githubusercontent.com
+151.101.184.133     avatars4.githubusercontent.com
+151.101.184.133     avatars5.githubusercontent.com
+151.101.184.133     avatars6.githubusercontent.com
+151.101.184.133     avatars7.githubusercontent.com
+151.101.184.133     avatars8.githubusercontent.com  
+~~~~
 
 
  效果图 
@@ -172,7 +191,7 @@ cd  /XXXX/flink-streaming-platform-web/bin
   ##### e:登录
 
 ~~~~
-http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/
+http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/admin/index
 
 
 登录号：admin  密码 123456
