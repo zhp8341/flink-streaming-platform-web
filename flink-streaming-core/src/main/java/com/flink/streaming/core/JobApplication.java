@@ -1,6 +1,7 @@
 package com.flink.streaming.core;
 
 
+import com.flink.streaming.core.enums.CatalogType;
 import com.flink.streaming.core.model.CheckPointParam;
 import com.flink.streaming.core.model.JobRunParam;
 import com.flink.streaming.core.model.SqlConfig;
@@ -18,6 +19,9 @@ import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.table.catalog.Catalog;
+import org.apache.flink.table.catalog.GenericInMemoryCatalog;
+import org.apache.flink.table.catalog.hive.HiveCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +76,9 @@ public class JobApplication {
             //加载配置
             setConfiguration(tEnv, sqlConfig);
 
+            //配置catalog
+            setCatalog(tEnv, jobRunParam);
+
             //执行ddl
             callDdl(tEnv, sqlConfig);
 
@@ -89,6 +96,40 @@ public class JobApplication {
         }
 
 
+    }
+
+    /**
+     * 设置Catalog
+     *
+     * @author Jim Chen
+     * @date 2021-01-21
+     * @time 01:18
+     * @param tEnv
+     * @param jobRunParam
+     */
+    private static void setCatalog(TableEnvironment tEnv, JobRunParam jobRunParam) {
+        String catalogType = jobRunParam.getCatalog();
+        String hiveConfDir = jobRunParam.getHiveConfDir();
+
+        Catalog catalog = null;
+        String catalogName = null;
+        if (CatalogType.HIVE.toString().equalsIgnoreCase(catalogType)) {
+            catalogName = "hive_catalog";
+            catalog = new HiveCatalog(
+                    catalogName,
+                    "default",
+                    hiveConfDir);
+        } else if (CatalogType.JDBC.toString().equalsIgnoreCase(catalogType)) {
+
+        } else if (CatalogType.POSTGRES.toString().equalsIgnoreCase(catalogType)) {
+
+        } else {
+            //  default catalog is memory
+            catalogName = "memory_catalog";
+            catalog = new GenericInMemoryCatalog(catalogName);
+        }
+        tEnv.registerCatalog(catalogName, catalog);
+        tEnv.useCatalog(catalogName);
     }
 
 
@@ -165,9 +206,15 @@ public class JobApplication {
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         String sqlPath = parameterTool.get("sql");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
+
+        String catalog = parameterTool.get("catalog", "memory");
+        String hiveConfDir = parameterTool.get("hive_conf_dir");
+
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(buildCheckPointParam(parameterTool));
+        jobRunParam.setCatalog(catalog);
+        jobRunParam.setHiveConfDir(hiveConfDir);
         return jobRunParam;
     }
 

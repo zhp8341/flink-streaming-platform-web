@@ -190,6 +190,13 @@
             </exclusions>
         </dependency>
 
+        <!-- Hive Connector的支持，仅在编译时生效-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-hive_2.11</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
 
         <!-- Flink modules  end -->

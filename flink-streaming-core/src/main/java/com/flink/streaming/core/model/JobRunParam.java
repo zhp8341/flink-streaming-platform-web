@@ -22,4 +22,15 @@ public class JobRunParam {
     private CheckPointParam checkPointParam;
 
 
+    /**
+     * flink catalog type，目前仅支持hive catalog和默认memory catalog
+     */
+    private String catalog;
+
+
+    /**
+     * hive catalog的配置文件目录
+     */
+    private String hiveConfDir;
+
 }
