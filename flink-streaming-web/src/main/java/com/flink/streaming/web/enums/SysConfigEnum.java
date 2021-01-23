@@ -20,6 +20,10 @@ public enum SysConfigEnum {
 
     FLINK_STREAMING_PLATFORM_WEB_HOME("flink_streaming_platform_web_home", "flink-streaming-platform-web应用安装的目录（必选）", SysConfigEnumType.SYS.name()),
 
+    FLINK_CATALOG_TYPE("flink_catalog_type", "flink catalog类型（目前仅支持hive catalog和memory catalog(默认)）", SysConfigEnumType.SYS.name()),
+
+    HIVE_CATALOG_CONF_DIR("hive_catalog_conf_dir", "hive catalog配置目录", SysConfigEnumType.SYS.name()),
+
     YARN_RM_HTTP_ADDRESS("yarn_rm_http_address", "yarn的rm Http地址（yarn per 模式必须） ", SysConfigEnumType.SYS.name()),
 
     FLINK_REST_HTTP_ADDRESS("flink_rest_http_address", "flink Rest & web frontend 地址(Local Cluster模式)", SysConfigEnumType.SYS.name()),

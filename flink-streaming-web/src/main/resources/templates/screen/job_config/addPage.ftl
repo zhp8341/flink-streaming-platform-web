@@ -10,15 +10,15 @@
     <title>新增配置</title>
     <#include "../../control/public_css_js.ftl">
 
-    <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/codemirror/theme/mbo.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/codemirror/hint/show-hint.css"/>
-    <script type="text/javascript" src="/static/codemirror/js/codemirror.js"></script>
-    <script type="text/javascript" src="/static/codemirror/js/css.js"></script>
-    <script type="text/javascript" src="/static/codemirror/js/sql.js"></script>
-    <script type="text/javascript" src="/static/codemirror/hint/show-hint.js"></script>
-    <script type="text/javascript" src="/static/codemirror/hint/sql-hint.js"></script>
-    <script type="text/javascript" src="/static/codemirror/hint/formatting.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css?version=20210123"/>
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/theme/mbo.css?version=20210123"/>
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/hint/show-hint.css?version=20210123"/>
+    <script type="text/javascript" src="/static/codemirror/js/codemirror.js?version=20210123"></script>
+    <script type="text/javascript" src="/static/codemirror/js/css.js?version=20210123"></script>
+    <script type="text/javascript" src="/static/codemirror/js/sql.js?version=20210123"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/show-hint.js?version=20210123"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/sql-hint.js?version=20210123"></script>
+    <script type="text/javascript" src="/static/codemirror/hint/formatting.js?version=20210123"></script>
     <style>
         label{font-weight: 800}
     </style>
