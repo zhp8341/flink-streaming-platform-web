@@ -1,10 +1,10 @@
-package com.flink.streaming.core.sql;
+package com.flink.streaming.common.sql;
 
 
-import com.flink.streaming.core.constants.SystemConstant;
-import com.flink.streaming.core.enums.SqlCommand;
-import com.flink.streaming.core.model.SqlCommandCall;
-import com.flink.streaming.core.model.SqlConfig;
+import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.SqlCommand;
+import com.flink.streaming.common.model.SqlCommandCall;
+import com.flink.streaming.common.model.SqlConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

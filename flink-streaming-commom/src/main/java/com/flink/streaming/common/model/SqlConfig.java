@@ -1,4 +1,4 @@
-package com.flink.streaming.core.model;
+package com.flink.streaming.common.model;
 
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;

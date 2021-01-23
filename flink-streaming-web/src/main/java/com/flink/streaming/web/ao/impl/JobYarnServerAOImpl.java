@@ -266,7 +266,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
 
                 try {
-                    String command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig, localLog, savepointPath);
+                    String command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig,  savepointPath);
                     commandAdapter.startForPerYarn(command, localLog, jobRunLogId);
                     Thread.sleep(1000 * 10);
                     appId = httpRequestAdapter.getAppIdByYarn(jobConfig.getJobName(), YarnUtil.getQueueName(jobConfig.getFlinkRunConfig()));

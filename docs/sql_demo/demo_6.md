@@ -177,7 +177,7 @@ DELETE FROM orders WHERE order_id = 10004;
 -C file:///data1/flink/flink-streaming-platform-web/jars/flink-connector-jdbc_2.11-1.12.0.jar  
 -C file:///data1/flink/flink-streaming-platform-web/jars/flink-sql-connector-kafka_2.11-1.12.0.jar  
 -C file:///data1/flink/flink-streaming-platform-web/jars/flink-sql-connector-elasticsearch7_2.11-1.12.0.jar 
--c  com.flink.streaming.core.JobApplication /data1/flink/flink-streaming-platform-web/lib/flink-streaming-core_flink_1.12.0-1.1.1.RELEASE.jar 
+-c  com.flink.streaming.core.JobApplication /data1/flink/flink-streaming-platform-web/lib/flink-streaming-core_flink_1.12.0-1.2.0.RELEASE.jar 
 -sql /data1/flink/flink-streaming-platform-web/sql/job_sql_8.sql
 ```
 
@@ -261,6 +261,6 @@ java.lang.NoSuchMethodError: org.apache.flink.formats.json.JsonRowDataSerializat
  /data1/flink/flink/bin/flink run -d -p 2 
 -C file:///data1/flink/flink-streaming-platform-web/jars/flink-connector-jdbc_2.11-1.12.0.jar 
 -C file:///data1/flink/flink-streaming-platform-web/jars/flink-sql-connector-kafka_2.11-1.12.0.jar 
--c com.flink.streaming.core.JobApplication /data1/flink/flink-streaming-platform-web/lib/flink-streaming-core_flink_1.12.0-1.1.1.RELEASE.jar 
+-c com.flink.streaming.core.JobApplication /data1/flink/flink-streaming-platform-web/lib/flink-streaming-core_flink_1.12.0-1.2.0.RELEASE.jar 
 -sql /data1/flink/flink-streaming-platform-web/sql/job_sql_8.sql
 ```

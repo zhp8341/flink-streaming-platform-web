@@ -6,7 +6,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
-  主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示。 目的是减少开发，完全实现flink-sql 流计算任务
+  主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
   
   **flink任务支持单流 、双流、 单流与维表等**
   
@@ -30,6 +30,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 151.101.184.133     gist.githubusercontent.com
 151.101.184.133     cloud.githubusercontent.com
 151.101.184.133     camo.githubusercontent.com
+151.101.184.133     avatars.githubusercontent.com
 151.101.184.133     avatars0.githubusercontent.com
 151.101.184.133     avatars1.githubusercontent.com
 151.101.184.133     avatars2.githubusercontent.com
@@ -38,7 +39,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 151.101.184.133     avatars5.githubusercontent.com
 151.101.184.133     avatars6.githubusercontent.com
 151.101.184.133     avatars7.githubusercontent.com
-151.101.184.133     avatars8.githubusercontent.com  
+151.101.184.133     avatars8.githubusercontent.com
+151.101.184.133     avatars9.githubusercontent.com
+151.101.184.133     avatars10.githubusercontent.com       
 ~~~~
 
 
@@ -56,7 +59,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
  ![图片](http://img.ccblog.cn/flink/7.png)
  ![图片](http://img.ccblog.cn/flink/8.png)
  ![图片](http://img.ccblog.cn/flink/9.png)
-
+ ![图片](http://img.ccblog.cn/flink/10.png)
+ ![图片](http://img.ccblog.cn/flink/12.png)
 
 
   
@@ -347,6 +351,19 @@ CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
 udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://github.com/zhp8341/flink-streaming-udf)
 
 
+f: sql语句
+
+![图片](http://img.ccblog.cn/flink/10.png)
+
+![图片](http://img.ccblog.cn/flink/12.png)
+
+支持代码格式化 sql语句校验 提示功能
+
+目前不支持hive、批处理语法 如（不支持直接select 必须使用 insert into xx select xx  ）
+
+**备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果 tips: win系统 CTRL+A 全选 mac系统 command+A 全选**
+
+**备注：只能校验单个sql语法正确与否, 不能校验上下文之间关系，如：这张表是否存在 数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误**
 
 
 ### 2、系统设置
@@ -393,6 +410,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
    
 效果图
 ![图片](https://img-blog.csdnimg.cn/20201018111816869.png#pic_center)
+
 
 ##  三、配置demo
 
@@ -635,7 +653,7 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 4、 完善文档 （持续过程）
 
-5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验
+5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验(完成)
 
 6、 checkpoint支持rocksDB
 

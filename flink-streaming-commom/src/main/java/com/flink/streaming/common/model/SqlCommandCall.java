@@ -1,7 +1,7 @@
-package com.flink.streaming.core.model;
+package com.flink.streaming.common.model;
 
 
-import com.flink.streaming.core.enums.SqlCommand;
+import com.flink.streaming.common.enums.SqlCommand;
 import lombok.Data;
 
 /**
