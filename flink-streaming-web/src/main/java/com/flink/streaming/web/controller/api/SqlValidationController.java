@@ -31,7 +31,7 @@ public class SqlValidationController extends BaseController {
         try {
             List<String> listSql = SqlValidation.toSqlList(flinkSql);
             if (CollectionUtils.isEmpty(listSql)) {
-                return RestResult.error("没有检测到sql语句");
+                return RestResult.error("没有检测到有效sql语句,是否缺少了 ; 分隔符");
             }
 
             SqlValidation.checkSql(listSql);

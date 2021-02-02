@@ -74,7 +74,8 @@ public class JobApplication {
             Configurations.setConfiguration(tEnv, sqlConfig);
 
             //配置catalog
-            setCatalog(tEnv, jobRunParam);
+            //TODO udf 不能生效
+            //setCatalog(tEnv, jobRunParam);
 
             //执行ddl
             Executes.callDdl(tEnv, sqlConfig);

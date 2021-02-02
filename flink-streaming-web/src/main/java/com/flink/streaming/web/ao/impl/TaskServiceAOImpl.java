@@ -206,7 +206,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             }
             alarmServiceAO.sendForDingding(alartUrl, content, jobConfigId);
         } catch (Exception e) {
-            log.error("告警失败 is error");
+            log.error("告警失败 is error",e);
         }
     }
 }
