@@ -30,5 +30,7 @@ public class CheckPointParam {
     //是否异步
     Boolean asynchronousSnapshots;
 
+    //检查点在作业取消后的保留策略，DELETE_ON_CANCELLATION代表删除，RETAIN_ON_CANCELLATION代表保留
+    private String externalizedCheckpointCleanup;
 
 }

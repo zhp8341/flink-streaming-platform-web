@@ -4,6 +4,7 @@ import com.flink.streaming.core.model.CheckPointParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup;
 
 /**
  * @author zhuhuipei
@@ -38,6 +39,9 @@ public class CheckPointParams {
 
         String asynchronousSnapshots = parameterTool.get("asynchronousSnapshots");
 
+        String externalizedCheckpointCleanup = parameterTool.get("externalizedCheckpointCleanup");
+
+
         CheckPointParam checkPointParam = new CheckPointParam();
         if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
             checkPointParam.setAsynchronousSnapshots(Boolean.getBoolean(asynchronousSnapshots));
@@ -53,6 +57,9 @@ public class CheckPointParams {
         }
         if (StringUtils.isNotEmpty(tolerableCheckpointFailureNumber)) {
             checkPointParam.setTolerableCheckpointFailureNumber(Integer.valueOf(tolerableCheckpointFailureNumber));
+        }
+        if (StringUtils.isNotEmpty(externalizedCheckpointCleanup)) {
+            checkPointParam.setExternalizedCheckpointCleanup(externalizedCheckpointCleanup);
         }
         return checkPointParam;
 
