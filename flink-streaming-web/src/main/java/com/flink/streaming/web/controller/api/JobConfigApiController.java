@@ -202,6 +202,12 @@ public class JobConfigApiController extends BaseController {
                     return RestResult.error("checkpointingMode 参数必须是  AT_LEAST_ONCE 或者 EXACTLY_ONCE");
                 }
             }
+            if (checkPointParam != null && StringUtils.isNotEmpty(checkPointParam.getExternalizedCheckpointCleanup())) {
+                if (!("DELETE_ON_CANCELLATION".equals(checkPointParam.getExternalizedCheckpointCleanup().toUpperCase())
+                    || "RETAIN_ON_CANCELLATION".equals(checkPointParam.getExternalizedCheckpointCleanup().toUpperCase()))) {
+                    return RestResult.error("externalizedCheckpointCleanup 参数必须是 DELETE_ON_CANCELLATION  或者 RETAIN_ON_CANCELLATION");
+                }
+            }
         }
 
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
