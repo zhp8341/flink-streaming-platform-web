@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.environment.CheckpointConfig;
+import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
@@ -56,6 +57,14 @@ public class FsCheckPoint {
                     checkPointParam.getAsynchronousSnapshots()));
         } else {
             env.setStateBackend(new FsStateBackend(checkPointParam.getCheckpointDir()));
+        }
+
+        if (checkPointParam.getExternalizedCheckpointCleanup() != null) {
+            if (checkPointParam.getExternalizedCheckpointCleanup().equalsIgnoreCase(ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION.name())) {
+                env.getCheckpointConfig().enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION);
+            } else if(checkPointParam.getExternalizedCheckpointCleanup().equalsIgnoreCase(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION.name())) {
+                env.getCheckpointConfig().enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+            }
         }
 
     }

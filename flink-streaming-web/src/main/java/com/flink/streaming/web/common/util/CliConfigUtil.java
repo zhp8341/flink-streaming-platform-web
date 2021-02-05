@@ -66,6 +66,7 @@ public class CliConfigUtil {
             options.addOption("checkpointInterval", true, "checkpointInterval");
             options.addOption("checkpointingMode", true, "checkpointingMode");
             options.addOption("checkpointTimeout", true, "checkpointTimeout");
+            options.addOption("externalizedCheckpointCleanup", true, "externalizedCheckpointCleanup");
 
             CommandLineParser parser = new DefaultParser();
             CommandLine cl = parser.parse(options, config);
@@ -80,6 +81,7 @@ public class CliConfigUtil {
             String asynchronousSnapshots = cl.getOptionValue("asynchronousSnapshots");
             String checkpointInterval = cl.getOptionValue("checkpointInterval");
             String checkpointTimeout = cl.getOptionValue("checkpointTimeout");
+            String externalizedCheckpointCleanup = cl.getOptionValue("externalizedCheckpointCleanup");
 
             CheckPointParam checkPointParam = new CheckPointParam();
             if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
@@ -101,6 +103,9 @@ public class CliConfigUtil {
 
             if (StringUtils.isNotEmpty(tolerableCheckpointFailureNumber)) {
                 checkPointParam.setTolerableCheckpointFailureNumber(Integer.valueOf(tolerableCheckpointFailureNumber));
+            }
+            if (StringUtils.isNotEmpty(externalizedCheckpointCleanup)) {
+                checkPointParam.setExternalizedCheckpointCleanup(externalizedCheckpointCleanup);
             }
             return checkPointParam;
         } catch (UnrecognizedOptionException e) {
