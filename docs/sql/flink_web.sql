@@ -3,6 +3,12 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- CREATE DATABASES test
+-- ----------------------------
+CREATE DATABASE IF NOT EXISTS test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+USE test;
+
+-- ----------------------------
 -- Table structure for alart_log
 -- ----------------------------
 DROP TABLE IF EXISTS `alart_log`;
