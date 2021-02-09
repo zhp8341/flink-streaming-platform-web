@@ -43,7 +43,9 @@ public class CommandUtil {
         command.append("-c  com.flink.streaming.core.JobApplication").append(" ");
         command.append(jobRunParamDTO.getSysHome()).append(JARVERSION);
         command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
-
+        if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
+            command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
+        }
 
         log.info("buildRunCommandForLocal runCommand={}", command.toString());
         return command.toString();
