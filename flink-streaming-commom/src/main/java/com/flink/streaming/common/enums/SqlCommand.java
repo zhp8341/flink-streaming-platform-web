@@ -1,8 +1,7 @@
-package com.flink.streaming.core.enums;
+package com.flink.streaming.common.enums;
 
-import com.flink.streaming.core.constants.SystemConstant;
 import lombok.Getter;
-
+import com.flink.streaming.common.constant.SystemConstant;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;

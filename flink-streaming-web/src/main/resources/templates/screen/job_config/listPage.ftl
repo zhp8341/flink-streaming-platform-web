@@ -226,6 +226,6 @@
 </div><!-- /.main-container -->
 
 
-<script src="/static/js/customer/list_job_config.js"></script>
+<script src="/static/js/customer/list_job_config.js?version=20210123"></script>
 </body>
 </html>

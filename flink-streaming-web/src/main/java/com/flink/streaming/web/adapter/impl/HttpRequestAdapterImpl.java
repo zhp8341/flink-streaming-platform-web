@@ -35,6 +35,7 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
     @Autowired
     private SystemConfigService systemConfigService;
 
+    //TODO 设个方法设计不好 需要改造
     @Override
     public String getAppIdByYarn(String jobName, String queueName) {
         if (StringUtils.isEmpty(jobName)) {
@@ -47,22 +48,18 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
         log.info("请求结果 str={} url={}", res, url);
 
         YarnAppInfo yarnAppInfo = JSON.parseObject(res, YarnAppInfo.class);
-        if (yarnAppInfo == null) {
-            log.error("在队列" + queueName + "没有找到任何yarn上的任务 url={}", url);
-            throw new BizException("yarn队列" + queueName + "下没有找到任何任务");
-        }
-        if (yarnAppInfo.getApps() == null) {
-            log.error("yarnAppInfo.getApps() is null", yarnAppInfo);
-            throw new BizException("yarnAppInfo.getApps() is error");
-        }
+
+        this.check( yarnAppInfo, queueName, jobName, url);
 
         for (AppTO appTO : yarnAppInfo.getApps().getApp()) {
-            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) && SystemConstants.STATUS_RUNNING.equals(appTO.getState())) {
+            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) &&
+                    SystemConstants.STATUS_RUNNING.equals(appTO.getState())) {
                 log.info("任务信息 appTO={}", appTO);
                 return appTO.getId();
             }
         }
-        throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" + JobConfigDTO.buildRunName(jobName), SysErrorEnum.YARN_CODE.getCode());
+        throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" +
+                JobConfigDTO.buildRunName(jobName), SysErrorEnum.YARN_CODE.getCode());
     }
 
 
@@ -98,5 +95,23 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
         return YarnStateEnum.getYarnStateEnum(String.valueOf(JSON.parseObject(res).get("state")));
     }
 
+
+    private void check(YarnAppInfo yarnAppInfo,String queueName,String jobName,String url){
+        if (yarnAppInfo == null) {
+            log.error("在队列" + queueName + "没有找到任何yarn上的任务 url={}", url);
+            throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" +
+                    JobConfigDTO.buildRunName(jobName), SysErrorEnum.YARN_CODE.getCode());
+        }
+        if (yarnAppInfo.getApps() == null) {
+            log.error("yarnAppInfo.getApps() is null", yarnAppInfo);
+            throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" +
+                    JobConfigDTO.buildRunName(jobName), SysErrorEnum.YARN_CODE.getCode());
+        }
+        if (yarnAppInfo.getApps().getApp()==null||yarnAppInfo.getApps().getApp().size()<=0){
+            log.error("yarnAppInfo.getApps().getApp() is null", yarnAppInfo);
+            throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" +
+                    JobConfigDTO.buildRunName(jobName), SysErrorEnum.YARN_CODE.getCode());
+        }
+    }
 
 }

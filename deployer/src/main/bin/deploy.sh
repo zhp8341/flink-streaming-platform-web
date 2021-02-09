@@ -22,7 +22,7 @@ fi
 ACTION=$1
 
 ##变量设置##
-app_name=flink-streaming-web-1.1.1.RELEASE.jar
+app_name=flink-streaming-web-1.2.0.RELEASE.jar
 env=prod
 project=../lib/$app_name
 time=$(date "+%Y%m%d-%H%M%S")

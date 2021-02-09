@@ -136,6 +136,6 @@
         );
     });
 </script>
-<script src="/static/js/customer/config.js"></script>
+<script src="/static/js/customer/config.js?version=20210123"></script>
 </body>
 </html>

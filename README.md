@@ -5,25 +5,48 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 
 ## 一、简介 
-  flink-streaming-platform-web系统是基于flink封装的一个可视化的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
-  主要功能包含任务配置、启/停任务、告警、日志等功能。目的是减少开发，完全实现flink-sql 流计算任务
-  
-  flink任务支持单流 双流 单流与维表等
-  
-  <font color=red size=5>支持本地模式、yarn-per模式、STANDALONE模式 </font >
-  
-  
+  flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
+  主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
+
+  **flink任务支持单流 、双流、 单流与维表等**
+
+  **支持本地模式、yarn-per模式、STANDALONE模式**
+
+
   **支持udf、自定义连接器等,完全兼容官方连接器** 
-  
+
+
   **目前flink版本已经升级到1.12**
-  
-  
+
+
   **如果您觉得还不错请在右上角点一下star 谢谢 🙏 大家的支持是开源最大动力**
     
+    
+~~~~ 
+打不开图片可以绑定一下hosts 试试
+# GitHub Start
+151.101.184.133     assets-cdn.github.com
+151.101.184.133     raw.githubusercontent.com
+151.101.184.133     gist.githubusercontent.com
+151.101.184.133     cloud.githubusercontent.com
+151.101.184.133     camo.githubusercontent.com
+151.101.184.133     avatars.githubusercontent.com
+151.101.184.133     avatars0.githubusercontent.com
+151.101.184.133     avatars1.githubusercontent.com
+151.101.184.133     avatars2.githubusercontent.com
+151.101.184.133     avatars3.githubusercontent.com
+151.101.184.133     avatars4.githubusercontent.com
+151.101.184.133     avatars5.githubusercontent.com
+151.101.184.133     avatars6.githubusercontent.com
+151.101.184.133     avatars7.githubusercontent.com
+151.101.184.133     avatars8.githubusercontent.com
+151.101.184.133     avatars9.githubusercontent.com
+151.101.184.133     avatars10.githubusercontent.com       
+~~~~
 
 
  效果图 
- 
+
  ![图片](http://img.ccblog.cn/flink/0.png)
  ![图片](http://img.ccblog.cn/flink/1-1.png)
  ![图片](http://img.ccblog.cn/flink/1.png)
@@ -36,10 +59,11 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
  ![图片](http://img.ccblog.cn/flink/7.png)
  ![图片](http://img.ccblog.cn/flink/8.png)
  ![图片](http://img.ccblog.cn/flink/9.png)
+ ![图片](http://img.ccblog.cn/flink/10.png)
+ ![图片](http://img.ccblog.cn/flink/12.png)
 
 
 
-  
 ## 二、环境以及安装
 
 
@@ -58,6 +82,13 @@ scala版本 2.11
 kafka版本 1.0+
 
 mysql版本 5.6+
+
+
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
+
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
+
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
 
 
 
@@ -118,7 +149,7 @@ export HADOOP_CLASSPATH=`hadoop classpath`
 
 
 
-a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
+  ##### a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming-platform-web/releases/
 
 ~~~~
  tar -xvf   flink-streaming-platform-web.tar.gz
@@ -126,7 +157,7 @@ a:**下载最新版本** 并且解压 https://github.com/zhp8341/flink-streaming
 ~~~~
 
 
-b:执行mysql语句
+ ##### b:执行mysql语句
 
 ~~~~
 
@@ -139,7 +170,7 @@ mysql 版本5.6+以上
 
 ~~~~
 
-c:修改数据库连接配置
+  ##### c:修改数据库连接配置
 
 ~~~~
 /flink-streaming-platform-web/conf/application.properties  
@@ -149,7 +180,7 @@ c:修改数据库连接配置
 **关于数据库连接配置 需要看清楚你 useSSL=true 你的mysql是否支持 如果不支持可以直接 useSSL=false**
 
 
-d:启动web
+  ##### d:启动web
 
 ~~~~
 cd  /XXXX/flink-streaming-platform-web/bin 
@@ -163,13 +194,15 @@ cd  /XXXX/flink-streaming-platform-web/bin
 日志目录地址： /XXXX/flink-streaming-platform-web/logs/
 
 ~~~~
+
+
 **一定 一定 一定 要到bin目录下再执行deploy.sh  否则无法启动**
 
 
-e:登录
+  ##### e:登录
 
 ~~~~
-http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/
+http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/admin/index
 
 
 登录号：admin  密码 123456
@@ -177,7 +210,7 @@ http://${ip或者hostname}:9084/  如 : http://hadoop003:9084/
 ~~~~
 
 
-f:集群
+  ##### f:集群
 
 如果需要集群部署模式 简单参考图
 
@@ -188,6 +221,23 @@ f:集群
 
  **备注：flink客户端必须和flink-streaming-platform-web应用部署在同一服务器**
 
+
+  ##### g:端口/内存修改
+
+ web端口修改 在conf下面的 application.properties 
+
+ **server.port参数 默认是9084**
+
+ jmx端口 在启动脚本 deploy.sh 里面
+
+ **默认是8999**
+
+ **debug端口 9901**
+
+
+jvm内存修改 都在deploy.sh
+
+**默认是按2G物理内存在分配jvm的  -Xmx1888M -Xms1888M -Xmn1536M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M**
 
 
 
@@ -202,19 +252,19 @@ f:集群
 a: 任务名称（*必选）
 ~~~~
 任务名称不能超过50个字符 并且 任务名称仅能含数字,字母和下划线
- ~~~~
- 
+~~~~
+
 b: 运行模式
 
    YARN_PER( yarn独立模式 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/yarn_setup.html#run-a-single-flink-job-on-yarn)
-   
-   
+
+
    STANDALONE（独立集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/cluster_setup.html）
-   
-   
+
+
    LOCAL(本地集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/local.html )
-   
-   
+
+
    <font color=red size=5>LOCAL 需要在本地单机启动flink 服务  ./bin/start-cluster.sh </font>
 
 
@@ -271,7 +321,8 @@ d: Checkpoint信息
 -checkpointTimeout 
 -checkpointDir 
 -tolerableCheckpointFailureNumber 
--asynchronousSnapshots 
+-asynchronousSnapshots
+-externalizedCheckpointCleanup
 如：  -asynchronousSnapshots true  -checkpointDir   hdfs://hcluster/flink/checkpoints/   
 (注意目前权限)
 
@@ -282,9 +333,10 @@ d: Checkpoint信息
 | checkpointInterval      |  整数 （如 1000）  |   默认每60s保存一次checkpoint  单位毫秒   |
 | checkpointingMode      |  EXACTLY_ONCE  或者 AT_LEAST_ONCE  |     一致性模式 默认EXACTLY_ONCE  单位字符  |
 | checkpointTimeout      |   6000|      默认超时10 minutes 单位毫秒|
-| checkpointDir      |    |   保存地址 如  hdfs://hcluster/flink/checkpoints/ 注意目录权限   | 
+| checkpointDir      |    |   保存地址 如  hdfs://hcluster/flink/checkpoints/ 注意目录权限   |
 | tolerableCheckpointFailureNumber      |  1  |    设置失败次数 默认一次    |
 | asynchronousSnapshots      |  true 或者 false  |     是否异步  |
+| externalizedCheckpointCleanup | DELETE_ON_CANCELLATION或者RETAIN_ON_CANCELLATION | 作业取消后检查点是否删除 |
 
 
 
@@ -301,13 +353,26 @@ http://ccblog.cn/jars/mysql-connector-java-5.1.25.jar
 CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
 ~~~~
 ![图片](http://img.ccblog.cn/flink/9.png)
- 
+
  多个url使用换行
 
 
 udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://github.com/zhp8341/flink-streaming-udf)
 
 
+f: sql语句
+
+![图片](http://img.ccblog.cn/flink/10.png)
+
+![图片](http://img.ccblog.cn/flink/12.png)
+
+支持代码格式化 sql语句校验 提示功能
+
+目前不支持hive、批处理语法 如（不支持直接select 必须使用 insert into xx select xx  ）
+
+**备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果 tips: win系统 CTRL+A 全选 mac系统 command+A 全选**
+
+**备注：只能校验单个sql语法正确与否, 不能校验上下文之间关系，如：这张表是否存在 数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误**
 
 
 ### 2、系统设置
@@ -351,9 +416,10 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ![图片](https://img-blog.csdnimg.cn/20201018110534482.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 ![图片](https://img-blog.csdnimg.cn/20201018112359232.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pocDgzNDE=,size_16,color_FFFFFF,t_70#pic_center)
 
-   
+
 效果图
 ![图片](https://img-blog.csdnimg.cn/20201018111816869.png#pic_center)
+
 
 ##  三、配置demo
 
@@ -386,7 +452,7 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 ```
 
 
-##以下语法是按照flink1.10写的  有时间重新写
+
 
 [demo1 单流kafka写入mysqld 参考 ](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_1.md)
 
@@ -398,79 +464,12 @@ udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://
 
 [demo5 滑动窗口](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_5.md)
 
+[demo6 JDBC CDC的使用示例](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/sql_demo/demo_6.md)
+
+[demo7 datagen简介](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/sql_demo/demo_datagen.md)
 
 
-```sql
 
-CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
-
--- 如果使用udf 函数必须配置 udf地址
-
-     create table flink_test_6 ( 
-  id BIGINT,
-  day_time VARCHAR,
-  amnount BIGINT,
-  proctime AS PROCTIME ()
-)
- with ( 
- 'connector.properties.zookeeper.connect'='hadoop001:2181',
-  'connector.version'='universal',
-  'connector.topic'='flink_test_6',
-  'connector.startup-mode'='earliest-offset',
-  'format.derive-schema'='true',
-  'connector.type'='kafka',
-  'update-mode'='append',
-  'connector.properties.bootstrap.servers'='hadoop003:9092',
-  'connector.properties.group.id'='flink_gp_test1',
-  'format.type'='json'
- );
-
-
-create table flink_test_6_dim ( 
-  id BIGINT,
-  coupon_amnount BIGINT
-)
- with ( 
-   'connector.type' = 'jdbc',
-   'connector.url' = 'jdbc:mysql://127.0.0.1:3306/flink_web?characterEncoding=UTF-8',
-   'connector.table' = 'test_dim',
-   'connector.username' = 'flink_web_test',
-   'connector.password' = 'flink_web_test_123',
-   'connector.lookup.max-retries' = '3'
- );
-
-
-CREATE TABLE sync_test_3 (
-                   day_time string,
-                   total_gmv bigint
- ) WITH (
-   'connector.type' = 'jdbc',
-   'connector.url' = 'jdbc:mysql://127.0.0.1:3306/flink_web?characterEncoding=UTF-8',
-   'connector.table' = 'sync_test_3',
-   'connector.username' = 'flink_web_test',
-   'connector.password' = 'flink_web_test_123'
-
- );
-
-
-INSERT INTO sync_test_3 
-SELECT 
-  day_time, 
-  SUM(amnount - coupon_amnount) AS total_gmv 
-FROM 
-  (
-    SELECT 
-      a.day_time as day_time, 
-      a.amnount as amnount, 
-      b.coupon_amnount as coupon_amnount 
-    FROM 
-      flink_test_6 as a 
-      LEFT JOIN flink_test_6_dim  FOR SYSTEM_TIME AS OF  a.proctime  as b
-     ON b.id = a.id
-  ) 
-GROUP BY day_time;
-
-```
 
 
 
@@ -514,7 +513,7 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connector
 
 
  ![图片](http://img.ccblog.cn/flink/9.png)
- 
+
  多个url使用换行
 
 **自定义连接器打包的时候需要打成shade 并且解决jar的冲突**
@@ -661,9 +660,9 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 3、 支持Application模式
 
-4、 完善文档
+4、 完善文档 （持续过程）
 
-5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验
+5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验(完成)
 
 6、 checkpoint支持rocksDB
 
@@ -676,12 +675,14 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 钉钉 
  [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
- 
+
 http://img.ccblog.cn/flink/dd2.png 
 
 微信二维码 http://img.ccblog.cn/flink/wx2.png
 
  [微信二维码](http://img.ccblog.cn/flink/wx2.png)
+
+ 
 
 
 
