@@ -322,6 +322,7 @@ d: Checkpoint信息
 -checkpointDir 
 -tolerableCheckpointFailureNumber 
 -asynchronousSnapshots 
+-externalizedCheckpointCleanup 
 如：  -asynchronousSnapshots true  -checkpointDir   hdfs://hcluster/flink/checkpoints/   
 (注意目前权限)
 
@@ -335,6 +336,7 @@ d: Checkpoint信息
 | checkpointDir      |    |   保存地址 如  hdfs://hcluster/flink/checkpoints/ 注意目录权限   | 
 | tolerableCheckpointFailureNumber      |  1  |    设置失败次数 默认一次    |
 | asynchronousSnapshots      |  true 或者 false  |     是否异步  |
+| externalizedCheckpointCleanup      |  RETAIN_ON_CANCELLATION 或者 DELETE_ON_CANCELLATION  |    可以不填   |
 
 
 
@@ -669,18 +671,39 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 
 
-联系方式 
+ ##  八、联系方式 
+ 
 
 钉钉 
  [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
  
+ 
 http://img.ccblog.cn/flink/dd2.png 
 
+
 微信二维码 http://img.ccblog.cn/flink/wx2.png
+
 
  [微信二维码](http://img.ccblog.cn/flink/wx2.png)
  
  
-
+ 
+ ##  九、捐赠
+ 
+ 目前测试环境主要是订购了阿里云的ecs自己搭建的集群服务，用于平台测试。
+ 
+ 捐赠费用主要用于测试环境费用支付、以及后续聘请前端优化界面等开销。
+ 
+ 
+ 
+ [点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
+ 
+ ![图片](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/wxzf.jpg)
+ 
+ 
+ 
+ [点击打开支付宝捐赠](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/zfb.jpg)
+  
+  ![图片](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/zfb.jpg)
 
 
