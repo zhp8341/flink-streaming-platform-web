@@ -695,15 +695,16 @@ http://img.ccblog.cn/flink/dd2.png
  捐赠费用主要用于测试环境费用支付、以及后续聘请前端优化界面等开销。
  
  
- 
+  [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
+   
+  ![图片](http://img.ccblog.cn/jz/zfb.jpg)
+
+
  [点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
  
- ![图片](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/wxzf.jpg)
+
  
  
  
- [点击打开支付宝捐赠](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/zfb.jpg)
-  
-  ![图片](http://flink-sql.oss-cn-hangzhou.aliyuncs.com/zfb.jpg)
 
 
