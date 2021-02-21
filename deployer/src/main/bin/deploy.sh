@@ -38,7 +38,7 @@ start(){
      then
 
          echo "开始启动进程执行命令  java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties  "
-         echo -e "\n \n"
+        
           java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties      >/dev/null 2>&1  &
           sleep 10
           pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
