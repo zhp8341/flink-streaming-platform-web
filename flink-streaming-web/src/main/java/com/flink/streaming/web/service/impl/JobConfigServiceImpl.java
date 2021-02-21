@@ -187,30 +187,30 @@ public class JobConfigServiceImpl implements JobConfigService {
         StringBuffer tips = new StringBuffer();
         String flinkHome = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
         if (StringUtils.isEmpty(flinkHome)) {
-            tips.append("请在  系统管理-->系统设置 里面配置 flinkHome");
+            tips.append(" flinkHome、");
         }
         String webHome = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
         if (StringUtils.isEmpty(webHome)) {
-            tips.append(" web应用安装的目录、");
+            tips.append(" web应用安装的目录 ");
         }
         switch (deployModeEnum) {
             case YARN_PER:
                 String yarnHttpAddress = systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
                 if (StringUtils.isEmpty(yarnHttpAddress)) {
-                    tips.append(" yarnHttpAddress url地址、");
+                    tips.append(" yarn_rm_http_address url地址 ");
                 }
                 break;
             case LOCAL:
                 String flinkHttpAddress = systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey());
                 if (StringUtils.isEmpty(flinkHttpAddress)) {
-                    tips.append(" flinkHttpAddress url地址");
+                    tips.append(" flink_rest_http_address url地址 ");
                 }
                 break;
             default:
                 break;
         }
         if (StringUtils.isNotEmpty(tips.toString())) {
-            throw new BizException(tips.toString());
+            throw new BizException("请在  系统管理-->系统设置 里面配置 "+tips.toString());
         }
 
     }
