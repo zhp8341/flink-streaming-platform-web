@@ -232,7 +232,7 @@ public class JobConfigApiController extends BaseController {
             }
         }
 
-        return null;
+        return null;    // 返回 null ，作为检验成功的标识
     }
 
 
