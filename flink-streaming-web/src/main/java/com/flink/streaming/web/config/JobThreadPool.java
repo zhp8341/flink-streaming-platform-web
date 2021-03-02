@@ -1,4 +1,4 @@
-package com.flink.streaming.web.common.thread;
+package com.flink.streaming.web.config;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ *
  * 核心线程10个 最大线程100 队列200 公平策略
  *
  * @author zhuhuipei
@@ -16,8 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @time 00:16
  */
 @Slf4j
-
-public class AsyncThreadPool {
+public class JobThreadPool {
 
     private static int corePoolSize = 10;
 
@@ -28,22 +28,22 @@ public class AsyncThreadPool {
 
     private static ThreadPoolExecutor threadPoolExecutor;
 
-    private static AsyncThreadPool asyncThreadPool;
+    private static JobThreadPool asyncThreadPool;
 
-    private AsyncThreadPool() {
+    private JobThreadPool() {
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(200, true);
         threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue);
     }
 
-    public static synchronized AsyncThreadPool getInstance() {
+    public static synchronized JobThreadPool getInstance() {
         if (null == asyncThreadPool) {
-            synchronized (AsyncThreadPool.class) {
+            synchronized (JobThreadPool.class) {
                 if (null == asyncThreadPool) {
-                    asyncThreadPool = new AsyncThreadPool();
+                    asyncThreadPool = new JobThreadPool();
                 }
             }
         }
-        log.info("AsyncThreadPool threadPoolExecutor={}", threadPoolExecutor);
+        log.info("JobThreadPool threadPoolExecutor={}", threadPoolExecutor);
         return asyncThreadPool;
     }
 

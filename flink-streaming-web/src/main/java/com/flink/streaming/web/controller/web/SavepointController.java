@@ -38,7 +38,7 @@ public class SavepointController {
         List<SavepointBackupDTO> savepointBackupDTOList = savepointBackupService.lasterHistory10(jobConfigId);
         modelMap.put("savepointList", SavepointBackupVO.toDTOList(savepointBackupDTOList));
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(jobConfigId);
-        if (jobConfigDTO != null && JobConfigStatus.RUN.getCode().intValue() != jobConfigDTO.getStauts().getCode().intValue()
+        if (jobConfigDTO != null && JobConfigStatus.RUN.getCode().intValue() != jobConfigDTO.getStatus().getCode().intValue()
                 && YN.getYNByValue(jobConfigDTO.getIsOpen()).getCode()) {
             modelMap.put("startButton", true);
         } else {

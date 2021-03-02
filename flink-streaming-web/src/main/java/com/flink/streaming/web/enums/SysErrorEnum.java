@@ -37,6 +37,7 @@ public enum SysErrorEnum {
     JOB_CONFIG_JOB_NAME_IS_EXIST("20001", "任务名称已经存在"),
     JOB_CONFIG_JOB_IS_NOT_EXIST("20002", "任务配置不存在"),
     JOB_CONFIG_JOB_IS_OPEN("20003", "任务开启或者运行状态不能修改，请先关闭任务"),
+    JOB_CONFIG_DEPLOY_MODE_ENUM_NULL("20004", "DeployModeEnum 参数为空"),
 
     SYSTEM_CONFIG_IS_NULL("30000", "请先配置系统环境 "),
     SYSTEM_CONFIG_IS_NULL_FLINK_HOME("30001", "请先flink_home环境的目录地址"),
@@ -45,11 +46,15 @@ public enum SysErrorEnum {
     SYSTEM_CONFIG_IS_NULL_FLINK_REST_HA_HTTP_ADDRESS("30005", "请先配置flink rest  ha 的http地址"),
     SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME("30003", "请先配置web平台的目录地址"),
 
-
     YARN_CODE("00000", "yarn队列中没有找到运行的任务"),
 
 
     ADD_SAVEPOINT_ERROR("40000", "手动添加SAVEPOINT失败"),
+
+
+    ALARM_DINGDING_NULL("50000","请到报警管理-报警设置 配置钉钉告警url"),
+
+    ALARM_HTTP_NULL("50001","请到报警管理-报警设置 配置回调url"),
 
     ;
 

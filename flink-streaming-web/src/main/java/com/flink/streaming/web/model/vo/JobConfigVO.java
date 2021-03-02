@@ -82,8 +82,8 @@ public class JobConfigVO {
         jobConfigVO.setJobId(jobConfigDTO.getJobId());
         jobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
         jobConfigVO.setIsOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
-        jobConfigVO.setStauts(jobConfigDTO.getStauts().getCode());
-        jobConfigVO.setStautsStr(jobConfigDTO.getStauts().getDesc());
+        jobConfigVO.setStauts(jobConfigDTO.getStatus().getCode());
+        jobConfigVO.setStautsStr(jobConfigDTO.getStatus().getDesc());
         if (jobConfigDTO.getDeployModeEnum() != null) {
             jobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }

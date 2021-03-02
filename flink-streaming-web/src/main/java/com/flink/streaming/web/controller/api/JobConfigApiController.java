@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import com.flink.streaming.web.ao.JobConfigAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.exceptions.BizException;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @Slf4j
-public class JobConfigApiController extends BaseController {
+public class  JobConfigApiController extends BaseController {
 
 
     @Autowired
@@ -40,6 +41,8 @@ public class JobConfigApiController extends BaseController {
 
     @Autowired
     private JobConfigService jobConfigService;
+    @Autowired
+    private JobConfigAO jobConfigAO;
 
     @RequestMapping("/start")
     public RestResult<String> start(Long id, Long savepointId) {
@@ -137,7 +140,7 @@ public class JobConfigApiController extends BaseController {
             if (restResult != null) {
                 return restResult;
             }
-            jobConfigService.addJobConfig(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
+            jobConfigAO.addJobConfig(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
         } catch (BizException biz) {
             log.warn("addJobConfig is error ", biz);
             return RestResult.error(biz.getErrorMsg());
@@ -165,7 +168,7 @@ public class JobConfigApiController extends BaseController {
             if (YN.getYNByValue(jobConfigDTO.getIsOpen()).getCode()) {
                 return RestResult.error(SysErrorEnum.JOB_CONFIG_JOB_IS_OPEN.getErrorMsg());
             }
-            jobConfigService.updateJobConfigById(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
+            jobConfigAO.updateJobConfigById(UpsertJobConfigParam.toDTO(upsertJobConfigParam));
         } catch (BizException biz) {
             log.warn("updateJobConfigById is error ", biz);
             return RestResult.error(biz.getErrorMsg());
@@ -209,7 +212,6 @@ public class JobConfigApiController extends BaseController {
                 }
             }
         }
-
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
             String[] urls = upsertJobConfigParam.getExtJarPath().split("\n");
             for (String url : urls) {
@@ -260,7 +262,7 @@ public class JobConfigApiController extends BaseController {
                 log.info(" STANDALONE模式启动 {}", deployModeEnum);
                 return jobStandaloneServerAO;
             default:
-                throw new RuntimeException("不支持改模式系统");
+                throw new RuntimeException("不支持该模式系统");
         }
     }
 

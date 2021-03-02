@@ -3,7 +3,7 @@ package com.flink.streaming.web.model.vo;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import com.flink.streaming.web.enums.AlartLogStatusEnum;
+import com.flink.streaming.web.enums.AlarmLogStatusEnum;
 import com.flink.streaming.web.model.dto.AlartLogDTO;
 import lombok.Data;
 
@@ -66,15 +66,15 @@ public class AlartLogVO {
         alartLogVO.setJobConfigId(alartLogDTO.getJobConfigId());
         alartLogVO.setJobName(alartLogDTO.getJobName());
         alartLogVO.setMessage(alartLogDTO.getMessage());
-        alartLogVO.setStatus(alartLogDTO.getAlartLogStatusEnum().getCode());
-        if (alartLogDTO.getAlartLogTypeEnum() != null) {
-            alartLogVO.setTypeDesc(alartLogDTO.getAlartLogTypeEnum().getDesc());
+        alartLogVO.setStatus(alartLogDTO.getAlarmLogStatusEnum().getCode());
+        if (alartLogDTO.getAlarMLogTypeEnum() != null) {
+            alartLogVO.setTypeDesc(alartLogDTO.getAlarMLogTypeEnum().getDesc());
         }
-        if (alartLogDTO.getAlartLogStatusEnum() != null) {
-            if (AlartLogStatusEnum.SUCCESS.equals(alartLogDTO.getAlartLogStatusEnum())) {
-                alartLogVO.setStatusDesc(alartLogDTO.getAlartLogStatusEnum().getDesc());
+        if (alartLogDTO.getAlarmLogStatusEnum() != null) {
+            if (AlarmLogStatusEnum.SUCCESS.equals(alartLogDTO.getAlarmLogStatusEnum())) {
+                alartLogVO.setStatusDesc(alartLogDTO.getAlarmLogStatusEnum().getDesc());
             } else {
-                alartLogVO.setStatusDesc("<span style=\"color: red\">" + alartLogDTO.getAlartLogStatusEnum().getDesc() + "</span>");
+                alartLogVO.setStatusDesc("<span style=\"color: red\">" + alartLogDTO.getAlarmLogStatusEnum().getDesc() + "</span>");
             }
 
         }

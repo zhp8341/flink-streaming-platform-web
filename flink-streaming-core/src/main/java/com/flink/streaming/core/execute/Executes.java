@@ -2,6 +2,7 @@ package com.flink.streaming.core.execute;
 
 import com.flink.streaming.common.model.SqlConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.TableEnvironment;
 
 /**
@@ -56,10 +57,13 @@ public class Executes {
         if (sqlConfig == null || sqlConfig.getDmlList() == null) {
             return;
         }
+        StatementSet statementSet= tEnv.createStatementSet();
         for (String dml : sqlConfig.getDmlList()) {
             System.out.println("#############dml############# \n" + dml);
             log.info("#############dml############# \n {}", dml);
-            tEnv.executeSql(dml);
+//            tEnv.executeSql(dml);
+            statementSet.addInsertSql(dml);
         }
+        statementSet.execute();
     }
 }

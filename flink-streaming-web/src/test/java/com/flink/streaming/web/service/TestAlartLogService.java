@@ -1,8 +1,8 @@
 package com.flink.streaming.web.service;
 
 import com.flink.streaming.web.base.TestRun;
-import com.flink.streaming.web.enums.AlartLogStatusEnum;
-import com.flink.streaming.web.enums.AlartLogTypeEnum;
+import com.flink.streaming.web.enums.AlarmLogStatusEnum;
+import com.flink.streaming.web.enums.AlarmLogTypeEnum;
 import com.flink.streaming.web.model.dto.AlartLogDTO;
 import com.flink.streaming.web.model.dto.PageModel;
 import org.junit.Test;
@@ -25,16 +25,16 @@ public class TestAlartLogService extends TestRun {
         for (int i = 0; i <20 ; i++) {
             AlartLogDTO alartLogDTO = new AlartLogDTO();
             alartLogDTO.setJobConfigId(2L);
-            alartLogDTO.setAlartLogTypeEnum(AlartLogTypeEnum.DINGDING);
-            alartLogDTO.setAlartLogStatusEnum(AlartLogStatusEnum.SUCCESS);
+            alartLogDTO.setAlarMLogTypeEnum(AlarmLogTypeEnum.DINGDING);
+            alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.SUCCESS);
             alartLogDTO.setMessage("单测成功");
             alartLogService.addAlartLog(alartLogDTO);
 
 
             AlartLogDTO alartLogDTO2 = new AlartLogDTO();
             alartLogDTO2.setJobConfigId(2L);
-            alartLogDTO2.setAlartLogTypeEnum(AlartLogTypeEnum.DINGDING);
-            alartLogDTO2.setAlartLogStatusEnum(AlartLogStatusEnum.FAIL);
+            alartLogDTO2.setAlarMLogTypeEnum(AlarmLogTypeEnum.DINGDING);
+            alartLogDTO2.setAlarmLogStatusEnum(AlarmLogStatusEnum.FAIL);
             alartLogDTO2.setMessage("单测失败");
             alartLogDTO2.setFailLog("xxx失败");
             alartLogService.addAlartLog(alartLogDTO2);

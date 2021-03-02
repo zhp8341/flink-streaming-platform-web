@@ -8,6 +8,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 
 /**
+ * SchedulerTask 线程池
  * @author zhuhuipei
  * @Description:
  * @date 2018/9/6

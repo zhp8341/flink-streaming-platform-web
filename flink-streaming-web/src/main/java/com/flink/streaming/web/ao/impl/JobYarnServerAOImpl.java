@@ -9,19 +9,9 @@ import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
-import com.flink.streaming.web.common.thread.AsyncThreadPool;
-import com.flink.streaming.web.common.util.CliConfigUtil;
-import com.flink.streaming.web.common.util.CommandUtil;
-import com.flink.streaming.web.common.util.FileUtils;
-import com.flink.streaming.web.common.util.IpUtil;
-import com.flink.streaming.web.common.util.YarnUtil;
-import com.flink.streaming.web.enums.DeployModeEnum;
-import com.flink.streaming.web.enums.JobConfigStatus;
-import com.flink.streaming.web.enums.JobStatusEnum;
-import com.flink.streaming.web.enums.SysConfigEnum;
-import com.flink.streaming.web.enums.SysConfigEnumType;
-import com.flink.streaming.web.enums.SysErrorEnum;
-import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.common.util.*;
+import com.flink.streaming.web.config.JobThreadPool;
+import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunLogDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
@@ -84,10 +74,10 @@ public class JobYarnServerAOImpl implements JobServerAO {
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        if (JobConfigStatus.RUN.getCode().equals(jobConfigDTO.getStauts().getCode())) {
+        if (JobConfigStatus.RUN.getCode().equals(jobConfigDTO.getStatus().getCode())) {
             throw new BizException("任务运行中请先停止任务");
         }
-        if (jobConfigDTO.getStauts().equals(JobConfigStatus.STARTING)) {
+        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
             throw new BizException("任务正在启动中 请稍等..");
         }
         if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()) {
@@ -144,12 +134,8 @@ public class JobYarnServerAOImpl implements JobServerAO {
         jobRunLogDTO.setJobStatus(JobStatusEnum.STARTING.name());
         Long jobRunLogId = jobRunLogService.insertJobRunLog(jobRunLogDTO);
 
-        //变更任务状态
-        JobConfigDTO jobConfigUpdate = new JobConfigDTO();
-        jobConfigUpdate.setId(jobConfigDTO.getId());
-        jobConfigUpdate.setLastRunLogId(jobRunLogId);
-        jobConfigUpdate.setStauts(JobConfigStatus.STARTING);
-        jobConfigService.updateJobConfigById(jobConfigUpdate);
+        //变更任务状态 有乐观锁 防止重复提交
+        jobConfigService.updateStatusByStart(jobConfigDTO.getId(), userName, jobRunLogId, jobConfigDTO.getVersion());
 
         String savepointPath = savepointBackupService.getSavepointPathById(id, savepointId);
 
@@ -176,7 +162,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
         this.stop(jobConfigDTO);
 
         JobConfigDTO jobConfig = new JobConfigDTO();
-        jobConfig.setStauts(JobConfigStatus.STOP);
+        jobConfig.setStatus(JobConfigStatus.STOP);
         jobConfig.setEditor(userName);
         jobConfig.setId(id);
         jobConfig.setJobId("");
@@ -231,10 +217,10 @@ public class JobYarnServerAOImpl implements JobServerAO {
     @Override
     public void close(Long id, String userName) {
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO.getStauts().equals(JobConfigStatus.RUN)) {
+        if (jobConfigDTO.getStatus().equals(JobConfigStatus.RUN)) {
             throw new BizException(MessageConstants.MESSAGE_002);
         }
-        if (jobConfigDTO.getStauts().equals(JobConfigStatus.STARTING)) {
+        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
             throw new BizException(MessageConstants.MESSAGE_003);
         }
         jobConfigService.openOrClose(id, YN.N, userName);
@@ -252,7 +238,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
                            final Long jobRunLogId, final String savepointPath) {
 
 
-        ThreadPoolExecutor threadPoolExecutor = AsyncThreadPool.getInstance().getThreadPoolExecutor();
+        ThreadPoolExecutor threadPoolExecutor = JobThreadPool.getInstance().getThreadPoolExecutor();
         threadPoolExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -266,7 +252,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
 
                 try {
-                    String command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig,  savepointPath);
+                    String command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig, savepointPath);
                     commandAdapter.startForPerYarn(command, localLog, jobRunLogId);
                     Thread.sleep(1000 * 10);
                     appId = httpRequestAdapter.getAppIdByYarn(jobConfig.getJobName(), YarnUtil.getQueueName(jobConfig.getFlinkRunConfig()));
@@ -327,14 +313,14 @@ public class JobYarnServerAOImpl implements JobServerAO {
                     JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
                     jobRunLogDTO.setId(jobRunLogId);
                     if (JobStatusEnum.SUCCESS.name().equals(jobStatus) && !StringUtils.isEmpty(appId)) {
-                        jobConfigDTO.setStauts(JobConfigStatus.RUN);
+                        jobConfigDTO.setStatus(JobConfigStatus.RUN);
                         jobConfigDTO.setLastStartTime(new Date());
                         jobConfigDTO.setJobId(appId);
                         jobRunLogDTO.setJobId(appId);
                         jobRunLogDTO.setRemoteLogUrl(systemConfigService.getYarnRmHttpAddress()
                                 + SystemConstants.HTTP_YARN_CLUSTER_APPS + jobConfigDTO.getJobId());
                     } else {
-                        jobConfigDTO.setStauts(JobConfigStatus.FAIL);
+                        jobConfigDTO.setStatus(JobConfigStatus.FAIL);
                     }
                     jobConfigService.updateJobConfigById(jobConfigDTO);
 
