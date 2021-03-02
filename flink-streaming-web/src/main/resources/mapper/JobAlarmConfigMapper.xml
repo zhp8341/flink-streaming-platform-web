@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flink.streaming.web.mapper.JobAlarmConfigMapper">
+    <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobAlarmConfig">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="job_id" jdbcType="BIGINT" property="jobId"/>
+        <result column="type" jdbcType="BIT" property="type"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+        <result column="creator" jdbcType="VARCHAR" property="creator"/>
+        <result column="editor" jdbcType="VARCHAR" property="editor"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, job_id, type, version, is_deleted, create_time, edit_time, creator, editor
+    </sql>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+
+        insert into job_alarm_config (job_id, type, version,
+        is_deleted, create_time, edit_time,
+        creator, editor)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.jobId}, #{item.type}, 0,
+            0, now(), now(),
+            'sys', 'sys')
+        </foreach>
+    </insert>
+
+
+    <select id="selectByJobId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job_alarm_config
+        where job_id = #{jobId,jdbcType=BIGINT} and is_deleted=0
+    </select>
+
+
+
+    <update id="deleteByJobId" parameterType="java.lang.Long">
+        update job_alarm_config
+        set is_deleted=1
+        where job_id = #{jobId,jdbcType=BIGINT} and is_deleted=0
+    </update>
+
+
+</mapper>

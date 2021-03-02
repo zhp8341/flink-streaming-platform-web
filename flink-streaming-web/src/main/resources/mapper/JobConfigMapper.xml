@@ -9,7 +9,7 @@
         <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
         <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
         <result column="is_open" jdbcType="BIT" property="isOpen"/>
-        <result column="stauts" jdbcType="BIT" property="stauts"/>
+        <result column="status" jdbcType="BIT" property="stauts"/>
         <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
         <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
         <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
@@ -33,7 +33,7 @@
         flink_checkpoint_config,
         job_id,
         is_open,
-        stauts,
+        status,
         ext_jar_path,
         last_start_time,
         last_run_log_id,
@@ -54,7 +54,7 @@
         </selectKey>
         insert into job_config (job_name, deploy_mode, flink_run_config,
         flink_checkpoint_config, job_id, is_open,
-        stauts, last_start_time, version,
+        status, last_start_time, version,
         is_deleted, create_time, edit_time,
         creator, editor, flink_sql,ext_jar_path
         )
@@ -97,7 +97,7 @@
 
         <if test="stauts != null ">
             <![CDATA[
-	               and stauts = #{stauts,jdbcType=BIT}
+	               and status = #{stauts,jdbcType=BIT}
 			 ]]>
         </if>
 
@@ -129,7 +129,7 @@
 
         from job_config
 
-        where is_deleted=0 and  stauts in
+        where is_deleted=0 and  status in
 
         <foreach collection="statusList" item="id" index="index" open="(" close=")" separator=",">
             #{id}
@@ -151,9 +151,23 @@
     </select>
 
 
+    <update id="updateStatusByStart" >
+        update job_config
+        <set>
+            version=version+1,
+            editor = #{userName,jdbcType=VARCHAR},
+            status = #{status,jdbcType=BIT},
+            last_run_log_id = #{jobRunLogId,jdbcType=BIT}
+        </set>
+        where id = #{id,jdbcType=BIGINT} and is_deleted=0 and version=#{oldVersion,jdbcType=INTEGER}
+    </update>
+
+
     <update id="updateByPrimaryKeySelective" parameterType="com.flink.streaming.web.model.entity.JobConfig">
         update job_config
         <set>
+            version=version+1,
+
             <if test="jobName != null">
                 job_name = #{jobName,jdbcType=VARCHAR},
             </if>
@@ -173,7 +187,7 @@
                 is_open = #{isOpen,jdbcType=BIT},
             </if>
             <if test="stauts != null">
-                stauts = #{stauts,jdbcType=BIT},
+                status = #{stauts,jdbcType=BIT},
             </if>
 
             <if test="extJarPath != null">
@@ -183,9 +197,7 @@
             <if test="lastStartTime != null">
                 last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="version != null">
-                version = #{version,jdbcType=INTEGER},
-            </if>
+
             <if test="isDeleted != null">
                 is_deleted = #{isDeleted,jdbcType=BIT},
             </if>

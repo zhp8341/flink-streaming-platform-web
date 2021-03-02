@@ -20,7 +20,9 @@ public enum SysConfigEnum {
 
     FLINK_STREAMING_PLATFORM_WEB_HOME("flink_streaming_platform_web_home", "flink-streaming-platform-web应用安装的目录（必选）", SysConfigEnumType.SYS.name()),
 
-    FLINK_CATALOG_TYPE("flink_catalog_type", "flink catalog类型（目前仅支持hive catalog和memory catalog(默认)）", SysConfigEnumType.SYS.name()),
+    FLINK_CATALOG_TYPE("flink_catalog_type", "  暂不支持catalog（无效配置）", SysConfigEnumType.SYS.name()),
+    //FLINK_CATALOG_TYPE("flink_catalog_type", "flink catalog类型（目前仅支持hive catalog和memory catalog(默认)）",
+    // SysConfigEnumType.SYS.name()),
 
     HIVE_CATALOG_CONF_DIR("hive_catalog_conf_dir", "hive catalog配置目录", SysConfigEnumType.SYS.name()),
 
@@ -31,6 +33,9 @@ public enum SysConfigEnum {
     FLINK_REST_HA_HTTP_ADDRESS("flink_rest_ha_http_address", "flink Rest & web frontend HA 地址(Standalone Cluster模式 支持HA 可以填写多个地址 ;用分隔)", SysConfigEnumType.SYS.name()),
 
     DINGDING_ALARM_URL("dingding_alart_url", "钉钉告警所需的url（如果不填写将无法告警）", SysConfigEnumType.ALART.name()),
+
+    CALLBACK_ALARM_URL("callback_alart_url", "自定义http回调告警(只需填写url即可如:http://127.0.0.1/alarmCallback 地址必须是alarmCallback )",
+            SysConfigEnumType.ALART.name()),
 
     ;
 

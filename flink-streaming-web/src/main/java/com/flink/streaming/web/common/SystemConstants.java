@@ -20,6 +20,11 @@ public class SystemConstants {
     public static final String STATUS_RUNNING = "RUNNING";
 
 
+    public static final String USER_NAME_TASK_AUTO = "task-auto";
+
+
+
+
     public static final String DEFAULT_SAVEPOINT_ROOT_PATH = "hdfs:///flink/savepoint/flink-streaming-platform-web/";
 
     public static final String SLASH = "/";

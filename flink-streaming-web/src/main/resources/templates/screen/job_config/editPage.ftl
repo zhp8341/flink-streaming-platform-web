@@ -64,6 +64,26 @@
                                 <a href="https://github.com/zhp8341/flink-streaming-platform-web#%E4%B8%89%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"
                                    target="_blank">点击查看</a>
                             </div>
+                            <div class="form-group">
+                                <label for="inputfile">告警辅助配置：</label>
+
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="1"  <#if jobConfig.types??&&
+                                    jobConfig.types?seq_contains(1) > checked </#if>  />
+                                    钉钉告警
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="2"  <#if jobConfig.types??&&
+                                    jobConfig.types?seq_contains(2) > checked </#if> />
+                                    http回调告警
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="3"
+                                            <#if jobConfig.types??&&
+                                            jobConfig.types?seq_contains(3) > checked </#if> />
+                                    任务退出自动拉起
+                                </label>
+                            </div>
                             <div class="form-group ">
                                 <label for="inputfile">任务状态：</label>
                                 <pre>${jobConfig.stautsStr!""}</pre>
@@ -87,7 +107,8 @@
                             </div>
 
                             <div class="form-group" id="configDiv">
-                                <label for="inputfile" >*flink运行配置(如)：</label>
+                                <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)
+                                    ：</label>
                                 <input class="form-control " type="text"  name="flinkRunConfig" value="${jobConfig.flinkRunConfig!""}"   id="flinkRunConfig" >
                             </div>
 
@@ -228,6 +249,12 @@
 
     function editConfig() {
         flinkSqlVal=editor.getValue();
+
+        var chk_value =[];//定义一个数组
+        $('input[name="alarmType"]:checked').each(function(){
+            chk_value.push($(this).val());
+        });
+
         $.post("../api/editConfig", {
                 id: $('#id').val(),
                 jobName: $('#jobName').val(),
@@ -235,6 +262,7 @@
                 flinkRunConfig:  $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql:   flinkSqlVal,
+                alarmTypes:   chk_value.toString(),
                 extJarPath:  $('#extJarPath').val()
             },
             function (data, status) {

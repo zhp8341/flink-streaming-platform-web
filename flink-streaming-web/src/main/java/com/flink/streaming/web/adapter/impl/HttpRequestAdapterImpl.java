@@ -52,10 +52,13 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
         this.check( yarnAppInfo, queueName, jobName, url);
 
         for (AppTO appTO : yarnAppInfo.getApps().getApp()) {
-            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) &&
-                    SystemConstants.STATUS_RUNNING.equals(appTO.getState())) {
-                log.info("任务信息 appTO={}", appTO);
-                return appTO.getId();
+            if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) ) {
+                if ( SystemConstants.STATUS_RUNNING.equals(appTO.getState())){
+                    log.info("任务信息 appTO={}", appTO);
+                    return appTO.getId();
+                }else{
+                    log.error("任务运行状态失败 状态是 {}",appTO.getState());
+                }
             }
         }
         throw new BizException("yarn队列" + queueName + "中没有找到运行的任务 name=" +

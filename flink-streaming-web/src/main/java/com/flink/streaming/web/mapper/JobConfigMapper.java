@@ -24,6 +24,10 @@ public interface JobConfigMapper {
     int updateByPrimaryKeySelective(JobConfig record);
 
 
+    int updateStatusByStart(@Param("id") Long id, @Param("status") Integer status, @Param("userName") String userName,
+                         @Param("jobRunLogId") Long jobRunLogId, @Param("oldVersion") Integer oldVersion);
+
+
     Page<JobConfig> findJobConfig(JobConfigParam jobConfigParam);
 
 

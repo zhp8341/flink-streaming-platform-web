@@ -63,6 +63,22 @@
                                    target="_blank">点击查看</a>
                             </div>
                             <div class="form-group">
+                                <label for="inputfile">告警辅助配置：</label>
+
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="1" />
+                                    钉钉告警
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="2" />
+                                    http回调告警
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="alarmType" value="3" />
+                                    任务退出自动拉起
+                                </label>
+                            </div>
+                            <div class="form-group">
                                 <label for="inputfile">*任务名称：</label>
                                 <input class="form-control " type="text" placeholder="任务名称" name="jobName" id="jobName">
                             </div>
@@ -76,7 +92,7 @@
                                 </select>
                             </div>
                             <div class="form-group" id="configDiv">
-                                <label for="inputfile">*flink运行配置：</label>
+                                <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)：</label>
                                 <input class="form-control " type="text" name="flinkRunConfig" id="flinkRunConfig">
                             </div>
                             <div class="form-group">
@@ -105,11 +121,7 @@
                                 <a class="btn  btn-warning btn-sm" style="margin-left: 60px"  onclick="checkSql()">
                                     sql预校验</a>
                             </div>
-<#--                            <div class="form-group">-->
-<#--                                 <h5  style="color: #87B87F"> 代码格式化 备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果-->
-<#--                                     tips: win系统 CTRL+A 全选     mac系统 command+A  全选-->
-<#--                                 </h5>-->
-<#--                            </div>-->
+
                             <div class="form-group">
                                 <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,
                                     不能校验上下文之间关系，如：这张表是否存在
@@ -120,6 +132,8 @@
                             <div class="form-group">
                                 <label name="errorMessage" id="errorMessage"></label>
                             </div>
+
+
                         </div>
 
                         <!-- PAGE CONTENT ENDS -->
@@ -220,12 +234,17 @@
 
     function addConfig() {
         flinkSqlVal = editor.getValue();
+        var chk_value =[];//定义一个数组
+        $('input[name="alarmType"]:checked').each(function(){
+            chk_value.push($(this).val());
+        });
         $.post("../api/addConfig", {
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig: $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
+                alarmTypes:   chk_value.toString(),
                 extJarPath: $('#extJarPath').val()
             },
             function (data, status) {

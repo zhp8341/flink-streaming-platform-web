@@ -1,5 +1,6 @@
 package com.flink.streaming.web.model.dto;
 
+import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.web.model.entity.JobConfig;
@@ -58,7 +59,7 @@ public class JobConfigDTO implements Serializable {
      * @see com.flink.streaming.web.enums.JobConfigStatus
      * 1:运行中 0: 停止中 -1:运行失败
      */
-    private JobConfigStatus stauts;
+    private JobConfigStatus status;
 
 
     /**
@@ -80,6 +81,8 @@ public class JobConfigDTO implements Serializable {
      * sql语句
      */
     private String flinkSql;
+
+    private List<AlarmTypeEnum> alarmTypeEnumList;
 
 
     private Long lastRunLogId;
@@ -113,7 +116,7 @@ public class JobConfigDTO implements Serializable {
         jobConfig.setFlinkCheckpointConfig(jobConfigDTO.getFlinkCheckpointConfig());
         jobConfig.setJobId(jobConfigDTO.getJobId());
         jobConfig.setIsOpen(jobConfigDTO.getIsOpen());
-        jobConfig.setStauts(jobConfigDTO.getStauts().getCode());
+        jobConfig.setStauts(jobConfigDTO.getStatus().getCode());
         jobConfig.setLastStartTime(jobConfigDTO.getLastStartTime());
         jobConfig.setVersion(jobConfigDTO.getVersion());
         jobConfig.setFlinkSql(jobConfigDTO.getFlinkSql());
@@ -139,7 +142,7 @@ public class JobConfigDTO implements Serializable {
         jobConfigDTO.setFlinkCheckpointConfig(jobConfig.getFlinkCheckpointConfig());
         jobConfigDTO.setJobId(jobConfig.getJobId());
         jobConfigDTO.setIsOpen(jobConfig.getIsOpen());
-        jobConfigDTO.setStauts(JobConfigStatus.getJobConfigStatus(jobConfig.getStauts()));
+        jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(jobConfig.getStauts()));
         jobConfigDTO.setLastStartTime(jobConfig.getLastStartTime());
         jobConfigDTO.setVersion(jobConfig.getVersion());
         jobConfigDTO.setCreateTime(jobConfig.getCreateTime());
@@ -174,5 +177,14 @@ public class JobConfigDTO implements Serializable {
         return "flink@" + jobName;
     }
 
+
+    public static JobConfigDTO bulidStop(Long id) {
+        JobConfigDTO jobConfig = new JobConfigDTO();
+        jobConfig.setStatus(JobConfigStatus.STOP);
+        jobConfig.setEditor("sys_auto");
+        jobConfig.setId(id);
+        jobConfig.setJobId("");
+        return jobConfig;
+    }
 
 }

@@ -18,12 +18,13 @@ public interface JobConfigService {
 
     /**
      * 新增配置
+     * 返回主键Id
      *
      * @author zhuhuipei
      * @date 2020-07-14
      * @time 19:26
      */
-    void addJobConfig(JobConfigDTO jobConfigDTO);
+    Long addJobConfig(JobConfigDTO jobConfigDTO);
 
 
     /**
@@ -42,6 +43,17 @@ public interface JobConfigService {
      * @time 19:01
      */
     void updateJobConfigStatusById(Long id, JobConfigStatus jobConfigStatus);
+
+
+    /**
+     * 启动状态更新 有乐观锁
+     * @author zhuhuipei
+     * @date 2021/2/28
+     * @time 17:57
+     */
+    void updateStatusByStart(Long id, String userName, Long jobRunLogId, Integer version);
+
+
 
 
     /**

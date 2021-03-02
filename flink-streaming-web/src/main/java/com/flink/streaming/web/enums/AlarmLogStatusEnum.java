@@ -9,7 +9,7 @@ import lombok.Getter;
  * @time 21:45
  */
 @Getter
-public enum AlartLogStatusEnum {
+public enum AlarmLogStatusEnum {
     SUCCESS(1, "成功"),
     FAIL(0, "失败"),
     ;
@@ -20,19 +20,19 @@ public enum AlartLogStatusEnum {
     private String desc;
 
 
-    AlartLogStatusEnum(int code, String desc) {
+    AlarmLogStatusEnum(int code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static AlartLogStatusEnum getAlartLogStatusEnum(Integer code) {
+    public static AlarmLogStatusEnum getAlarmLogStatusEnum(Integer code) {
         if (code == null) {
             return null;
         }
 
-        for (AlartLogStatusEnum alartLogStatusEnum : AlartLogStatusEnum.values()) {
-            if (alartLogStatusEnum.getCode() == code.intValue()) {
-                return alartLogStatusEnum;
+        for (AlarmLogStatusEnum alarmLogStatusEnum : AlarmLogStatusEnum.values()) {
+            if (alarmLogStatusEnum.getCode() == code.intValue()) {
+                return alarmLogStatusEnum;
             }
 
         }

@@ -8,14 +8,17 @@ import com.flink.streaming.web.ao.TaskServiceAO;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.YarnUtil;
-import com.flink.streaming.web.enums.JobConfigStatus;
-import com.flink.streaming.web.enums.SysConfigEnum;
-import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.config.AlarmPoolConfig;
+import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.flink.JobStandaloneInfo;
 import com.flink.streaming.web.model.flink.JobYarnInfo;
+import com.flink.streaming.web.model.vo.CallbackDTO;
+import com.flink.streaming.web.service.JobAlarmConfigService;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SystemConfigService;
+import com.flink.streaming.web.thread.AlarmDingdingThread;
+import com.flink.streaming.web.thread.AlarmHttpThread;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author zhuhuipei
@@ -50,26 +54,35 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private JobServerAO jobYarnServerAO;
 
     @Autowired
+    private JobServerAO jobStandaloneServerAO;
+
+    @Autowired
     private SystemConfigService systemConfigService;
+
+    @Autowired
+    private JobAlarmConfigService jobAlarmConfigService;
+
+
+    private ThreadPoolExecutor threadPoolExecutor = AlarmPoolConfig.getInstance().getThreadPoolExecutor();
 
     @Override
     public void checkJobStatusByYarn() {
-
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             log.warn("当前配置中没有运行的任务");
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
+            List<AlarmTypeEnum> alarmTypeEnumList = jobAlarmConfigService.findByJobId(jobConfigDTO.getId());
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
-                    this.checkYarn(jobConfigDTO);
+                    this.checkYarn(jobConfigDTO, alarmTypeEnumList);
                     break;
                 case LOCAL:
-                    this.checkStandalone(jobConfigDTO);
+                    this.checkStandalone(jobConfigDTO, alarmTypeEnumList);
                     break;
                 case STANDALONE:
-                    this.checkStandalone(jobConfigDTO);
+                    this.checkStandalone(jobConfigDTO, alarmTypeEnumList);
                     break;
                 default:
                     break;
@@ -108,11 +121,9 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                     if (!StringUtils.isEmpty(appId)) {
                         JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(appId);
                         if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
-                            log.info("执行停止操作 jobYarnInfo={} id={}", jobYarnInfo, appId);
+                            log.warn("执行停止操作 jobYarnInfo={} id={}", jobYarnInfo, appId);
                             flinkHttpRequestAdapter.cancelJobForYarnByAppId(appId, jobYarnInfo.getId());
                         }
-                        alart(SystemConstants.buildDingdingMessage("kill掉yarn上任务保持数据一致性 任务名称：" +
-                                jobConfigDTO.getJobName()), jobConfigDTO.getId());
                     }
                     break;
                 default:
@@ -125,6 +136,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     public void autoSavePoint() {
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
+            log.error("autoSavePoint is error  没有找到运行中的任务 ");
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
@@ -151,62 +163,143 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     }
 
 
-    private void checkYarn(JobConfigDTO jobConfigDTO) {
+    private void checkYarn(JobConfigDTO jobConfigDTO, List<AlarmTypeEnum> alarmTypeEnumList) {
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-            String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称："
-                    + jobConfigDTO.getJobName());
-            this.alart(message, jobConfigDTO.getId());
-            log.error(message);
+            log.error("任务配置不存在");
             return;
         }
+        //查询任务状态
         JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-        if (jobYarnInfo == null || !SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
-            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobInfo={}", jobYarnInfo);
-            JobConfigDTO jobConfig = new JobConfigDTO();
-            jobConfig.setStauts(JobConfigStatus.STOP);
-            jobConfig.setEditor("sys_auto");
-            jobConfig.setId(jobConfigDTO.getId());
-            jobConfig.setJobId("");
-            jobConfigService.updateJobConfigById(jobConfig);
-            this.alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
-                    jobConfigDTO.getJobName()), jobConfigDTO.getId());
+
+        if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+            return;
         }
+
+        //变更任务状态
+        log.error("发现本地任务状态和yarn上不一致,准备自动修复本地web任务状态 jobInfo={}", jobYarnInfo);
+        JobConfigDTO jobConfig = JobConfigDTO.bulidStop(jobConfigDTO.getId());
+        jobConfigService.updateJobConfigById(jobConfig);
+
+        //发送告警并且自动拉起任务
+        this.alermAndAutoJob(alarmTypeEnumList,
+                SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
+                        jobConfigDTO.getJobName()), jobConfigDTO, DeployModeEnum.YARN_PER);
+
+
     }
 
 
-    private void checkStandalone(JobConfigDTO jobConfigDTO) {
+    private void checkStandalone(JobConfigDTO jobConfigDTO, List<AlarmTypeEnum> alarmTypeEnumList) {
         if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
             String message = SystemConstants.buildDingdingMessage(" 检测到任务jobId异常 任务名称："
                     + jobConfigDTO.getJobName());
-            this.alart(message, jobConfigDTO.getId());
             log.error(message);
             return;
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
-        if (jobStandaloneInfo == null || !SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
-            log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobStandaloneInfo={}", jobStandaloneInfo);
-            JobConfigDTO jobConfig = new JobConfigDTO();
-            jobConfig.setStauts(JobConfigStatus.STOP);
-            jobConfig.setEditor("sys_auto");
-            jobConfig.setId(jobConfigDTO.getId());
-            jobConfig.setJobId("");
-            jobConfigService.updateJobConfigById(jobConfig);
-            this.alart(SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
-                    jobConfigDTO.getJobName()), jobConfigDTO.getId());
+        //查询任务状态
+        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),
+                jobConfigDTO.getDeployModeEnum());
+
+        if (jobStandaloneInfo != null && SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+            return;
         }
+
+        //变更任务状态
+        log.error("发现本地任务状态和yarn上不一致,准备自动修复任务状态 jobStandaloneInfo={}", jobStandaloneInfo);
+        JobConfigDTO jobConfig = JobConfigDTO.bulidStop(jobConfigDTO.getId());
+        jobConfigService.updateJobConfigById(jobConfig);
+
+        //发送告警并且自动拉起任务
+        this.alermAndAutoJob(alarmTypeEnumList,
+                SystemConstants.buildDingdingMessage(" 检测到任务停止运行 任务名称：" +
+                        jobConfigDTO.getJobName()), jobConfigDTO, DeployModeEnum.STANDALONE);
     }
 
 
-    private void alart(String content, Long jobConfigId) {
-        try {
-            String alartUrl = systemConfigService.getSystemConfigByKey(SysConfigEnum.DINGDING_ALARM_URL.getKey());
-            if (StringUtils.isEmpty(alartUrl)) {
-                log.warn("没有配置钉钉url地址 不发送告警");
-                return;
+    /**
+     * 告警并且拉起任务，
+     * //TODO 如果拉起失败下次将不能拉起
+     *
+     * @author zhuhuipei
+     * @date 2021/2/28
+     * @time 19:50
+     */
+    private void alermAndAutoJob(List<AlarmTypeEnum> alarmTypeEnumList, String cusContent,
+                                 JobConfigDTO jobConfigDTO, DeployModeEnum deployModeEnum) {
+
+
+        if (CollectionUtils.isEmpty(alarmTypeEnumList)) {
+            log.warn("没有配置告警，无法进行告警！！！");
+            return;
+        }
+
+        CallbackDTO callbackDTO = CallbackDTO.to(jobConfigDTO);
+        if (CollectionUtils.isEmpty(alarmTypeEnumList)) {
+            return;
+        }
+        //告警
+        for (AlarmTypeEnum alarmTypeEnum : alarmTypeEnumList) {
+            switch (alarmTypeEnum) {
+                case DINGDING:
+                    this.dingdingAlarm(cusContent, callbackDTO.getJobConfigId());
+                    break;
+                case CALLBACK_URL:
+                    this.httpAlarm(callbackDTO);
+                    break;
             }
-            alarmServiceAO.sendForDingding(alartUrl, content, jobConfigId);
-        } catch (Exception e) {
-            log.error("告警失败 is error",e);
         }
+        //自动拉起
+        if (alarmTypeEnumList.contains(AlarmTypeEnum.AUTO_START_JOB)) {
+            log.info("校验任务不存在,开始自动拉起 JobConfigId={}", callbackDTO.getJobConfigId());
+            try {
+                switch (deployModeEnum) {
+                    case YARN_PER:
+                        jobYarnServerAO.start(callbackDTO.getJobConfigId(), null, SystemConstants.USER_NAME_TASK_AUTO);
+                        break;
+                    case STANDALONE:
+                        jobStandaloneServerAO.start(callbackDTO.getJobConfigId(), null, SystemConstants.USER_NAME_TASK_AUTO);
+                        break;
+                }
+
+            } catch (Exception e) {
+                log.error("自动重启任务失败 JobConfigId={}", callbackDTO.getJobConfigId(), e);
+            }
+
+        }
+
     }
+
+
+    /**
+     * 钉钉告警
+     *
+     * @author zhuhuipei
+     * @date 2021/2/28
+     * @time 19:56
+     */
+    private void dingdingAlarm(String content, Long jobConfigId) {
+        String alartUrl = systemConfigService.getSystemConfigByKey(SysConfigEnum.DINGDING_ALARM_URL.getKey());
+        if (StringUtils.isEmpty(alartUrl)) {
+            log.warn("#####钉钉告警url没有设置，无法告警#####");
+            return;
+        }
+        threadPoolExecutor.execute(new AlarmDingdingThread(alarmServiceAO, content, jobConfigId, alartUrl));
+    }
+
+    /**
+     * 回调函数自定义告警
+     *
+     * @author zhuhuipei
+     * @date 2021/2/28
+     * @time 19:56
+     */
+    private void httpAlarm(CallbackDTO callbackDTO) {
+        String alartUrl = systemConfigService.getSystemConfigByKey(SysConfigEnum.CALLBACK_ALARM_URL.getKey());
+        if (StringUtils.isEmpty(alartUrl)) {
+            log.warn("#####回调告警url没有设置，无法告警#####");
+            return;
+        }
+        threadPoolExecutor.execute(new AlarmHttpThread(alarmServiceAO, callbackDTO, alartUrl));
+    }
+
 }

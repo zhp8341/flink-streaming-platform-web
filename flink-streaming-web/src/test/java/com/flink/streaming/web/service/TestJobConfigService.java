@@ -35,7 +35,7 @@ public class TestJobConfigService extends TestRun {
             jobConfigDTO.setDeployModeEnum(DeployModeEnum.STANDALONE);
             jobConfigDTO.setIsOpen(YN.N.getValue());
             jobConfigDTO.setJobName("job_name_"+i);
-            jobConfigDTO.setStauts(JobConfigStatus.STOP);
+            jobConfigDTO.setStatus(JobConfigStatus.STOP);
             jobConfigDTO.setCreator("sys");
             jobConfigDTO.setEditor("sys");
             jobConfigService.addJobConfig(jobConfigDTO);
@@ -54,7 +54,7 @@ public class TestJobConfigService extends TestRun {
         jobConfigDTO.setDeployModeEnum(DeployModeEnum.STANDALONE);
         jobConfigDTO.setIsOpen(YN.N.getValue());
         jobConfigDTO.setJobName("job_name1");
-        jobConfigDTO.setStauts(JobConfigStatus.STOP);
+        jobConfigDTO.setStatus(JobConfigStatus.STOP);
         jobConfigDTO.setCreator("sys1");
         jobConfigDTO.setEditor("sys1");
         jobConfigDTO.setId(1L);
