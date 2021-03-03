@@ -16,7 +16,7 @@ function stop(id) {
         }
     );
 }
-function start(id) {
+function id) {
     $.post("../api/start", {
             id: id
 

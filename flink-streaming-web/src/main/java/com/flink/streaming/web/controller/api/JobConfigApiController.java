@@ -36,7 +36,7 @@ public class JobConfigApiController extends BaseController {
     private JobServerAO jobYarnServerAO;
 
     @Autowired
-    private JobServerAO jobStandaloneServerAO;
+    private JobServerAO jobStandaloneServerAO;  // @Autowired注解，根据Bean的name来注入bean对象 jobStandaloneServerAO
 
     @Autowired
     private JobConfigService jobConfigService;
