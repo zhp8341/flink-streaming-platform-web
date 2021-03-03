@@ -36,6 +36,7 @@
         <file_encoding>UTF-8</file_encoding>
         <flink_streaming_version>1.2.0.RELEASE</flink_streaming_version>
         <flink.version>1.12.0</flink.version>
+        <scala.binary.version>2.11</scala.binary.version>
         <spring.boot.version>2.2.8.RELEASE</spring.boot.version>
     </properties>
 

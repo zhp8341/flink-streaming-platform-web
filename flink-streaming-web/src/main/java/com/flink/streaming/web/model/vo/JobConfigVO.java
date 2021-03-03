@@ -92,7 +92,7 @@ public class JobConfigVO {
 
         if (StringUtils.isNotEmpty(domain)) {
             if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId()) + "/#/overview");
+                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId()) + "#/overview");
             }
             if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
                 jobConfigVO.setFlinkRunUrl(domain + String.format("#/job/%s/overview", jobConfigDTO.getJobId()));

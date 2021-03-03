@@ -8,6 +8,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
 
+   **支持钉钉告警、自定义回调告警、自动拉起任务**
+   
   **flink任务支持单流 、双流、 单流与维表等**
 
   **支持本地模式、yarn-per模式、STANDALONE模式**
@@ -61,6 +63,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
  ![图片](http://img.ccblog.cn/flink/9.png)
  ![图片](http://img.ccblog.cn/flink/10.png)
  ![图片](http://img.ccblog.cn/flink/12.png)
+ ![图片](http://img.ccblog.cn/flink/13.png)
 
 
 
@@ -69,7 +72,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ### 1、环境
 
-操作系统：linux  **(不支持win系统)**
+操作系统：linux  **(暂时不支持win系统)**
 
 hadoop版本 2+ 
 
@@ -84,13 +87,14 @@ kafka版本 1.0+
 mysql版本 5.6+
 
 
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
 
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
 
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不行**
+**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
 
 
+如果有flink版本需要可以自己编译 详见下面源码编译
 
 ### 2、应用安装
 
@@ -404,6 +408,9 @@ f: sql语句
 
 ### 3、报警设置
 
+
+#### a:钉钉告警配置
+
 ~~~~
     报警设置用于: 当运行的任务挂掉的时候会告警
    
@@ -421,6 +428,56 @@ f: sql语句
 效果图
 ![图片](https://img-blog.csdnimg.cn/20201018111816869.png#pic_center)
 
+
+
+#### b:自定义回调告警
+ 
+ 
+自定义回调告警用于用户可以按照一定的http接口开发自己想要的告警模式 如短信、邮件、微信等
+
+**开发要求**
+
+**url: http://{domain}/alarmCallback    URN必须是alarmCallback**
+
+**支持 post get**
+
+
+| 请求参数        |  说明  |
+| --------   | :----:  |
+| appId              |     任务appid  |
+| jobName           |   任务名称  |
+| deployMode      |    模式   |
+
+
+具体开发可参考如下代码
+
+https://github.com/zhp8341/flink-streaming-platform-web/blob/master/flink-streaming-web/src/main/java/com/flink/streaming/web/controller/api/ApiController.java
+
+~~~~
+  @RequestMapping("/alarmCallback")
+    public RestResult alarmCallback(String appId, String jobName, String deployMode) {
+        log.info("测试回调 appId={} jobName={} deployMode={}", appId, jobName, deployMode);
+        //业务逻辑
+        return RestResult.success();
+    }
+~~~~
+
+
+#### c:任务自动拉起
+
+
+如果配置了自动拉起并且检测到集群上的任务挂掉就会再次重启
+
+**配置效果图**
+
+ ![图片](http://img.ccblog.cn/flink/13.png)
+
+
+
+
+```diff
++ 备注：如果有开发条件的同学可以将错误日志接入你们的日志报警系统
+```
 
 ##  三、配置demo
 
@@ -657,7 +714,7 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 1、 支持除官方以外的连接器  如：阿里云的sls
 
-2、 任务告警自动拉起
+2、 任务告警自动拉起 (完成)
 
 3、 支持Application模式
 
@@ -670,9 +727,23 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 7、 支持jar模式提交任务
 
 
+##  八、源码编译
+
+目前web客户端支持的flink版本是1.12.0,如果需要调整flink版本可下载源码
+然后修改pom里面的版本号 https://github.com/zhp8341/flink-streaming-platform-web/blob/master/pom.xml 
+~~~~
+<flink.version>1.12.0</flink.version> <!--flink版本-->
+<scala.binary.version>2.11</scala.binary.version> <!--scala版本-->
+~~~~
+
+保存后打包
+
+~~~~
+mvn clean package  -Dmaven.test.skip=true
+~~~~
 
 
- ##  八、联系方式 
+ ##  九、联系方式 
  
 
 钉钉 
@@ -688,7 +759,7 @@ http://img.ccblog.cn/flink/dd2.png
 
  
  
- ##  九、捐赠
+ ##  十、捐赠
  
  目前测试环境主要是订购了阿里云的ecs自己搭建的集群服务，用于平台测试。
  
