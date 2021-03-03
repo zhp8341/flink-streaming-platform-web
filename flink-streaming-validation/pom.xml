@@ -6,20 +6,12 @@
         <artifactId>flink-streaming-platform-web</artifactId>
         <groupId>com.streaming.platform.web</groupId>
         <version>1.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>flink-streaming-validation</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <scala.binary.version>2.11</scala.binary.version>
-        <httpclient.version>4.5.6</httpclient.version>
-        <java.version>1.8</java.version>
-        <flink.version>1.12.0</flink.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.streaming.platform.web</groupId>

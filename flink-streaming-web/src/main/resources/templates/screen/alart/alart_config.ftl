@@ -82,7 +82,13 @@
                                     <h5 style="text-align:center;color:
                                     fuchsia">回调url支持post、get请求，请求参数是appId、jobName、deployMode
                                     在自定义开发的时候必须要有这三个请求参数，且URN必须是alarmCallback
+
                                     </h5>
+                                    <h5 style="text-align:center;color:
+                                    fuchsia">
+                                    <a href="https://github.com/zhp8341/flink-streaming-platform-web#3%E6%8A%A5%E8%AD%A6%E8%AE%BE%E7%BD%AE"  target="_blank">详见告警配置说明</a>
+                                    </h5>
+
 
                                 </th>
                             </tr>

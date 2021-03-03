@@ -50,6 +50,14 @@ start(){
               echo "启动成功 pid=" $pid
            fi
 
+           if [ -d "../logs/" ];then
+              echo "...........开始打印系统日志.............."
+              tail -fn 100  ../logs/info.log
+            else
+              echo "日志文件夹logs不存在"
+            fi
+
+
      else
       echo " $app_name 进程已经存 pid=" $pid
      fi
