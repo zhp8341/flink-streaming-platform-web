@@ -1,0 +1,2 @@
+
+启动一个任务时，执行的命令：/work/flink/flink-1.12.0/bin/flink run -d -c  com.flink.streaming.core.JobApplication /work/flink/flink-streaming-platform-web/lib/flink-streaming-core-1.2.0.RELEASE.jar -sql /work/flink/flink-streaming-platform-web/sql/job_sql_2.sql
