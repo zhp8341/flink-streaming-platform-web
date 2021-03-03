@@ -191,8 +191,39 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- Flink modules  end -->
+
+        <!--by myself BEGIN 为在idea环境运行 flink-streaming-core模块，额外添加的依赖-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/flink-table_2.11-1.12.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-blink_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/flink-table-blink_2.11-1.12.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <!-- by myself  END 为在idea环境运行 flink-streaming-core模块，额外添加的依赖-->
+
 
     </dependencies>
 
@@ -218,7 +249,7 @@
                                 <excludes>
                                     <exclude>org.apache.flink:force-shading</exclude>
                                     <exclude>com.google.code.findbugs:jsr305</exclude>
-<!--                                    <exclude>org.slf4j:*</exclude>-->
+                                    <exclude>org.slf4j:*</exclude>
 <!--                                    <exclude>log4j:*</exclude>-->
                                 </excludes>
                             </artifactSet>
