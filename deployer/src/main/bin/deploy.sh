@@ -40,7 +40,7 @@ start(){
          echo "开始启动进程执行命令  java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties  "
         
           java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties      >/dev/null 2>&1  &
-          sleep 10
+          sleep 30
           pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
 
            if [ -z $pid ]
@@ -50,13 +50,7 @@ start(){
               echo "启动成功 pid=" $pid
            fi
 
-           if [ -d "../logs/" ];then
-              echo "...........开始打印系统日志.............."
-              tail -fn 100  ../logs/info.log
-            else
-              echo "日志文件夹logs不存在"
-            fi
-
+           echo "可通过命令  tail -fn 300  ../logs/info.log  查看web日志"
 
      else
       echo " $app_name 进程已经存 pid=" $pid
