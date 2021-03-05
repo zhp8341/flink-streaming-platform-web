@@ -210,6 +210,7 @@
             <systemPath>${project.basedir}/lib/flink-table-blink_2.11-1.12.0.jar</systemPath>
         </dependency>
 
+        <!--下面的两个依赖，用于解决：java异常 java.lang.NoClassDefFoundError: org/slf4j/LoggerFactory-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -221,6 +222,13 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>1.12.0</version>
+        </dependency>
+
 
         <!-- by myself  END 为在idea环境运行 flink-streaming-core模块，额外添加的依赖-->
 
