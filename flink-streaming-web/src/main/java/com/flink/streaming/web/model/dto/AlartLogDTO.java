@@ -1,8 +1,8 @@
 package com.flink.streaming.web.model.dto;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.flink.streaming.web.enums.AlartLogStatusEnum;
-import com.flink.streaming.web.enums.AlartLogTypeEnum;
+import com.flink.streaming.web.enums.AlarmLogStatusEnum;
+import com.flink.streaming.web.enums.AlarmLogTypeEnum;
 import com.flink.streaming.web.model.entity.AlartLog;
 import lombok.Data;
 
@@ -33,12 +33,12 @@ public class AlartLogDTO {
     /**
      * 1:钉钉
      */
-    private AlartLogTypeEnum alartLogTypeEnum;
+    private AlarmLogTypeEnum alarMLogTypeEnum;
 
     /**
      * 1:成功 0:失败
      */
-    private AlartLogStatusEnum alartLogStatusEnum;
+    private AlarmLogStatusEnum alarmLogStatusEnum;
 
 
     /**
@@ -70,8 +70,8 @@ public class AlartLogDTO {
         alartLog.setId(alartLogDTO.getId());
         alartLog.setJobConfigId(alartLogDTO.getJobConfigId());
         alartLog.setMessage(alartLogDTO.getMessage());
-        alartLog.setType(alartLogDTO.getAlartLogTypeEnum().getCode());
-        alartLog.setStatus(alartLogDTO.getAlartLogStatusEnum().getCode());
+        alartLog.setType(alartLogDTO.getAlarMLogTypeEnum().getCode());
+        alartLog.setStatus(alartLogDTO.getAlarmLogStatusEnum().getCode());
         alartLog.setFailLog(alartLogDTO.getFailLog());
         alartLog.setCreateTime(alartLogDTO.getCreateTime());
         alartLog.setEditTime(alartLogDTO.getEditTime());
@@ -89,8 +89,8 @@ public class AlartLogDTO {
         alartLogDTO.setId(alartLog.getId());
         alartLogDTO.setJobConfigId(alartLog.getJobConfigId());
         alartLogDTO.setMessage(alartLog.getMessage());
-        alartLogDTO.setAlartLogTypeEnum(AlartLogTypeEnum.getAlartLogTypeEnum(alartLog.getType()));
-        alartLogDTO.setAlartLogStatusEnum(AlartLogStatusEnum.getAlartLogStatusEnum(alartLog.getStatus()));
+        alartLogDTO.setAlarMLogTypeEnum(AlarmLogTypeEnum.getAlarmLogTypeEnum(alartLog.getType()));
+        alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.getAlarmLogStatusEnum(alartLog.getStatus()));
         alartLogDTO.setFailLog(alartLog.getFailLog());
         alartLogDTO.setCreateTime(alartLog.getCreateTime());
         alartLogDTO.setEditTime(alartLog.getEditTime());

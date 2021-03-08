@@ -54,7 +54,7 @@ CREATE TABLE `job_config` (
   `flink_checkpoint_config` varchar(512) DEFAULT NULL COMMENT 'checkPoint配置',
   `job_id` varchar(64) DEFAULT NULL COMMENT '运行后的任务id',
   `is_open` tinyint(1) NOT NULL COMMENT '1:开启 0: 关闭',
-  `stauts` tinyint(1) NOT NULL COMMENT '1:运行中 0: 停止中 -1:运行失败',
+  `status` tinyint(1) NOT NULL COMMENT '1:运行中 0: 停止中 -1:运行失败',
   `ext_jar_path` varchar(2048) DEFAULT NULL COMMENT 'udf地址已经连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar',
   `last_start_time` datetime DEFAULT NULL COMMENT '最后一次启动时间',
   `last_run_log_id` bigint(11) DEFAULT NULL COMMENT '最后一次日志',
@@ -148,6 +148,23 @@ CREATE TABLE `user` (
   UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+
+
+CREATE TABLE `job_alarm_config`
+(
+    `id`          bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+    `job_id`      bigint(11) unsigned NOT NULL COMMENT 'job_config主表id',
+    `type`        tinyint(1)          NOT NULL COMMENT '类型 1:钉钉告警 2:url回调 3:异常自动拉起任务',
+    `version`     int(11)             NOT NULL DEFAULT '0' COMMENT '更新版本号  ',
+    `is_deleted`  tinyint(1)          NOT NULL DEFAULT '0',
+    `create_time` datetime                     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `edit_time`   datetime                     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    `creator`     varchar(32)                  DEFAULT 'sys',
+    `editor`      varchar(32)                  DEFAULT 'sys',
+    PRIMARY KEY (`id`),
+    KEY `uk_index_job_id` (`job_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='告警辅助配置表';
 
 -- ----------------------------
 -- Records of user

@@ -1,5 +1,7 @@
 package com.flink.streaming.web.ao;
 
+import com.flink.streaming.web.model.vo.CallbackDTO;
+
 /**
  * @author zhuhuipei
  * @Description:
@@ -16,4 +18,14 @@ public interface AlarmServiceAO {
      * @time 19:53
      */
     boolean sendForDingding(String url, String content, Long jobConfigId);
+
+
+    /**
+     * 发送http请求回调
+     *
+     * @author zhuhuipei
+     * @date 2021/2/21
+     * @time 11:31
+     */
+    boolean sendForHttp(String url,CallbackDTO callbackDTO);
 }

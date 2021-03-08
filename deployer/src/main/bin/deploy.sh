@@ -22,7 +22,7 @@ fi
 ACTION=$1
 
 ##变量设置##
-app_name=flink-streaming-web-1.1.1.RELEASE.jar
+app_name=flink-streaming-web-1.2.0.RELEASE.jar
 env=prod
 project=../lib/$app_name
 time=$(date "+%Y%m%d-%H%M%S")
@@ -36,16 +36,27 @@ start(){
          echo $pid
      if [ -z $pid ]
      then
-         echo "开始启动进程 $app_name "
-          java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties      >/dev/null 2>&1  &
-          sleep 10
-          pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
-     else
 
+         echo "开始启动进程执行命令  java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties  "
+        
+          java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties      >/dev/null 2>&1  &
+          sleep 30
+          pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
+
+           if [ -z $pid ]
+           then
+              echo "启动应用进程失败 请手动执行一下  java  -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties  "
+           else
+              echo "启动成功 pid=" $pid
+           fi
+
+           echo "可通过命令  tail -fn 300  ../logs/info.log  查看web日志"
+
+     else
       echo " $app_name 进程已经存 pid=" $pid
      fi
 
-    echo "Start java end pid=" $pid
+
 }
 
 stop()
@@ -57,7 +68,7 @@ echo "------>Check pid of $app_name"
 
 if [ -z "$pid" ]
 then
-    echo "------>APP_NAME lication [$app_name] is already stopped"
+    echo "------>APP_NAME process [$app_name] is already stopped"
 else
     for pid in ${pid[*]}
     do

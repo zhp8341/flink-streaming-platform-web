@@ -30,6 +30,9 @@ public class CheckPointParam {
     //是否异步
     Boolean asynchronousSnapshots;
 
+    //作业取消时，检查点是否保留，true代表为DELETE_ON_CANCELLATION，false代表为RETAIN_ON_CANCELLATION
+    private String externalizedCheckpointCleanup;
+
     public static void main(String[] args) {
         CheckPointParam checkPointParam = new CheckPointParam();
         System.out.println(JSON.toJSONString(checkPointParam, SerializerFeature.WriteMapNullValue));

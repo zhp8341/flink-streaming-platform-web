@@ -53,7 +53,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <input class="form-control " type="text" placeholder="变量值" name="val" id="val">
+                                <input class="form-control " type="text" placeholder="请输入URl地址" name="val" id="val">
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-info btn-sm " type="button" onclick="upsertSynConfig()">保存</button>
@@ -72,8 +72,24 @@
                             <thead>
                             <tr>
                                 <th colspan="4" >
-                                    <h5 style="text-align:center;color: red">备注：目前暂时只支持钉钉群告警且只能添加一个 （当运行的任务挂掉的时候会告警）</h5>
+                                    <h5 style="text-align:center;color: red">1、目前暂时钉钉群告警且只能添加一个
+                                        （当运行的任务挂掉的时候会告警）</h5>
                                     <h5 style="text-align:center;color: fuchsia">部署的机器需要支持外网否则无法支持钉钉发送</h5>
+
+                                    <h5 style="text-align:center;color: red">2、回调url用于支持用户自定义告警，当任务出现告警时，会通过回调url通知 如
+                                        http://127.0.0.1/alarmCallback
+                                    </h5>
+                                    <h5 style="text-align:center;color:
+                                    fuchsia">回调url支持post、get请求，请求参数是appId、jobName、deployMode
+                                    在自定义开发的时候必须要有这三个请求参数，且URN必须是alarmCallback
+
+                                    </h5>
+                                    <h5 style="text-align:center;color:
+                                    fuchsia">
+                                    <a href="https://github.com/zhp8341/flink-streaming-platform-web#3%E6%8A%A5%E8%AD%A6%E8%AE%BE%E7%BD%AE"  target="_blank">详见告警配置说明</a>
+                                    </h5>
+
+
                                 </th>
                             </tr>
                             <tr>
@@ -98,7 +114,20 @@
                                         <td>${systemConfigVO.key}</td>
                                         <td>${systemConfigVO.val}</td>
                                         <td>${systemConfigVO.desc}</td>
-                                        <td><a href="#" id="dingding_test">测试一下</a> <a href="#" onclick="deleteConfig('${systemConfigVO.key}')">删除</a></td>
+                                        <td>
+
+                                            <#if systemConfigVO.key?? && systemConfigVO.key=="dingding_alart_url">
+                                                <a href="#" id="dingding_test">测试一下</a>
+                                            </#if>
+                                            <#if systemConfigVO.key?? && systemConfigVO.key=="callback_alart_url">
+                                                <a href="#" id="callback_test">测试一下</a>
+                                            </#if>
+
+                                            <a href="#" onclick="deleteConfig('${systemConfigVO.key}')">删除</a>
+
+                                            <a href="/admin/alartLogList" target="_blank" >操作日志查看</a>
+
+                                        </td>
                                     </tr>
                                 </#list>
 
@@ -135,7 +164,20 @@
             }
         );
     });
+
+    $("#callback_test").click(function () {
+        $.post("../api/testHttpAlert", {},
+            function (data, status) {
+                if (data!=null && data.success){
+                    alert("测试通过成功 ");
+                }else{
+                    alert("执行失败："+data.message)
+                }
+
+            }
+        );
+    });
 </script>
-<script src="/static/js/customer/config.js"></script>
+<script src="/static/js/customer/config.js?version=20210123"></script>
 </body>
 </html>

@@ -62,7 +62,7 @@ public class AppTO {
     private Long startedTime;
 
 
-    private Integer finishedTime;
+    private Long finishedTime;
 
     /**
      * AM 容器地址

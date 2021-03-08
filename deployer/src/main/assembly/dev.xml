@@ -54,6 +54,8 @@
                 <exclude>net.*:*</exclude>
                 <exclude>ch.*:*</exclude>
                 <exclude>jakarta.*:*</exclude>
+                <exclude>com.streaming.platform.web:flink-streaming-commom</exclude>
+                <exclude>com.streaming.platform.web:flink-streaming-validation</exclude>
 
                 <exclude>com.alibaba.*:*</exclude>
                 <exclude>com.esotericsoftware.*:*</exclude>

@@ -1,7 +1,7 @@
 package com.flink.streaming.web.service.impl;
 
 import com.flink.streaming.web.enums.YN;
-import com.flink.streaming.web.mapper.AlartLogMapper;
+import com.flink.streaming.web.mapper.AlarmLogMapper;
 import com.flink.streaming.web.model.dto.AlartLogDTO;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.entity.AlartLog;
@@ -25,20 +25,20 @@ public class AlartLogServiceImpl implements AlartLogService {
 
 
     @Autowired
-    private AlartLogMapper alartLogMapper;
+    private AlarmLogMapper alarmLogMapper;
 
     @Override
     public void addAlartLog(AlartLogDTO alartLogDTO) {
         if (alartLogDTO == null) {
             return;
         }
-        alartLogMapper.insert(AlartLogDTO.toEntity(alartLogDTO));
+        alarmLogMapper.insert(AlartLogDTO.toEntity(alartLogDTO));
     }
 
 
     @Override
     public AlartLogDTO findLogById(Long id) {
-        return AlartLogDTO.toDTO(alartLogMapper.selectByPrimaryKey(id));
+        return AlartLogDTO.toDTO(alarmLogMapper.selectByPrimaryKey(id));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class AlartLogServiceImpl implements AlartLogService {
         }
         PageHelper.startPage(alartLogParam.getPageNum(), alartLogParam.getPageSize(), YN.Y.getCode());
 
-        Page<AlartLog> page = alartLogMapper.selectByParam(alartLogParam);
+        Page<AlartLog> page = alarmLogMapper.selectByParam(alartLogParam);
         if (page == null) {
             return null;
         }

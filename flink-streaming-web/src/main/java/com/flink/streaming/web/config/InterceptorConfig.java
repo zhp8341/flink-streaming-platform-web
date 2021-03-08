@@ -20,8 +20,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
-//    @Autowired
-//    private SysConfigInterceptor sysConfigInterceptor;
 
 
     @Override
@@ -31,12 +29,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
         //所有路径都被拦截
         registration.addPathPatterns("/**");
         //添加不拦截路径
-        registration.excludePathPatterns("/static/**", "/static/*", "/admin/index", "/admin/qrcode", "/api/login");
+        registration.excludePathPatterns("/static/**", "/static/*", "/admin/index",
+                "/admin/qrcode", "/api/login",
+                "/ok","/alarmCallback");
 
-
-//        InterceptorRegistration  sysConfigRegistration= registry.addInterceptor(sysConfigInterceptor);
-//        sysConfigRegistration.addPathPatterns("/admin/*");
-//        sysConfigRegistration.excludePathPatterns("/admin/sysConfig","/admin/upsertSynConfig","/admin/index","/admin/login");
 
     }
 }

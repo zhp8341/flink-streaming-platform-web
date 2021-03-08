@@ -5,7 +5,7 @@
     <parent>
         <artifactId>flink-streaming-platform-web</artifactId>
         <groupId>com.streaming.platform.web</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.streaming.platform.web</groupId>
-            <artifactId>flink-streaming-core_flink_${flink.version}</artifactId>
+            <artifactId>flink-streaming-core</artifactId>
             <version>${flink_streaming_version}</version>
         </dependency>
         <dependency>
@@ -31,7 +31,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -82,6 +81,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <finalName>projectname</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <attach>false</attach>
                 </configuration>
@@ -94,10 +94,6 @@
             <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
-                <property>
-                    <name>env</name>
-                    <value>!release</value>
-                </property>
             </activation>
 
             <build>
@@ -118,33 +114,7 @@
 
         </profile>
 
-        <profile>
-            <id>release</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>release</value>
-                </property>
-            </activation>
 
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration>
-                            <!-- 发布模式使用的maven assembly插件描述文件 -->
-                            <descriptors>
-                                <descriptor>${basedir}/src/main/assembly/release.xml</descriptor>
-                            </descriptors>
-                            <!-- 如果一个应用的包含多个deploy模块，如果使用同样的包名， 如果把它们复制的一个目录中可能会失败，所以包名加了 artifactId以示区分 -->
-                            <finalName>flink-streaming-platform-web</finalName>
-                            <!-- scm 要求 release 模式打出的包放到顶级目录下的target子目录中 -->
-                            <outputDirectory>${project.parent.build.directory}</outputDirectory>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
 </project>
