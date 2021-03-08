@@ -1,10 +1,11 @@
 package com.flink.streaming.core.checkpoint;
 
+import com.flink.streaming.core.enums.StateBackendEnum;
 import com.flink.streaming.core.model.CheckPointParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup;
 
 /**
  * @author zhuhuipei
@@ -12,6 +13,7 @@ import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedC
  * @date 2021/1/17
  * @time 19:56
  */
+@Slf4j
 public class CheckPointParams {
 
     /**
@@ -41,6 +43,10 @@ public class CheckPointParams {
 
         String externalizedCheckpointCleanup = parameterTool.get("externalizedCheckpointCleanup");
 
+        String stateBackendType = parameterTool.get("stateBackendType");
+
+        String enableIncremental = parameterTool.get("enableIncremental");
+
 
         CheckPointParam checkPointParam = new CheckPointParam();
         if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
@@ -61,6 +67,14 @@ public class CheckPointParams {
         if (StringUtils.isNotEmpty(externalizedCheckpointCleanup)) {
             checkPointParam.setExternalizedCheckpointCleanup(externalizedCheckpointCleanup);
         }
+
+        checkPointParam.setStateBackendEnum(StateBackendEnum.getStateBackend(stateBackendType));
+
+        if (StringUtils.isNotEmpty(enableIncremental)) {
+            checkPointParam.setEnableIncremental(Boolean.getBoolean(enableIncremental.trim()));
+        }
+        log.info("checkPointParam={}", checkPointParam);
+        System.out.println("checkPointParam=" + checkPointParam);
         return checkPointParam;
 
     }
