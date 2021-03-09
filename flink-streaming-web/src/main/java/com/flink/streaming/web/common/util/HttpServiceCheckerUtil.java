@@ -28,7 +28,7 @@ public class HttpServiceCheckerUtil {
      */
     public static boolean checkUrlConnect(String url) {
         try {
-            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_3_S);
+            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_10_S);
             restTemplate.exchange(url.trim(), HttpMethod.GET, new HttpEntity<String>(null, new HttpHeaders()), String.class);
         } catch (ResourceAccessException e) {
             if (e.getCause() instanceof ConnectException || e.getCause() instanceof SocketTimeoutException) {
