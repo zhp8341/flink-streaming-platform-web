@@ -11,13 +11,13 @@ public interface TaskServiceAO {
     /**
      * 检查任务状态一致性问题（任务是不是挂掉）
      * <p>
-     * 如：数据库里面任务状态是运行中，实际任务在yarn上已经挂掉啦
+     * 如：数据库里面任务状态是运行中，实际任务在集群上已经挂掉啦
      *
      * @author zhuhuipei
      * @date 2020-09-22
      * @time 23:00
      */
-    void checkJobStatusByYarn();
+    void checkJobStatus();
 
 
     /**
