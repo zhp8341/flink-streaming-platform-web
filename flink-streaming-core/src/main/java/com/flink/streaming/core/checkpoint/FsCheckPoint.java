@@ -1,6 +1,7 @@
 package com.flink.streaming.core.checkpoint;
 
-import com.flink.streaming.core.model.CheckPointParam;
+
+import com.flink.streaming.common.model.CheckPointParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend;
@@ -40,8 +41,10 @@ public class FsCheckPoint {
         if (StringUtils.isEmpty(checkPointParam.getCheckpointingMode()) ||
                 CheckpointingMode.EXACTLY_ONCE.name().equalsIgnoreCase(checkPointParam.getCheckpointingMode())) {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
+            log.info("本次CheckpointingMode模式 精确一次 即exactly-once");
         } else {
             checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE);
+            log.info("本次CheckpointingMode模式 至少一次 即AT_LEAST_ONCE");
         }
 
         //默认超时10 minutes.
@@ -63,10 +66,12 @@ public class FsCheckPoint {
                     equalsIgnoreCase(ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION.name())) {
                 env.getCheckpointConfig()
                         .enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.DELETE_ON_CANCELLATION);
+                log.info("本次使用DELETE_ON_CANCELLATION代表删除");
             } else if (checkPointParam.getExternalizedCheckpointCleanup().
                     equalsIgnoreCase(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION.name())) {
                 env.getCheckpointConfig()
                         .enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+                log.info("本次使用RETAIN_ON_CANCELLATION代表保留");
             }
         }
 

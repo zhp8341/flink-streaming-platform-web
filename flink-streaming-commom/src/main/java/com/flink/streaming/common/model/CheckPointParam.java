@@ -1,9 +1,9 @@
-package com.flink.streaming.core.model;
+package com.flink.streaming.common.model;
 
-import com.flink.streaming.core.enums.StateBackendEnum;
+
+import com.flink.streaming.common.enums.StateBackendEnum;
 import lombok.Data;
-import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.environment.CheckpointConfig;
+
 
 /**
  * @author zhuhuipei
@@ -22,12 +22,12 @@ public class CheckPointParam {
     /**
      * 默认CheckpointingMode.EXACTLY_ONCE
      */
-    private String checkpointingMode = CheckpointingMode.EXACTLY_ONCE.name();
+    private String checkpointingMode = "EXACTLY_ONCE";
 
     /**
      * 默认超时10 minutes.
      */
-    private long checkpointTimeout = CheckpointConfig.DEFAULT_TIMEOUT;
+    private long checkpointTimeout = 10 * 60 * 1000;
 
     /**
      * 目录

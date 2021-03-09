@@ -67,7 +67,7 @@ public class SchedulerTask {
         }
         log.info("#####checkJobStatusByYarn#######");
         try {
-            taskServiceAO.checkJobStatusByYarn();
+            taskServiceAO.checkJobStatus();
         } catch (Exception e) {
             log.error("checkJobStatusByYarn is error", e);
         }

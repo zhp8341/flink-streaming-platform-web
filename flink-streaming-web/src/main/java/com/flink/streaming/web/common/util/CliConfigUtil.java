@@ -1,16 +1,12 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.common.enums.StateBackendEnum;
+import com.flink.streaming.common.model.CheckPointParam;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
-import com.flink.streaming.web.model.param.CheckPointParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -67,6 +63,8 @@ public class CliConfigUtil {
             options.addOption("checkpointingMode", true, "checkpointingMode");
             options.addOption("checkpointTimeout", true, "checkpointTimeout");
             options.addOption("externalizedCheckpointCleanup", true, "externalizedCheckpointCleanup");
+            options.addOption("stateBackendType", true, "stateBackendType");
+            options.addOption("enableIncremental", true, "enableIncremental");
 
             CommandLineParser parser = new DefaultParser();
             CommandLine cl = parser.parse(options, config);
@@ -82,10 +80,13 @@ public class CliConfigUtil {
             String checkpointInterval = cl.getOptionValue("checkpointInterval");
             String checkpointTimeout = cl.getOptionValue("checkpointTimeout");
             String externalizedCheckpointCleanup = cl.getOptionValue("externalizedCheckpointCleanup");
+            String stateBackendType = cl.getOptionValue("stateBackendType");
+            String enableIncremental = cl.getOptionValue("enableIncremental");
 
             CheckPointParam checkPointParam = new CheckPointParam();
             if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
-                if (Boolean.FALSE.toString().equals(asynchronousSnapshots.toLowerCase()) || Boolean.TRUE.toString().equals(asynchronousSnapshots.toLowerCase())) {
+                if (Boolean.FALSE.toString().equals(asynchronousSnapshots.toLowerCase())
+                        || Boolean.TRUE.toString().equals(asynchronousSnapshots.toLowerCase())) {
                     checkPointParam.setAsynchronousSnapshots(Boolean.valueOf(asynchronousSnapshots));
                 } else {
                     throw new BizException("asynchronousSnapshots 参数必须是 Boolean 类型或者为空 ");
@@ -107,6 +108,20 @@ public class CliConfigUtil {
             if (StringUtils.isNotEmpty(externalizedCheckpointCleanup)) {
                 checkPointParam.setExternalizedCheckpointCleanup(externalizedCheckpointCleanup);
             }
+
+            checkPointParam.setStateBackendEnum(StateBackendEnum.getStateBackend(stateBackendType));
+
+            if (StringUtils.isNotEmpty(enableIncremental)) {
+                if (Boolean.FALSE.toString().equals(enableIncremental.toLowerCase())
+                        || Boolean.TRUE.toString().equals(enableIncremental.toLowerCase())) {
+                    checkPointParam.setEnableIncremental(Boolean.getBoolean(enableIncremental.trim()));
+                } else {
+                    throw new BizException("enableIncremental 参数必须是 Boolean 类型或者为空 ");
+                }
+            }
+
+            log.info("checkPointParam ={}",checkPointParam);
+
             return checkPointParam;
         } catch (UnrecognizedOptionException e) {
             log.error("checkFlinkCheckPoint is error", e);
@@ -116,7 +131,7 @@ public class CliConfigUtil {
             throw e;
         } catch (Exception e) {
             log.error("checkFlinkCheckPoint is error", e);
-            throw new BizException("Checkpoint参数校验不通过");
+            throw new BizException("Checkpoint参数校验不通过:"+e.getMessage());
         }
     }
 

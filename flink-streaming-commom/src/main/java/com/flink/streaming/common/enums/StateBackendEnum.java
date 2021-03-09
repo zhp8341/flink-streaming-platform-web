@@ -1,4 +1,4 @@
-package com.flink.streaming.core.enums;
+package com.flink.streaming.common.enums;
 
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author zhuhuipei
  * @Description:
- * @date 2021/3/8
+ * @date 2021/3/7
  * @time 16:27
  */
 @Getter
@@ -30,6 +30,6 @@ public enum StateBackendEnum {
             }
 
         }
-        return FILE;
+        throw new  RuntimeException("stateBackendType值只能是 0 1 2 非法参数值"+stateBackendType);
     }
 }

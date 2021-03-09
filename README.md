@@ -341,6 +341,8 @@ d: Checkpoint信息
 | tolerableCheckpointFailureNumber      |  1  |    设置失败次数 默认一次    |
 | asynchronousSnapshots      |  true 或者 false  |     是否异步  |
 | externalizedCheckpointCleanup | DELETE_ON_CANCELLATION或者RETAIN_ON_CANCELLATION | 作业取消后检查点是否删除（可不填） |
+| stateBackendType      |  0 或者 1 或者 2 |   默认1  后端状态 0:MemoryStateBackend   1: FsStateBackend  2:RocksDBStateBackend  |
+| enableIncremental      |  true 或者 false  |     是否采用增量 只有在 stateBackendType 2模式下才有效果 即RocksDBStateBackend  |
 
 
 
@@ -722,7 +724,7 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 
 5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验(完成)
 
-6、 checkpoint支持rocksDB
+6、 checkpoint支持rocksDB (完成)
 
 7、 支持jar模式提交任务
 

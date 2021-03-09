@@ -66,7 +66,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private ThreadPoolExecutor threadPoolExecutor = AlarmPoolConfig.getInstance().getThreadPoolExecutor();
 
     @Override
-    public void checkJobStatusByYarn() {
+    public void checkJobStatus() {
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             log.warn("当前配置中没有运行的任务");
@@ -99,6 +99,9 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
+            if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()){
+                continue;
+            }
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
                     String appId = null;

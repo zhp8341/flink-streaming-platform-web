@@ -1,7 +1,8 @@
 package com.flink.streaming.core.checkpoint;
 
-import com.flink.streaming.core.enums.StateBackendEnum;
-import com.flink.streaming.core.model.CheckPointParam;
+
+import com.flink.streaming.common.enums.StateBackendEnum;
+import com.flink.streaming.common.model.CheckPointParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.java.utils.ParameterTool;
