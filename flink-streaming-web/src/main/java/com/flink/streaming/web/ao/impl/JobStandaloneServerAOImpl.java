@@ -184,7 +184,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                         .append(DateUtil.now()).append("\n")
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n")
                         .append("运行模式:").append(jobConfig.getDeployModeEnum().name())
-                        .append("三方jar:").append(jobConfig.getExtJarPath())
+                        .append("三方jar:\n").append(jobConfig.getExtJarPath())
                         .append("\n");
 
                 try {
@@ -231,13 +231,13 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
              */
             private String errorInfoDir() {
                 StringBuilder errorTips = new StringBuilder("\n\n")
-                        .append("详细错误日志可以登录服务器:")
+                        .append("（重要）请登陆服务器分别查看下面两个目录下的错误日志:")
                         .append(IpUtil.getInstance().getLocalIP()).append("\n")
-                        .append("web系统日志目录：")
+                        .append("web系统日志目录（web日志）：")
                         .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
                         .append("logs/error.log")
                         .append("\n")
-                        .append("flink提交日志目录：")
+                        .append("flink提交日志目录（flink客户端日志）：")
                         .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
                         .append("log/")
                         .append("\n")
