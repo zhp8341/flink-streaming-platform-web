@@ -345,7 +345,11 @@ d: Checkpoint信息
 | enableIncremental      |  true 或者 false  |     是否采用增量 只有在 stateBackendType 2模式下才有效果 即RocksDBStateBackend  |
 
 
+**rocksBD 优化配置参数** 
 
+https://ci.apache.org/projects/flink/flink-docs-release-1.12/deployment/config.html#advanced-rocksdb-state-backends-options
+
+**源码配置项java类  RocksDBConfigurableOptions**
 
 e: 三方地址
 ~~~~
@@ -743,6 +747,10 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 ~~~~
 mvn clean package  -Dmaven.test.skip=true
 ~~~~
+
+最后打好的包在 {你的目录}/flink-streaming-platform-web/deployer/target
+
+包名是：flink-streaming-platform-web.tar.gz
 
 
  ##  九、联系方式 

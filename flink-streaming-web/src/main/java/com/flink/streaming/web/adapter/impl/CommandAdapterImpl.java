@@ -2,6 +2,7 @@ package com.flink.streaming.web.adapter.impl;
 
 import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.common.SystemConstants;
+import com.flink.streaming.web.common.TipsConstants;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
@@ -96,7 +97,7 @@ public class CommandAdapterImpl implements CommandAdapter {
             throw new RuntimeException("pcs.waitFor() is error  rs=" + rs);
         }
         if (StringUtils.isEmpty(appId)) {
-            localLog.append("appId 无法获取");
+            localLog.append("appId无法获 ").append(TipsConstants.TIPS_1);
             throw new RuntimeException("appId无法获取");
         }
         return appId;
