@@ -51,7 +51,7 @@ public class CheckPointParams {
 
         CheckPointParam checkPointParam = new CheckPointParam();
         if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
-            checkPointParam.setAsynchronousSnapshots(Boolean.getBoolean(asynchronousSnapshots));
+            checkPointParam.setAsynchronousSnapshots(Boolean.parseBoolean(asynchronousSnapshots));
         }
         checkPointParam.setCheckpointDir(checkpointDir);
 
@@ -72,7 +72,7 @@ public class CheckPointParams {
         checkPointParam.setStateBackendEnum(StateBackendEnum.getStateBackend(stateBackendType));
 
         if (StringUtils.isNotEmpty(enableIncremental)) {
-            checkPointParam.setEnableIncremental(Boolean.getBoolean(enableIncremental.trim()));
+            checkPointParam.setEnableIncremental(Boolean.parseBoolean(enableIncremental.trim()));
         }
         log.info("checkPointParam={}", checkPointParam);
         System.out.println("checkPointParam=" + checkPointParam);
