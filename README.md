@@ -4,6 +4,16 @@
 https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b 
 
 
+
+**github地址（建议）：** 
+
+https://github.com/zhp8341/flink-streaming-platform-web
+
+
+**国内gitee 地址** 
+https://gitee.com/zhuhuipei/flink-streaming-platform-web
+
+
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
