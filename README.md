@@ -4,6 +4,16 @@
 https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b 
 
 
+
+**github地址** 
+
+https://github.com/zhp8341/flink-streaming-platform-web
+
+
+**国内gitee 地址** 
+https://gitee.com/zhuhuipei/flink-streaming-platform-web
+
+
 ## 一、简介 
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
@@ -345,7 +355,11 @@ d: Checkpoint信息
 | enableIncremental      |  true 或者 false  |     是否采用增量 只有在 stateBackendType 2模式下才有效果 即RocksDBStateBackend  |
 
 
+**rocksBD 优化配置参数** 
 
+https://ci.apache.org/projects/flink/flink-docs-release-1.12/deployment/config.html#advanced-rocksdb-state-backends-options
+
+**源码配置项java类  RocksDBConfigurableOptions**
 
 e: 三方地址
 ~~~~
@@ -743,6 +757,10 @@ ${FLINK_HOME}/log/flink-${USER}-client-.log
 ~~~~
 mvn clean package  -Dmaven.test.skip=true
 ~~~~
+
+最后打好的包在 {你的目录}/flink-streaming-platform-web/deployer/target
+
+包名是：flink-streaming-platform-web.tar.gz
 
 
  ##  九、联系方式 

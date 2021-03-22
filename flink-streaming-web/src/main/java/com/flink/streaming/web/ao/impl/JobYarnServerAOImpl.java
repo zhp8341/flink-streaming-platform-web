@@ -8,6 +8,7 @@ import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
+import com.flink.streaming.web.common.TipsConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.*;
 import com.flink.streaming.web.config.JobThreadPool;
@@ -89,11 +90,12 @@ public class JobYarnServerAOImpl implements JobServerAO {
         try {
             String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
             if (StringUtils.isEmpty(queueName)) {
-                throw new BizException("无法获取队列名称，请检查你的 flink运行配置");
+                throw new BizException("无法获取队列名称，请检查你的 flink运行配置参数");
             }
             String appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
             if (StringUtils.isNotEmpty(appId)) {
-                throw new BizException("该任务在yarn上有运行，请取消任务后再运行 任务名称是:" + jobConfigDTO.getJobName() + " 队列名称是:" + queueName);
+                throw new BizException("该任务在yarn上有运行，请取消任务后再运行 任务名称是:" +
+                        jobConfigDTO.getJobName() + " 队列名称是:" + queueName + TipsConstants.TIPS_1);
             }
         } catch (BizException e) {
             if (e != null && SysErrorEnum.YARN_CODE.getCode().equals(e.getCode())) {
@@ -248,7 +250,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
                         .append(DateUtil.now()).append("\n")
-                        .append("三方jar:").append(jobConfig.getExtJarPath()).append("\n")
+                        .append("三方jar: \n").append(jobConfig.getExtJarPath()).append("\n")
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n");
 
                 try {
