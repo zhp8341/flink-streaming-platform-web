@@ -61,12 +61,12 @@ public class CommandUtil {
     public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfig, String savepointPath) throws ParseException {
         StringBuilder command = new StringBuilder();
         command.append(jobRunParamDTO.getFlinkBinPath()).append(" run ");
+        command.append("-m yarn-cluster -yd").append(" ");
         if (StringUtils.isNotEmpty(savepointPath)) {
             command.append(" -s ").append(savepointPath).append(" ");
         }
         command.append(jobRunParamDTO.getFlinkRunParam()).append(" ");
         command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfig.getJobName())).append(" ");
-        command.append(" -yd -m yarn-cluster ").append(" ");
 
         if (StringUtils.isNotEmpty(jobConfig.getExtJarPath())) {
             String[] urls = jobConfig.getExtJarPath().split("\n");
