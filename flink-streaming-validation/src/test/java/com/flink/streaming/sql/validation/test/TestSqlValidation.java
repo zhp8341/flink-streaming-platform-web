@@ -38,7 +38,7 @@ public class TestSqlValidation {
         //校验失败
         list.add("insert into  print_table2\n" +
                 "\tselect c froms print_table");
-        SqlValidation.checkSql(list);
+        SqlValidation.preCheckSql(list);
 
     }
 }

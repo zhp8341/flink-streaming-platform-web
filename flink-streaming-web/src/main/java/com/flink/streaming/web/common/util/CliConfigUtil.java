@@ -1,7 +1,9 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.common.enums.CheckPointParameterEnums;
 import com.flink.streaming.common.enums.StateBackendEnum;
 import com.flink.streaming.common.model.CheckPointParam;
+import com.flink.streaming.web.common.FlinkConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
@@ -55,33 +57,25 @@ public class CliConfigUtil {
     public static CheckPointParam checkFlinkCheckPoint(String flinkCheckpointConfig) {
         try {
             String[] config = trim(flinkCheckpointConfig);
-            Options options = new Options();
-            options.addOption("checkpointDir", true, "checkpointDir");
-            options.addOption("tolerableCheckpointFailureNumber", true, "tolerableCheckpointFailureNumber");
-            options.addOption("asynchronousSnapshots", true, "asynchronousSnapshots");
-            options.addOption("checkpointInterval", true, "checkpointInterval");
-            options.addOption("checkpointingMode", true, "checkpointingMode");
-            options.addOption("checkpointTimeout", true, "checkpointTimeout");
-            options.addOption("externalizedCheckpointCleanup", true, "externalizedCheckpointCleanup");
-            options.addOption("stateBackendType", true, "stateBackendType");
-            options.addOption("enableIncremental", true, "enableIncremental");
 
-            CommandLineParser parser = new DefaultParser();
-            CommandLine cl = parser.parse(options, config);
-
-            String checkpointDir = cl.getOptionValue("checkpointDir");
-            //如果checkpointDir为空不启用CheckPoint
-            if (StringUtils.isEmpty(checkpointDir)) {
-                throw new BizException("checkpointDir参数校验不通过");
+            ParameterTool parameterTool = ParameterTool.fromArgs(config);
+            if (parameterTool == null || parameterTool.getUnrequestedParameters() == null) {
+                throw new BizException("parameterTool or parameterTool.getUnrequestedParameters() is null ");
             }
-            String checkpointingMode = cl.getOptionValue("checkpointingMode", "EXACTLY_ONCE");
-            String tolerableCheckpointFailureNumber = cl.getOptionValue("tolerableCheckpointFailureNumber");
-            String asynchronousSnapshots = cl.getOptionValue("asynchronousSnapshots");
-            String checkpointInterval = cl.getOptionValue("checkpointInterval");
-            String checkpointTimeout = cl.getOptionValue("checkpointTimeout");
-            String externalizedCheckpointCleanup = cl.getOptionValue("externalizedCheckpointCleanup");
-            String stateBackendType = cl.getOptionValue("stateBackendType");
-            String enableIncremental = cl.getOptionValue("enableIncremental");
+
+            CheckPointParameterEnums.isExits(parameterTool.getUnrequestedParameters());
+
+            String checkpointDir = parameterTool.get(CheckPointParameterEnums.checkpointDir.name());
+
+            String checkpointingMode = parameterTool.get(CheckPointParameterEnums.checkpointingMode.name(),
+                    FlinkConstants.EXACTLY_ONCE);
+            String tolerableCheckpointFailureNumber = parameterTool.get(CheckPointParameterEnums.tolerableCheckpointFailureNumber.name());
+            String asynchronousSnapshots = parameterTool.get(CheckPointParameterEnums.asynchronousSnapshots.name());
+            String checkpointInterval = parameterTool.get(CheckPointParameterEnums.checkpointInterval.name());
+            String checkpointTimeout = parameterTool.get(CheckPointParameterEnums.checkpointTimeout.name());
+            String externalizedCheckpointCleanup = parameterTool.get(CheckPointParameterEnums.externalizedCheckpointCleanup.name());
+            String stateBackendType = parameterTool.get(CheckPointParameterEnums.stateBackendType.name());
+            String enableIncremental = parameterTool.get(CheckPointParameterEnums.enableIncremental.name());
 
             CheckPointParam checkPointParam = new CheckPointParam();
             if (StringUtils.isNotEmpty(asynchronousSnapshots)) {
@@ -91,12 +85,11 @@ public class CliConfigUtil {
                 } else {
                     throw new BizException("asynchronousSnapshots 参数必须是 Boolean 类型或者为空 ");
                 }
-
             }
             if (StringUtils.isNotEmpty(checkpointTimeout)) {
                 checkPointParam.setCheckpointTimeout(Long.valueOf(checkpointTimeout));
             }
-            checkPointParam.setCheckpointDir(checkpointDir);
+
             checkPointParam.setCheckpointingMode(checkpointingMode);
             if (StringUtils.isNotEmpty(checkpointInterval)) {
                 checkPointParam.setCheckpointInterval(Long.valueOf(checkpointInterval));
@@ -109,6 +102,13 @@ public class CliConfigUtil {
                 checkPointParam.setExternalizedCheckpointCleanup(externalizedCheckpointCleanup);
             }
 
+            //内存模式下不需要填写checkpointDir
+            if (!StateBackendEnum.MEMORY.getType().equalsIgnoreCase(stateBackendType)
+                    && StringUtils.isEmpty(checkpointDir)) {
+                throw new BizException("checkpointDir不存在或者没有对应的值");
+            }
+            checkPointParam.setCheckpointDir(checkpointDir);
+
             checkPointParam.setStateBackendEnum(StateBackendEnum.getStateBackend(stateBackendType));
 
             if (StringUtils.isNotEmpty(enableIncremental)) {
@@ -120,18 +120,15 @@ public class CliConfigUtil {
                 }
             }
 
-            log.info("checkPointParam ={}",checkPointParam);
+            log.info("checkPointParam ={}", checkPointParam);
 
             return checkPointParam;
-        } catch (UnrecognizedOptionException e) {
-            log.error("checkFlinkCheckPoint is error", e);
-            throw new BizException("Checkpoint参数校验不通过,不允许使用参数：" + e.getOption());
         } catch (BizException e) {
             log.error("checkFlinkCheckPoint is error", e);
             throw e;
         } catch (Exception e) {
             log.error("checkFlinkCheckPoint is error", e);
-            throw new BizException("Checkpoint参数校验不通过:"+e.getMessage());
+            throw new BizException("Checkpoint参数校验不通过:" + e.getMessage());
         }
     }
 

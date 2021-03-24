@@ -34,7 +34,7 @@ public class SqlValidationController extends BaseController {
                 return RestResult.error("没有检测到有效sql语句,是否缺少了 ; 分隔符");
             }
 
-            SqlValidation.checkSql(listSql);
+            SqlValidation.preCheckSql(listSql);
         } catch (Exception e) {
             log.warn("校验失败flinkSql={}   errorMessage= {} ", flinkSql, e.getMessage());
             return RestResult.error(e.getMessage());

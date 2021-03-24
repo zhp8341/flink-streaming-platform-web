@@ -1,5 +1,6 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
@@ -18,7 +19,6 @@ public class CommandUtil {
 
 
     //TODO 不能写死
-    private final static String JARVERSION = "lib/flink-streaming-core-1.2.0.RELEASE.jar";
 
     /**
      * 本地/Standalone Cluster模式
@@ -41,7 +41,7 @@ public class CommandUtil {
         }
 
         command.append("-c  com.flink.streaming.core.JobApplication").append(" ");
-        command.append(jobRunParamDTO.getSysHome()).append(JARVERSION);
+        command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
         command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
         if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
             command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
@@ -58,7 +58,8 @@ public class CommandUtil {
      * @date 2020-09-18
      * @time 00:57
      */
-    public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfig, String savepointPath) throws ParseException {
+    public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO,
+                                                       JobConfigDTO jobConfig, String savepointPath) throws Exception {
         StringBuilder command = new StringBuilder();
         command.append(jobRunParamDTO.getFlinkBinPath()).append(" run ");
         if (StringUtils.isNotEmpty(savepointPath)) {
@@ -75,9 +76,8 @@ public class CommandUtil {
             }
         }
 
-
         command.append("-c  com.flink.streaming.core.JobApplication").append(" ");
-        command.append(jobRunParamDTO.getSysHome()).append(JARVERSION);
+        command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
         command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
         if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
             command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
@@ -92,9 +92,6 @@ public class CommandUtil {
 
         return command.toString();
     }
-
-
-
 
 
 }
