@@ -94,7 +94,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
             }
             String appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
             if (StringUtils.isNotEmpty(appId)) {
-                throw new BizException("该任务在yarn上有运行，请取消任务后再运行 任务名称是:" +
+                throw new BizException("该任务在yarn上有运行，请到集群上取消任务后再运行 任务名称是:" +
                         jobConfigDTO.getJobName() + " 队列名称是:" + queueName + TipsConstants.TIPS_1);
             }
         } catch (BizException e) {

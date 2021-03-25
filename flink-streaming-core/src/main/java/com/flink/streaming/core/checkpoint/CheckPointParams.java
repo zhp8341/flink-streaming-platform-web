@@ -1,6 +1,8 @@
 package com.flink.streaming.core.checkpoint;
 
 
+import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.CheckPointParameterEnums;
 import com.flink.streaming.common.enums.StateBackendEnum;
 import com.flink.streaming.common.model.CheckPointParam;
 import lombok.extern.slf4j.Slf4j;
@@ -26,27 +28,30 @@ public class CheckPointParams {
      */
     public static CheckPointParam buildCheckPointParam(ParameterTool parameterTool) throws Exception {
 
-        String checkpointDir = parameterTool.get("checkpointDir");
+        String checkpointDir = parameterTool.get(CheckPointParameterEnums.checkpointDir.name(), SystemConstant.SPACE);
         //如果checkpointDir为空不启用CheckPoint
         if (StringUtils.isEmpty(checkpointDir)) {
             return null;
         }
-        String checkpointingMode = parameterTool.get("checkpointingMode",
+        String checkpointingMode = parameterTool.get(CheckPointParameterEnums.checkpointingMode.name(),
                 CheckpointingMode.EXACTLY_ONCE.name());
 
-        String checkpointInterval = parameterTool.get("checkpointInterval");
+        String checkpointInterval = parameterTool.get(CheckPointParameterEnums.checkpointInterval.name(),
+                SystemConstant.SPACE);
 
-        String checkpointTimeout = parameterTool.get("checkpointTimeout");
+        String checkpointTimeout = parameterTool.get(CheckPointParameterEnums.checkpointTimeout.name(), SystemConstant.SPACE);
 
-        String tolerableCheckpointFailureNumber = parameterTool.get("tolerableCheckpointFailureNumber");
+        String tolerableCheckpointFailureNumber =
+                parameterTool.get(CheckPointParameterEnums.tolerableCheckpointFailureNumber.name(), SystemConstant.SPACE);
 
-        String asynchronousSnapshots = parameterTool.get("asynchronousSnapshots");
+        String asynchronousSnapshots = parameterTool.get(CheckPointParameterEnums.asynchronousSnapshots.name(), SystemConstant.SPACE);
 
-        String externalizedCheckpointCleanup = parameterTool.get("externalizedCheckpointCleanup");
+        String externalizedCheckpointCleanup =
+                parameterTool.get(CheckPointParameterEnums.externalizedCheckpointCleanup.name(), SystemConstant.SPACE);
 
-        String stateBackendType = parameterTool.get("stateBackendType");
+        String stateBackendType = parameterTool.get(CheckPointParameterEnums.stateBackendType.name(), SystemConstant.SPACE);
 
-        String enableIncremental = parameterTool.get("enableIncremental");
+        String enableIncremental = parameterTool.get(CheckPointParameterEnums.enableIncremental.name(), SystemConstant.SPACE);
 
 
         CheckPointParam checkPointParam = new CheckPointParam();

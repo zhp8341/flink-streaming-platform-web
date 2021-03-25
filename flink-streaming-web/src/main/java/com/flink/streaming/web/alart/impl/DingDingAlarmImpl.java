@@ -38,7 +38,7 @@ public class DingDingAlarmImpl implements DingDingAlarm {
 
             HttpHeaders httpHeaders = HttpUtil.buildHttpHeaders(MediaType.APPLICATION_JSON_VALUE);
             HttpEntity<String> httpEntity = new HttpEntity(buildContent(content), httpHeaders);
-            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_10_S);
+            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_15_S);
             res = restTemplate.postForObject(url, httpEntity, String.class);
             if (StringUtils.isEmpty(res)) {
                 throw new BizException("消息发送失败 res is null");

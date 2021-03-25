@@ -24,7 +24,7 @@ public class HttpUtil {
 
     public final static int TIME_OUT_30_S = 1000 * 30;
 
-    public final static int TIME_OUT_10_S = 1000 * 10;
+    public final static int TIME_OUT_15_S = 1000 * 15;
 
     public final static int TIME_OUT_3_S = 1000 * 3;
 
@@ -80,10 +80,4 @@ public class HttpUtil {
             throw new Exception(" downFileByCurl pcs.waitFor() is error  rs=" + rs);
         }
     }
-
-
-    public static void main(String[] args) {
-        System.out.println(isHttpsOrHttp(" http://cloud.yangtuojia.com/bigdata/flink-sql-connector-elasticsearch6_2.11-1.12.0.jar "));
-    }
-
 }

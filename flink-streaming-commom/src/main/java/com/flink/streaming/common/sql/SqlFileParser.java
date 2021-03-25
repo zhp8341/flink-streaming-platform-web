@@ -4,7 +4,6 @@ package com.flink.streaming.common.sql;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.SqlCommand;
 import com.flink.streaming.common.model.SqlCommandCall;
-import com.flink.streaming.common.model.SqlConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,15 +16,16 @@ import java.util.regex.Matcher;
  * @author zhuhuipei
  * @Description:
  * @date 2020-06-23
+ *
  * @time 02:22
  */
-public class SqlParser {
+public class SqlFileParser {
 
 
-    public static SqlConfig parseToSqlConfig(List<String> lineList) {
+    public static List<SqlCommandCall> fileToSql(List<String> lineList) {
 
         if (CollectionUtils.isEmpty(lineList)) {
-            return null;
+            throw new RuntimeException("lineList is null");
         }
 
         List<SqlCommandCall> sqlCommandCallList = new ArrayList<>();
@@ -44,13 +44,13 @@ public class SqlParser {
                 if (optionalCall.isPresent()) {
                     sqlCommandCallList.add(optionalCall.get());
                 } else {
-                    throw new RuntimeException("Unsupported command '" + stmt.toString() + "'");
+                    throw new RuntimeException("不支持该语法使用" + stmt.toString() + "'");
                 }
                 stmt.setLength(0);
             }
         }
 
-        return SqlConfig.toSqlConfig(sqlCommandCallList);
+        return sqlCommandCallList;
 
     }
 
@@ -66,7 +66,6 @@ public class SqlParser {
                 for (int i = 0; i < groups.length; i++) {
                     groups[i] = matcher.group(i + 1);
                 }
-
                 return cmd.getOperandConverter().apply(groups)
                         .map((operands) -> new SqlCommandCall(cmd, operands));
             }
@@ -95,21 +94,5 @@ public class SqlParser {
         return str.substring(start, end);
     }
 
-    public static void main(String[] args) {
 
-        String stmt = "CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF'";
-
-        final Matcher matcher = SqlCommand.CREATE_FUNCTION.getPattern().matcher(stmt);
-        if (matcher.matches()) {
-            System.out.println(true);
-            final String[] groups = new String[matcher.groupCount()];
-            for (int i = 0; i < groups.length; i++) {
-                groups[i] = matcher.group(i + 1);
-            }
-            System.out.println(groups);
-        } else {
-            System.out.println(false);
-        }
-
-    }
 }
