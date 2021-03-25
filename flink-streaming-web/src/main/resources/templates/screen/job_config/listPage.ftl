@@ -153,6 +153,9 @@
                                                         <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
                                                     <#else>
                                                         <a href="#" onclick="start(${jobConfigVO.id})">提交任务</a>
+                                                        <#if jobConfigVO.deployMode=="YARN_PER">
+                                                            <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">恢复任务</a>
+                                                        </#if>
                                                     </#if>
                                                 <#else>
                                                     <a href="#" onclick="deleteConfig(${jobConfigVO.id})">删除</a>

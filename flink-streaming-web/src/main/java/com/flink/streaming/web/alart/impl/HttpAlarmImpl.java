@@ -33,7 +33,7 @@ public class HttpAlarmImpl implements HttpAlarm {
             log.error("url={} is null or callbackDTO={} is null", url, callbackDTO);
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
-        RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_10_S);
+        RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_15_S);
         try {
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("appId", callbackDTO.getAppId());

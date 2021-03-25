@@ -78,13 +78,9 @@ public class JobApplication {
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         String sqlPath = parameterTool.get("sql");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
-        String catalog = parameterTool.get("catalog", "memory");
-        String hiveConfDir = parameterTool.get("hive_conf_dir");
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(CheckPointParams.buildCheckPointParam(parameterTool));
-        jobRunParam.setCatalog(catalog);
-        jobRunParam.setHiveConfDir(hiveConfDir);
         return jobRunParam;
     }
 

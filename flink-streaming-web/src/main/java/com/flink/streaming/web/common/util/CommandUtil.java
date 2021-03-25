@@ -83,13 +83,6 @@ public class CommandUtil {
             command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
         }
 
-        if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCatalogType())) {
-            command.append(" -catalog ").append(jobRunParamDTO.getFlinkCatalogType());
-        }
-        if (StringUtils.isNotEmpty(jobRunParamDTO.getHiveCatalogConfDir())) {
-            command.append(" -hive_conf_dir ").append(jobRunParamDTO.getHiveCatalogConfDir());
-        }
-
         return command.toString();
     }
 

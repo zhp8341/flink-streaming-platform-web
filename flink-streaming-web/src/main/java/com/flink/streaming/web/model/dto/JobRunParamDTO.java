@@ -41,30 +41,17 @@ public class JobRunParamDTO {
      */
     private String sysHome;
 
-    /**
-     * flink catalog type，目前仅支持hive catalog和默认memory catalog
-     */
-    private String flinkCatalogType;
-
-    /**
-     * hive catalog的配置文件目录
-     */
-    private String hiveCatalogConfDir;
 
     public JobRunParamDTO(String flinkBinPath,
                           String flinkRunParam,
                           String sqlPath,
                           String sysHome,
-                          String flinkCheckpointConfig,
-                          String flinkCatalogType,
-                          String hiveCatalogConfDir) {
+                          String flinkCheckpointConfig) {
         this.flinkBinPath = flinkBinPath;
         this.flinkRunParam = flinkRunParam;
         this.sqlPath = sqlPath;
         this.sysHome = sysHome;
         this.flinkCheckpointConfig = flinkCheckpointConfig;
-        this.flinkCatalogType = flinkCatalogType;
-        this.hiveCatalogConfDir = hiveCatalogConfDir;
     }
 
     public static JobRunParamDTO getJobRunYarnDTO(Map<String, String> systemConfigMap, JobConfigDTO jobConfigDTO, String sqlPath) {
@@ -75,18 +62,13 @@ public class JobRunParamDTO {
 
         String sysHome = systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
 
-        String flinkCatalogType = systemConfigMap.getOrDefault(SysConfigEnum.FLINK_CATALOG_TYPE.getKey(), "memory");
-
-        String hiveCatalogConfDir = systemConfigMap.get(SysConfigEnum.HIVE_CATALOG_CONF_DIR.getKey());
-
         JobRunParamDTO jobRunParamDTO = new JobRunParamDTO(
                 flinkBinPath,
                 flinkRunParam,
                 sqlPath,
                 sysHome,
-                jobConfigDTO.getFlinkCheckpointConfig(),
-                flinkCatalogType,
-                hiveCatalogConfDir);
+                jobConfigDTO.getFlinkCheckpointConfig()
+        );
 
         return jobRunParamDTO;
 

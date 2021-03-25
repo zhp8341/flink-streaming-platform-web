@@ -8,15 +8,15 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   flink-streaming-platform-web系统是基于flink封装的一个可视化的、轻量级的web系统，用户只需在web界面进行sql配置就能完成流计算任务，
   主要功能包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 目的是减少开发，完全实现flink-sql 流计算任务
 
-   **支持钉钉告警、自定义回调告警、自动拉起任务**
+  **支持钉钉告警、自定义回调告警、自动拉起任务**
    
-  **flink任务支持单流 、双流、 单流与维表等**
+  **任务支持单流 、双流、 单流与维表等**
 
   **支持本地模式、yarn-per模式、STANDALONE模式**
-
+  
+  **支持catalog**
 
   **支持udf、自定义连接器等,完全兼容官方连接器** 
-
 
   **目前flink版本已经升级到1.12**
 
@@ -377,13 +377,14 @@ f: sql语句
 
 ![图片](http://img.ccblog.cn/flink/12.png)
 
-支持代码格式化 sql语句校验 提示功能
-
-目前不支持hive、批处理语法 如（不支持直接select 必须使用 insert into xx select xx  ）
 
 **备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果 tips: win系统 CTRL+A 全选 mac系统 command+A 全选**
 
-**备注：只能校验单个sql语法正确与否, 不能校验上下文之间关系，如：这张表是否存在 数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误**
+**备注：只能校验单个sql语法正确与否, 不能校验上下文之间关系 和catalog语法，如：这张表是否存在 数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误**
+
+
+[支持catalog](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/catalog.md)
+
 
 
 ### 2、系统设置
@@ -409,7 +410,10 @@ f: sql语句
 
 ~~~~
 
+
 ![图片](http://img.ccblog.cn/flink/5.png)
+
+
 
 
 ### 3、报警设置
@@ -532,7 +536,7 @@ https://github.com/zhp8341/flink-streaming-platform-web/blob/master/flink-stream
 
 [demo7 datagen简介](https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/sql_demo/demo_datagen.md)
 
-
+[catalog 使用示例](https://github.com/zhp8341/flink-streaming-platform-web/tree/master/docs/catalog.md)
 
 
 
@@ -544,8 +548,24 @@ https://github.com/zhp8341/flink-streaming-platform-web/blob/master/flink-stream
 
 
 
-
-
+###  支持的sql语法
+| 请求参数        | 
+| --------   | 
+| INSERT   INTO         |     
+| INSERT   OVERWRITE          |   
+|  CREATE   TABLE   |      
+|  CREATE    FUNCTION |      
+| CREATE    VIEW  |      
+| USE   CATALOG   |      
+|  DROP     |      
+|  ALTER     |      
+|  SHOW CATALOGS     |      
+|  SHOW DATABASES     |      
+|  SHOW TABLES     |      
+|  SHOW FUNCTIONS     |      
+| CREATE CATALOG      |      
+|   SET   |      
+|   SELECT (不支持)    | 
 
 
 ##  四、支持flink sql官方语法
