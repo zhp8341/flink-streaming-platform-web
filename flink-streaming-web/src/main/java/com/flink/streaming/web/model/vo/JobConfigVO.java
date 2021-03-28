@@ -92,16 +92,18 @@ public class JobConfigVO {
 
         if (StringUtils.isNotEmpty(domain)) {
             if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.rootUriForYarn(jobConfigDTO.getJobId()) + "#/overview");
+                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId()));
             }
             if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-                jobConfigVO.setFlinkRunUrl(domain + String.format("#/job/%s/overview", jobConfigDTO.getJobId()));
+                jobConfigVO.setFlinkRunUrl(domain + String.format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW,
+                        jobConfigDTO.getJobId()));
             }
             if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
                 String[] urls = domain.split(";");
                 for (String url : urls) {
                     if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
-                        jobConfigVO.setFlinkRunUrl(url.trim() + String.format("#/job/%s/overview", jobConfigDTO.getJobId()));
+                        jobConfigVO.setFlinkRunUrl(url.trim() +
+                                String.format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW, jobConfigDTO.getJobId()));
                         break;
                     }
                 }

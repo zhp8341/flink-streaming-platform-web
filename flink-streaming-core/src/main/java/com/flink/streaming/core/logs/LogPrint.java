@@ -1,5 +1,6 @@
 package com.flink.streaming.core.logs;
 
+import com.flink.streaming.common.enums.SqlCommand;
 import com.flink.streaming.common.model.SqlCommandCall;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.table.api.TableEnvironment;
@@ -43,7 +44,12 @@ public class LogPrint {
         }
         LogPrint.logPrint(sqlCommandCall);
 
-        tEnv.executeSql(sqlCommandCall.operands[0]).print();
+
+        if (sqlCommandCall.getSqlCommand().name().equalsIgnoreCase(SqlCommand.SELECT.name())) {
+            throw new RuntimeException("目前不支持select 语法使用");
+        } else {
+            tEnv.executeSql(sqlCommandCall.operands[0]).print();
+        }
 
 //        if (sqlCommandCall.getSqlCommand().name().equalsIgnoreCase(SqlCommand.SELECT.name())) {
 //            Iterator<Row> it = tEnv.executeSql(sqlCommandCall.operands[0]).collect();
@@ -53,4 +59,5 @@ public class LogPrint {
 //            }
 //        }
     }
+
 }

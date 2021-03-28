@@ -38,6 +38,7 @@ public class ExecuteSql {
                     statementSet.addInsertSql(sqlCommandCall.operands[0]);
                     break;
                 //显示语句
+                case SELECT:
                 case SHOW_CATALOGS:
                 case SHOW_DATABASES:
                 case SHOW_MODULES:

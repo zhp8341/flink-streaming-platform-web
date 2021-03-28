@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.model.CheckPointParam;
 import com.flink.streaming.web.ao.JobConfigAO;
 import com.flink.streaming.web.ao.JobServerAO;
@@ -207,7 +208,7 @@ public class JobConfigApiController extends BaseController {
             }
         }
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
-            String[] urls = upsertJobConfigParam.getExtJarPath().split("\n");
+            String[] urls = upsertJobConfigParam.getExtJarPath().split(SystemConstant.LINE_FEED);
             for (String url : urls) {
                 if (StringUtils.isEmpty(url)) {
                     continue;
@@ -259,6 +260,7 @@ public class JobConfigApiController extends BaseController {
                 throw new RuntimeException("不支持该模式系统");
         }
     }
+
 
     private RestResult checkPointParam(CheckPointParam checkPointParam) {
         if (checkPointParam == null) {

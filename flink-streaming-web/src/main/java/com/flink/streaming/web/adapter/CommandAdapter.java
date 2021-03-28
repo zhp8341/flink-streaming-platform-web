@@ -1,5 +1,7 @@
 package com.flink.streaming.web.adapter;
 
+import com.flink.streaming.web.enums.DeployModeEnum;
+
 /**
  * @author zhuhuipei
  * @Description:
@@ -8,24 +10,16 @@ package com.flink.streaming.web.adapter;
  */
 public interface CommandAdapter {
 
-    /**
-     * yarn per模式启动任务
-     *
-     * @author zhuhuipei
-     * @date 2020-09-18
-     * @time 20:18
-     */
-    void startForPerYarn(String command, StringBuilder localLog, Long jobRunLogId) throws Exception;
-
 
     /**
-     * 启动本地模式
+     * 启动服务
      *
      * @author zhuhuipei
-     * @date 2020/11/1
-     * @time 10:15
+     * @date 2021/3/26
+     * @time 17:31
      */
-    String startForLocal(String command, StringBuilder localLog, Long jobRunLogId) throws Exception;
+    String submitJob(String command, StringBuilder localLog, Long jobRunLogId, DeployModeEnum deployModeEnum) throws Exception;
+
 
     /**
      * yarn per模式执行savepoint

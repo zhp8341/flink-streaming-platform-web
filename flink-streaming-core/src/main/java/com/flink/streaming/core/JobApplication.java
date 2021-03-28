@@ -1,11 +1,14 @@
 package com.flink.streaming.core;
 
 
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.core.checkpoint.CheckPointParams;
+import com.flink.streaming.core.checkpoint.FsCheckPoint;
 import com.flink.streaming.core.execute.ExecuteSql;
 import com.flink.streaming.core.model.JobRunParam;
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -49,6 +52,9 @@ public class JobApplication {
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
+            //设置checkPoint
+            FsCheckPoint.setCheckpoint(env, jobRunParam.getCheckPointParam());
+
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
             List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
@@ -57,13 +63,18 @@ public class JobApplication {
 
             ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
 
+
+
             TableResult tableResult = statementSet.execute();
             if (tableResult == null || tableResult.getJobClient().get() == null ||
                     tableResult.getJobClient().get().getJobID() == null) {
                 throw new RuntimeException("任务运行失败 没有获取到JobID");
             }
-            System.out.println("任务提交成功 jobId=" + tableResult.getJobClient().get().getJobID());
-            log.info("任务提交成功 jobId={}", tableResult.getJobClient().get().getJobID());
+            JobID jobID=tableResult.getJobClient().get().getJobID();
+
+            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD  + jobID);
+
+            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}",jobID);
 
         } catch (Exception e) {
             System.err.println("任务执行失败:" + e.getMessage());

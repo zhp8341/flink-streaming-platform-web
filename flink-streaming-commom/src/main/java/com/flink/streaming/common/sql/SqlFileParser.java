@@ -38,7 +38,7 @@ public class SqlFileParser {
                     trimStart(line).startsWith(SystemConstant.COMMENT_SYMBOL)) {
                 continue;
             }
-            stmt.append("\n").append(line);
+            stmt.append(SystemConstant.LINE_FEED).append(line);
             if (line.trim().endsWith(SystemConstant.SEMICOLON)) {
                 Optional<SqlCommandCall> optionalCall = parse(stmt.toString());
                 if (optionalCall.isPresent()) {

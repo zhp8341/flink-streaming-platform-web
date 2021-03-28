@@ -49,7 +49,7 @@ public class HttpRequestAdapterImpl implements HttpRequestAdapter {
 
         YarnAppInfo yarnAppInfo = JSON.parseObject(res, YarnAppInfo.class);
 
-        this.check( yarnAppInfo, queueName, jobName, url);
+        this.check(yarnAppInfo, queueName, jobName, url);
 
         for (AppTO appTO : yarnAppInfo.getApps().getApp()) {
             if (JobConfigDTO.buildRunName(jobName).equals(appTO.getName()) ) {

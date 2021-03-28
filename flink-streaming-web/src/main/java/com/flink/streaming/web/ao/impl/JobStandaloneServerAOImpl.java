@@ -1,23 +1,18 @@
 package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
-import com.flink.streaming.web.config.JobThreadPool;
-import com.flink.streaming.web.common.util.CommandUtil;
+import com.flink.streaming.web.common.util.BuildCommandUtil;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.IpUtil;
-import com.flink.streaming.web.enums.DeployModeEnum;
-import com.flink.streaming.web.enums.JobConfigStatus;
-import com.flink.streaming.web.enums.JobStatusEnum;
-import com.flink.streaming.web.enums.SysConfigEnum;
-import com.flink.streaming.web.enums.SysConfigEnumType;
-import com.flink.streaming.web.enums.SysErrorEnum;
-import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.config.JobThreadPool;
+import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunLogDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
@@ -181,16 +176,16 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                 String appId = "";
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
-                        .append(DateUtil.now()).append("\n")
-                        .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append("\n")
+                        .append(DateUtil.now()).append(SystemConstant.LINE_FEED)
+                        .append("客户端IP：").append(IpUtil.getInstance().getLocalIP()).append(SystemConstant.LINE_FEED)
                         .append("运行模式:").append(jobConfig.getDeployModeEnum().name())
-                        .append("三方jar:\n").append(jobConfig.getExtJarPath())
-                        .append("\n");
+                        .append("三方jar:").append(SystemConstant.LINE_FEED).append(jobConfig.getExtJarPath())
+                        .append(SystemConstant.LINE_FEED);
 
                 try {
 
-                    String command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfig);
-                    appId = commandAdapter.startForLocal(command, localLog, jobRunLogId);
+                    String command = BuildCommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfig);
+                    appId = commandAdapter.submitJob(command, localLog, jobRunLogId,jobConfig.getDeployModeEnum());
                     Thread.sleep(1000 * 10);
                     JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(appId, jobConfig.getDeployModeEnum());
                     if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
@@ -210,7 +205,7 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
                     success = false;
                     jobStatus = JobStatusEnum.FAIL.name();
                 } finally {
-                    localLog.append("\n 启动结束时间 ").append(DateUtil.now()).append("\n\n");
+                    localLog.append("\n 启动结束时间 ").append(DateUtil.now()).append(SystemConstant.LINE_FEED);
                     if (success) {
                         localLog.append("######启动结果是 成功############################## ");
                     } else {
@@ -230,19 +225,19 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
              * @time 21:47
              */
             private String errorInfoDir() {
-                StringBuilder errorTips = new StringBuilder("\n\n")
+                StringBuilder errorTips = new StringBuilder(SystemConstant.LINE_FEED)
                         .append("（重要）请登陆服务器分别查看下面两个目录下的错误日志:")
-                        .append(IpUtil.getInstance().getLocalIP()).append("\n")
+                        .append(IpUtil.getInstance().getLocalIP()).append(SystemConstant.LINE_FEED)
                         .append("web系统日志目录（web日志）：")
                         .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
                         .append("logs/error.log")
-                        .append("\n")
+                        .append(SystemConstant.LINE_FEED)
                         .append("flink提交日志目录（flink客户端日志）：")
                         .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
                         .append("log/")
-                        .append("\n")
-                        .append("\n")
-                        .append("\n");
+                        .append(SystemConstant.LINE_FEED)
+                        .append(SystemConstant.LINE_FEED)
+                        .append(SystemConstant.LINE_FEED);
                 return errorTips.toString();
             }
 

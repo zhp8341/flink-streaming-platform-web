@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author zhuhuipei
  * @Description:
- * @date 2018/9/6
+ * @date 2015/9/6
  * @time 下午5:01
  */
 @Slf4j
@@ -74,26 +74,26 @@ public class SchedulerTask {
     }
 
 
-    /**
-     * 每隔20分钟进行一次对停止任务进行是否在yarn上运行的检查
-     *
-     * @author zhuhuipei
-     * @date 2020-10-25
-     * @time 18:34
-     */
-    @Async("taskExecutor")
-    @Scheduled(cron = "0 */20 * * * ?")
-    public void checkYarnJobByStop() {
-        if (!ipStatusService.isLeader()) {
-            return;
-        }
-        log.info("#####checkYarnJobByStop#######");
-        try {
-            taskServiceAO.checkYarnJobByStop();
-        } catch (Exception e) {
-            log.error("checkYarnJobByStop is error", e);
-        }
-    }
+//    /**
+//     * 每隔20分钟进行一次对停止任务进行是否在yarn上运行的检查
+//     *
+//     * @author zhuhuipei
+//     * @date 2020-10-25
+//     * @time 18:34
+//     */
+//    @Async("taskExecutor")
+//    @Scheduled(cron = "0 */20 * * * ?")
+//    public void checkYarnJobByStop() {
+//        if (!ipStatusService.isLeader()) {
+//            return;
+//        }
+//        log.info("#####checkYarnJobByStop#######");
+//        try {
+//            taskServiceAO.checkYarnJobByStop();
+//        } catch (Exception e) {
+//            log.error("checkYarnJobByStop is error", e);
+//        }
+//    }
 
 
     /**
@@ -104,7 +104,8 @@ public class SchedulerTask {
      * @time 23:45
      */
     @Async("taskExecutor")
-    @Scheduled(cron = "0 0 */1 * * ?")
+    //@Scheduled(cron = "0 0 */1 * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void autoSavePoint() {
         if (!ipStatusService.isLeader()) {
             return;
