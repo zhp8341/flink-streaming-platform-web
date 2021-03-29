@@ -70,9 +70,9 @@ public enum SqlCommand {
             "(ALTER\\s+FUNCTION.*)",
             (operands) -> Optional.of(new String[]{operands[0]})),
 
-//    SELECT(
-//            "(WITH.*SELECT.*|SELECT.*)",
-//            (operands) -> Optional.of(new String[]{operands[0]})),
+    SELECT(
+            "(WITH.*SELECT.*|SELECT.*)",
+            (operands) -> Optional.of(new String[]{operands[0]})),
 
     SHOW_CATALOGS(
             "SHOW\\s+CATALOGS",
@@ -115,7 +115,6 @@ public enum SqlCommand {
     public final Pattern pattern;
 
     public final Function<String[], Optional<String[]>> operandConverter;
-
 
 
     SqlCommand(String matchingRegex, Function<String[], Optional<String[]>> operandConverter) {

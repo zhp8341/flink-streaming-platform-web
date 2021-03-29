@@ -9,6 +9,7 @@ import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.YarnUtil;
 import com.flink.streaming.web.config.AlarmPoolConfig;
+import com.flink.streaming.web.config.SavePointThreadPool;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.flink.JobStandaloneInfo;
@@ -79,8 +80,6 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                     this.checkYarn(jobConfigDTO, alarmTypeEnumList);
                     break;
                 case LOCAL:
-                    this.checkStandalone(jobConfigDTO, alarmTypeEnumList);
-                    break;
                 case STANDALONE:
                     this.checkStandalone(jobConfigDTO, alarmTypeEnumList);
                     break;
@@ -93,13 +92,14 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     }
 
     @Override
+    @Deprecated
     public void checkYarnJobByStop() {
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.STOP.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()){
+            if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()) {
                 continue;
             }
             switch (jobConfigDTO.getDeployModeEnum()) {
@@ -139,20 +139,45 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     public void autoSavePoint() {
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
-            log.error("autoSavePoint is error  没有找到运行中的任务 ");
+            log.warn("autoSavePoint is error  没有找到运行中的任务 ");
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
+            if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
+                log.warn("没有配置Checkpoint不能执行SavePoint 任务:{}", jobConfigDTO.getJobName());
+                continue;
+            }
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
-                    JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-                    if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
-                        jobYarnServerAO.savepoint(jobConfigDTO.getId());
-                    }
-                    this.sleep();
+                    SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
                     break;
                 default:
                     break;
+            }
+            sleep();
+        }
+    }
+
+    /**
+     * 执行SavePoint
+     */
+    class SavePoint implements Runnable {
+
+        private JobConfigDTO jobConfigDTO;
+
+        public SavePoint(JobConfigDTO jobConfigDTO) {
+            this.jobConfigDTO = jobConfigDTO;
+        }
+
+        @Override
+        public void run() {
+            try {
+                JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+                if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+                    jobYarnServerAO.savepoint(jobConfigDTO.getId());
+                }
+            } catch (Exception e) {
+                log.error("执行savepoint 异常", e);
             }
         }
     }
@@ -160,7 +185,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
 
     private void sleep() {
         try {
-            Thread.sleep(100);
+            Thread.sleep(4000);
         } catch (InterruptedException e) {
         }
     }

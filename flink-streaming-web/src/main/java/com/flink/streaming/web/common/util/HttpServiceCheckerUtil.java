@@ -28,17 +28,21 @@ public class HttpServiceCheckerUtil {
      */
     public static boolean checkUrlConnect(String url) {
         try {
-            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_15_S);
-            restTemplate.exchange(url.trim(), HttpMethod.GET, new HttpEntity<String>(null, new HttpHeaders()), String.class);
+            log.info("checkUrlConnect url is {}", url);
+            RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_20_S);
+            restTemplate.exchange(url.trim(), HttpMethod.GET, new HttpEntity<String>(null,
+                    new HttpHeaders()), String.class);
         } catch (ResourceAccessException e) {
             if (e.getCause() instanceof ConnectException || e.getCause() instanceof SocketTimeoutException) {
-                log.error("网络异常 或者超时 url={}", url, e);
+                log.error("[checkUrlConnect]网络异常或者超时 url={}", url, e);
                 return false;
             } else {
-                log.warn("url={} 出错了 {}", e.getMessage());
+                log.warn("[checkUrlConnect]url={} 出错了 {}", e);
+                return false;
             }
         } catch (Exception e) {
-            log.warn("url={} 出错了 {}", e.getMessage());
+            log.error("[checkUrlConnect]url={} 出错了 {}", e);
+            return false;
         }
         log.info("网络检查正常 url={}", url);
         return true;
@@ -46,7 +50,7 @@ public class HttpServiceCheckerUtil {
 
     public static void main(String[] args) {
 //        String url = "https://youtube.com/";
-        String url = "http://hadoop001:8081/";
+        String url = "http://pre-hadoop-master002:8088/xxx";
         System.out.println(HttpServiceCheckerUtil.checkUrlConnect(url));
         ;
 

@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.web;
 
+import com.flink.streaming.web.common.SystemConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,7 @@ public class WebController extends BaseController {
     private String message() {
         String message = this.getServletRequest().getParameter("message");
         try {
-            return java.net.URLDecoder.decode(message, "UTF-8");
+            return java.net.URLDecoder.decode(message, SystemConstants.CODE_UTF_8);
         } catch (Exception ex) {
         }
         return "error";

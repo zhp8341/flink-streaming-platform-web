@@ -4,38 +4,35 @@ import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.calcite.config.Lex;
+import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.validate.SqlConformance;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.flink.configuration.Configuration;
+import org.apache.flink.sql.parser.validate.FlinkSqlConformance;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.SqlDialect;
-import org.apache.flink.table.api.StatementSet;
-import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.*;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.api.config.TableConfigOptions;
+import org.apache.flink.table.planner.calcite.CalciteConfig;
+import org.apache.flink.table.planner.calcite.CalciteParser;
+import org.apache.flink.table.planner.delegation.FlinkSqlParserFactories;
+import org.apache.flink.table.planner.utils.JavaScalaConversionUtil;
+import org.apache.flink.table.planner.utils.TableConfigUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author zhuhuipei
- * @Description:
- * @date 2021/1/17
- * @time 10:51
- */
+
 @Slf4j
 public class SqlValidation {
 
-
     //TODO 暂时没有找到好的解决方案
-
     /**
-     * sql校验
      *
      * @author zhuhuipei
-     * @date 2021/1/21
-     * @time 22:24
+     * @date 2021/3/27
+     * @time 10:10
      */
     public static void preCheckSql(List<String> sql) {
 
@@ -49,9 +46,7 @@ public class SqlValidation {
         TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
         List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
-
-        StatementSet statementSet = tEnv.createStatementSet();
-
+        TableConfig config = tEnv.getConfig();
         String value = null;
 
         try {
@@ -60,46 +55,65 @@ public class SqlValidation {
                 value = sqlCommandCall.operands[0];
 
                 switch (sqlCommandCall.sqlCommand) {
-                    case USE_CATALOG:
-                    case CREATE_CATALOG:
-                        throw new RuntimeException("暂时不支持 CATALOG 相关语法校验(请不要点击 sql预校验 按钮了)");
-                        //配置
+                    //配置
                     case SET:
                         String key = sqlCommandCall.operands[0];
                         String val = sqlCommandCall.operands[1];
-
-                        if (TableConfigOptions.TABLE_SQL_DIALECT.key().equalsIgnoreCase(key.trim())
-                                 && SqlDialect.HIVE.name().equalsIgnoreCase(val.trim())) {
-                            throw new RuntimeException("暂时不支持 Hive相关语法校验 (请不要点击 sql预校验 按钮)");
+                        if (val.contains(SystemConstant.LINE_FEED)){
+                           throw new RuntimeException("set 语法值异常："+val) ;
                         }
-                        Configuration configuration = tEnv.getConfig().getConfiguration();
-                        configuration.setString(key, val);
-                        break;
-                    //insert 语句
-                    case INSERT_INTO:
-                    case INSERT_OVERWRITE:
-                        statementSet.addInsertSql(sqlCommandCall.operands[0]);
+                        if (TableConfigOptions.TABLE_SQL_DIALECT.key().equalsIgnoreCase(key.trim())
+                                && SqlDialect.HIVE.name().equalsIgnoreCase(val.trim())) {
+                            config.setSqlDialect(SqlDialect.HIVE);
+                        }else{
+                            config.setSqlDialect(SqlDialect.DEFAULT);
+                        }
+
                         break;
                     //其他
                     default:
-                        tEnv.executeSql(sqlCommandCall.operands[0]);
+                        CalciteParser parser = new CalciteParser(getSqlParserConfig(config));
+                        parser.parse(sqlCommandCall.operands[0]);
                         break;
                 }
             }
         } catch (Exception e) {
-            log.warn("语法异常：{}  原因 {}", value, e);
-            throw new RuntimeException("语法异常  " + value + "  原因  " + e.getMessage());
+            log.warn("语法异常：  sql={}  原因是: {}", value, e);
+            throw new RuntimeException("语法异常   sql=" + value + "  原因:   " + e.getMessage());
         }
 
     }
 
+    private static SqlParser.Config getSqlParserConfig(TableConfig tableConfig) {
+        return JavaScalaConversionUtil.toJava(getCalciteConfig(tableConfig).getSqlParserConfig()).orElseGet(
+                () -> {
+                    SqlConformance conformance = getSqlConformance(tableConfig.getSqlDialect());
+                    return SqlParser
+                            .config()
+                            .withParserFactory(FlinkSqlParserFactories.create(conformance))
+                            .withConformance(conformance)
+                            .withLex(Lex.JAVA)
+                            .withIdentifierMaxLength(256);
+                }
+        );
+    }
 
+    private static CalciteConfig getCalciteConfig(TableConfig tableConfig) {
+        return TableConfigUtils.getCalciteConfig(tableConfig);
+    }
+    private static FlinkSqlConformance getSqlConformance(SqlDialect sqlDialect) {
+        switch (sqlDialect) {
+            case HIVE:
+                return FlinkSqlConformance.HIVE;
+            case DEFAULT:
+                return FlinkSqlConformance.DEFAULT;
+            default:
+                throw new TableException("Unsupported SQL dialect: " + sqlDialect);
+        }
+    }
     /**
      * 字符串转sql
      *
-     * @author zhuhuipei
-     * @date 2021/1/22
-     * @time 22:45
      */
     public static List<String> toSqlList(String sql) {
         if (StringUtils.isEmpty(sql)) {

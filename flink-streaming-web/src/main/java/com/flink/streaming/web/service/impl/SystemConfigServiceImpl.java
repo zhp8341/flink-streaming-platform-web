@@ -1,6 +1,7 @@
 package com.flink.streaming.web.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.exceptions.BizException;
 import com.flink.streaming.web.common.util.FileUtils;
@@ -53,7 +54,8 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     @Override
     public List<SystemConfigDTO> getSystemConfig(SysConfigEnumType sysConfigEnumType) {
-        return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType != null ? sysConfigEnumType.name() : null));
+        return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType != null ?
+                sysConfigEnumType.name() : null));
     }
 
     @Override
@@ -76,7 +78,8 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         if (StringUtils.isEmpty(url)) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
         }
-        if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
+        String checkUrl = url + FlinkYarnRestUriConstants.URI_YARN_INFO;
+        if (HttpServiceCheckerUtil.checkUrlConnect(checkUrl)) {
             return url.trim();
         }
         throw new BizException("网络异常 url=" + url);
@@ -170,17 +173,17 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     private void checkUrlValid(SysConfigEnum sysConfigEnum, String url) {
         switch (sysConfigEnum) {
             case YARN_RM_HTTP_ADDRESS:
-                if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
-                    throw new BizException("网络异常 url=" + url);
+                String checkUrl = url + FlinkYarnRestUriConstants.URI_YARN_INFO;
+                if (!HttpServiceCheckerUtil.checkUrlConnect(checkUrl)) {
+                    throw new BizException("网络异常 url=" + checkUrl);
                 }
+                break;
             case FLINK_REST_HTTP_ADDRESS:
-                if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
-                    throw new BizException("网络异常 url=" + url);
-                }
             case DINGDING_ALARM_URL:
                 if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
                     throw new BizException("网络异常 url=" + url);
                 }
+                break;
             case FLINK_REST_HA_HTTP_ADDRESS:
                 String[] urls = url.split(";");
                 for (String http : urls) {
@@ -188,6 +191,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
                         throw new BizException("网络异常 url=" + http);
                     }
                 }
+                break;
             default:
                 break;
         }

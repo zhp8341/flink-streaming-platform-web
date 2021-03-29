@@ -17,9 +17,20 @@ public class FlinkYarnRestUriConstants {
 
     public final static String URI_YARN_CHECKPOINT = "/checkpoints";
 
+    public final static String URI_YARN_INFO = "ws/v1/cluster/info";
+
+    public final static String URI_YARN_OVERVIEW = "#/overview";
+
+    public final static String URI_YARN_JOB_OVERVIEW = "#/job/%s/overview";
+
+
 
     public static String getUriJobsForYarn(String appId) {
         return rootUriForYarn(appId) + URI_JOBS;
+    }
+
+    public static String getUriOverviewForYarn(String appId) {
+        return rootUriForYarn(appId) + URI_YARN_OVERVIEW;
     }
 
     public static String getUriJobsForStandalone(String appId) {

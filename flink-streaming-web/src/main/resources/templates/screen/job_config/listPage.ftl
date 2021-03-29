@@ -51,7 +51,7 @@
                                 <input type="text" class="form-control" placeholder="任务名称(模糊查询)"
                                        name="jobName" <#if (jobConfigParam??)> value="${jobConfigParam.jobName!""}" </#if> />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <input type="text" class="form-control" placeholder="任务id"
                                        name="jobId"  <#if (jobConfigParam??) >  value="${jobConfigParam.jobId!""}" </#if> />
                             </div>
@@ -83,6 +83,9 @@
                             <div class="col-sm-1">
                                 <button type="button" class="btn btn-purple btn-sm" onclick="searchForm(1)">搜索</button>
                             </div>
+                             <div class="col-sm-1">
+                                 <button type="button" class="btn btn-pink btn-sm" onclick="refreshForm()">刷新</button>
+                             </div>
                             <div class="col-sm-1">
                                 <a class="btn btn-info btn-sm" href="/admin/addPage">新增</a>
                             </div>
@@ -204,7 +207,7 @@
                                     </#list>
 
                                     <#if pageVO.pageNum gte pageVO.pages>
-                                        <li class="disabled "><a class="page-link" href="#">下一页</a></li>
+                                        <li class="disabled "><a class="page-link" href="#" onclick="">下一页</a></li>
                                     <#else>
                                         <li>
                                             <a class="page-link" onclick="searchForm(${pageVO.pageNum+1})"  href="#" >下一页</a>

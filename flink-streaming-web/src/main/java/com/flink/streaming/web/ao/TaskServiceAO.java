@@ -27,6 +27,7 @@ public interface TaskServiceAO {
      * @date 2020-10-25
      * @time 17:15
      */
+    @Deprecated
     void checkYarnJobByStop();
 
 

@@ -1,8 +1,13 @@
 package com.flink.streaming.web.adapter.impl;
 
+import cn.hutool.core.date.DateUtil;
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.adapter.CommandAdapter;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
+import com.flink.streaming.web.common.util.BuildCommandUtil;
+import com.flink.streaming.web.config.WaitForPoolConfig;
+import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
@@ -12,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author zhuhuipei
@@ -23,9 +30,8 @@ import java.io.BufferedInputStream;
 @Service
 public class CommandAdapterImpl implements CommandAdapter {
 
-    private static long INTERVAL_TIME = 1000 * 5;
 
-    private static long INTERVAL_TIME_ONE = 1000 * 2;
+    private static long INTERVAL_TIME_TWO = 1000 * 2;
 
     @Autowired
     private JobRunLogService jobRunLogService;
@@ -34,67 +40,24 @@ public class CommandAdapterImpl implements CommandAdapter {
     @Autowired
     private SystemConfigService systemConfigService;
 
+
     @Override
-    public void startForPerYarn(String command, StringBuilder localLog, Long jobRunLogId) throws Exception {
-
-        long lastTime = System.currentTimeMillis();
-        byte[] buffer = new byte[1024];
+    public String submitJob(String command, StringBuilder localLog, Long jobRunLogId,
+                            DeployModeEnum deployModeEnum) throws Exception {
         log.info(" command ={} ", command);
-        localLog.append("启动命令：").append(command).append("\n");
+        localLog.append("启动命令：").append(command).append(SystemConstant.LINE_FEED);
         Process pcs = Runtime.getRuntime().exec(command);
-        BufferedInputStream reader = new BufferedInputStream(pcs.getInputStream());
-        int bytesRead = 0;
-        while ((bytesRead = reader.read(buffer)) != -1) {
-            String result = new String(buffer, 0, bytesRead, "UTF-8");
-            log.info(result);
-            localLog.append(result).append("\n");
 
-            //每隔5s更新日志
-            if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME) {
-                jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
-                lastTime = System.currentTimeMillis();
-            }
-        }
+        //清理错误日志
+        this.clearLogStream(pcs.getErrorStream(), String.format("%s#startForLocal-error#%s", DateUtil.now(),
+                deployModeEnum.name()));
+        String appId = this.clearInfoLogStream(pcs.getInputStream(), localLog, jobRunLogId);
         int rs = pcs.waitFor();
-        localLog.append("rs=").append(rs).append("\n");
-        if (rs != 0) {
-            localLog.append("pcs.waitFor() 执行异常 rs=").append(rs);
-            throw new Exception("pcs.waitFor() is error  rs=" + rs);
-        }
-    }
-
-    //TODO
-    @Override
-    public String startForLocal(String command, StringBuilder localLog, Long jobRunLogId) throws Exception {
-        long lastTime = System.currentTimeMillis();
-        byte[] buffer = new byte[1024];
-        log.info(" command ={} ", command);
-        localLog.append("启动命令：").append(command).append("\n");
-        Process pcs = Runtime.getRuntime().exec(command);
-        BufferedInputStream reader = new BufferedInputStream(pcs.getInputStream());
-        int bytesRead = 0;
-
-        String appId = null;
-        while ((bytesRead = reader.read(buffer)) != -1) {
-            String result = new String(buffer, 0, bytesRead, "UTF-8");
-            log.info(result);
-            if (result.contains("Job has been submitted with JobID")) {
-                appId = result.replace("Job has been submitted with JobID", "").trim();
-            }
-            localLog.append(result).append("\n");
-
-            //每隔1s更新日志
-            if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME_ONE) {
-                jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
-                lastTime = System.currentTimeMillis();
-            }
-        }
-        int rs = pcs.waitFor();
-        localLog.append("rs=").append(rs).append("\n");
+        localLog.append("rs=").append(rs).append(SystemConstant.LINE_FEED);
         jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
         if (rs != 0) {
-            localLog.append("pcs.waitFor() 执行异常 rs=").append(rs).append("   appId=").append(appId);
-            throw new RuntimeException("pcs.waitFor() is error  rs=" + rs);
+            localLog.append(" 执行异常 rs=").append(rs).append("   appId=").append(appId);
+            throw new RuntimeException("执行异常 is error  rs=" + rs);
         }
         if (StringUtils.isEmpty(appId)) {
             localLog.append("appId无法获 ").append(TipsConstants.TIPS_1);
@@ -103,31 +66,121 @@ public class CommandAdapterImpl implements CommandAdapter {
         return appId;
     }
 
+
     @Override
     public void savepointForPerYarn(String jobId, String targetDirectory, String yarnAppId) throws Exception {
-        String command = this.buildSavepointCommand(jobId, targetDirectory, yarnAppId);
+
+        String command = BuildCommandUtil.buildSavepointCommand(jobId, targetDirectory, yarnAppId,
+                systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
         log.info("[savepointForPerYarn] command={}", command);
         Process pcs = Runtime.getRuntime().exec(command);
-        BufferedInputStream reader = new BufferedInputStream(pcs.getInputStream());
-        int bytesRead = 0;
-        byte[] buffer = new byte[1024];
-        while ((bytesRead = reader.read(buffer)) != -1) {
-            String result = new String(buffer, 0, bytesRead, "UTF-8");
-            log.info(result);
-        }
+        //消费正常日志
+        this.clearLogStream(pcs.getInputStream(), String.format("%s-savepointForPerYarn-success", DateUtil.now()));
+        //消费错误日志
+        this.clearLogStream(pcs.getErrorStream(), String.format("%s-savepointForPerYarn-error", DateUtil.now()));
+
         int rs = pcs.waitFor();
         if (rs != 0) {
-            throw new Exception("pcs.waitFor() is error  rs=" + rs);
+            throw new Exception("[savepointForPerYarn]执行savepoint失败 is error  rs=" + rs);
         }
     }
 
 
-    private String buildSavepointCommand(String jobId, String targetDirectory, String yarnAppId) {
-        StringBuilder command = new StringBuilder(SystemConstants.buildFlinkBin(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey())));
-        command.append(" savepoint ")
-                .append(jobId).append(" ")
-                .append(targetDirectory).append(" ")
-                .append("-yid ").append(yarnAppId);
-        return command.toString();
+    /**
+     * 清理pcs.waitFor()日志放置死锁
+     *
+     * @author zhuhuipei
+     * @date 2021/3/28
+     * @time 11:15
+     */
+    private void clearLogStream(InputStream stream, final String threadName) {
+        WaitForPoolConfig.getInstance().getThreadPoolExecutor().execute(() -> {
+                    BufferedInputStream reader = null;
+                    try {
+                        Thread.currentThread().setName(threadName);
+                        reader = new BufferedInputStream(stream);
+                        int bytesRead = 0;
+                        byte[] buffer = new byte[1024];
+                        while ((bytesRead = reader.read(buffer)) != -1) {
+                            String result = new String(buffer, 0, bytesRead, SystemConstants.CODE_UTF_8);
+                            log.info(result);
+                        }
+                    } catch (Exception e) {
+                        log.error("threadName={}", threadName);
+                    } finally {
+                        this.close(reader, stream, "clearLogStream");
+                    }
+                }
+        );
     }
+
+    /**
+     * 启动日志输出并且从日志中获取成功后的jobId
+     *
+     * @author zhuhuipei
+     * @date 2021/3/28
+     * @time 11:15
+     */
+    private String clearInfoLogStream(InputStream stream, StringBuilder localLog, Long jobRunLogId) {
+
+        String appId = null;
+        BufferedInputStream reader = null;
+        try {
+            long lastTime = System.currentTimeMillis();
+            byte[] buffer = new byte[1024];
+            int bytesRead = 0;
+            reader = new BufferedInputStream(stream);
+            while ((bytesRead = reader.read(buffer)) != -1) {
+                String result = new String(buffer, 0, bytesRead, SystemConstants.CODE_UTF_8);
+                log.info(result);
+                if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD)) {
+                    appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD, SystemConstant.SPACE).trim();
+                }
+                if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP)) {
+                    appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP, SystemConstant.SPACE).trim();
+                }
+                localLog.append(result).append(SystemConstant.LINE_FEED);
+                //每隔2s更新日志
+                if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME_TWO) {
+                    jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
+                    lastTime = System.currentTimeMillis();
+                }
+            }
+            return appId;
+        } catch (Exception e) {
+            log.error("[clearInfoLogStream] is error", e);
+            throw new RuntimeException("clearInfoLogStream is error");
+        } finally {
+            this.close(reader, stream, "clearInfoLogStream");
+
+        }
+    }
+
+    /**
+     * 关闭流
+     *
+     * @author zhuhuipei
+     * @date 2021/3/28
+     * @time 12:53
+     */
+    private void close(BufferedInputStream reader, InputStream stream, String typeName) {
+        if (reader != null) {
+            try {
+                reader.close();
+                log.info("[{}]关闭reader ", typeName);
+            } catch (IOException e) {
+                log.error("[{}] 关闭reader流失败 ", typeName, e);
+            }
+        }
+        if (stream != null) {
+            try {
+                log.info("[{}]关闭stream ", typeName);
+                stream.close();
+            } catch (IOException e) {
+                log.error("[{}] 关闭stream流失败 ", typeName, e);
+            }
+        }
+        log.info("线程池状态: {}", WaitForPoolConfig.getInstance().getThreadPoolExecutor());
+    }
+
 }

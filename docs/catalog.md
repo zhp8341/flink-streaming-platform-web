@@ -1,6 +1,6 @@
 **cataLog操作说明**
 
-#依懒jar参考官方文档 
+## 依懒jar参考官方文档 
 
 https://ci.apache.org/projects/flink/flink-docs-release-1.12/zh/dev/table/connectors/hive/
 
@@ -13,8 +13,7 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/zh/dev/table/connec
 
 `可以把jar放到 lib 下 也可以放到http服务器上 然后在使用的时候添加http服务。`
 
-#demo1
-
+## demo1
 ~~~~ sql
  CREATE CATALOG testmyhive WITH (
     'type' = 'hive',
@@ -54,8 +53,7 @@ SHOW DATABASES;
  ~~~~ 
 
 
-#demo2
-
+## demo2
 如果已经使用过了可以直接
 ~~~~ sql
  CREATE CATALOG testmyhive WITH (
@@ -70,8 +68,7 @@ insert into print_table_01 select f0,f1,f2 from source_table_01;
  ~~~~ 
 
 
-#demo3
-
+## demo3
 
 https://ci.apache.org/projects/flink/flink-docs-release-1.12/zh/dev/table/connectors/hive/hive_read_write.html
 
@@ -125,9 +122,7 @@ SET table.sql-dialect=default;
 insert into hive_flink_table select itemId,price, 'XXXXaaa' as ups from item_test;
  ~~~~ 
 
-
-#kafka 生产者 数据demo 用于测试用
-
+## kafka 生产者 数据demo 用于测试用
 
 ~~~java
 public class KafkaSend {

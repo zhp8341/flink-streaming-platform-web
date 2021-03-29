@@ -124,6 +124,9 @@ public class FlinkHttpRequestAdapterImpl implements FlinkHttpRequestAdapter {
         try {
             JSONObject jsonObject = (JSONObject) JSON.parseObject(res).get("latest");
             JSONObject savepoint = (JSONObject) jsonObject.get("savepoint");
+            if (savepoint==null){
+                return null;
+            }
             return (String) savepoint.get("external_path");
         } catch (Exception e) {
             log.error("json 异常 res={}", res, e);

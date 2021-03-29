@@ -95,4 +95,11 @@ function searchForm(pageNum) {
 
 }
 
+function refreshForm() {
+    $("form[name='search']").submit();
+
+}
+
+
+
 
