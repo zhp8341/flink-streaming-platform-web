@@ -3,17 +3,17 @@ package com.flink.streaming.web.rpc.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.HttpUtil;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.YarnStateEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.model.to.AppTO;
 import com.flink.streaming.web.model.to.YarnAppInfo;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
+import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,6 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
         RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M);
         log.info("请求参数  url={}", url);
         String res = restTemplate.getForObject(url, String.class);
-        log.info("请求结果 str={} url={}", res, url);
 
         YarnAppInfo yarnAppInfo = JSON.parseObject(res, YarnAppInfo.class);
 
@@ -112,7 +111,6 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
             String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriJobsForYarn(appId);
             log.info("[getJobInfoForPerYarnByAppId]请求参数 appId={} url={}", appId, url);
             res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
-            log.info("[getJobInfoForPerYarnByAppId]请求参数结果: res={}", res);
             if (StringUtils.isEmpty(res)) {
                 return null;
             }
@@ -123,7 +121,7 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
             jobInfo.setStatus((String) jsonObject.get("status"));
             return jobInfo;
         } catch (Exception e) {
-            log.error("json 异常 res={}", res, e);
+            log.error("[getJobInfoForPerYarnByAppId] 错误  ", e);
         }
         return null;
     }

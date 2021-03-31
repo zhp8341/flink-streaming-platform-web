@@ -1,20 +1,20 @@
 package com.flink.streaming.web.ao.impl;
 
-import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
-import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.ao.TaskServiceAO;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.YarnUtil;
 import com.flink.streaming.web.config.AlarmPoolConfig;
 import com.flink.streaming.web.config.SavePointThreadPool;
 import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
-import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.model.vo.CallbackDTO;
+import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
+import com.flink.streaming.web.rpc.model.JobInfo;
+import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 import com.flink.streaming.web.service.JobAlarmConfigService;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SystemConfigService;
@@ -143,23 +143,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
-                log.warn("没有配置Checkpoint不能执行SavePoint 任务:{}", jobConfigDTO.getJobName());
-                continue;
-            }
-            if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())){
-                log.warn("自定义jar任务不支持savePoint  任务:{}", jobConfigDTO.getJobName());
-                continue;
-            }
-
-
-            switch (jobConfigDTO.getDeployModeEnum()) {
-                case YARN_PER:
-                    SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
-                    break;
-                default:
-                    break;
-            }
+            SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
             sleep();
         }
     }
@@ -178,10 +162,16 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         @Override
         public void run() {
             try {
-                JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-                if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
-                    jobYarnServerAO.savepoint(jobConfigDTO.getId());
+                switch (jobConfigDTO.getDeployModeEnum()) {
+                    case YARN_PER:
+                        jobYarnServerAO.savepoint(jobConfigDTO.getId());
+                        break;
+                    case LOCAL:
+                    case STANDALONE:
+                        jobStandaloneServerAO.savepoint(jobConfigDTO.getId());
+                        break;
                 }
+
             } catch (Exception e) {
                 log.error("执行savepoint 异常", e);
             }
@@ -263,7 +253,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
 
 
         if (CollectionUtils.isEmpty(alarmTypeEnumList)) {
-            log.warn("没有配置告警，无法进行告警！！！");
+            log.warn("没有配置告警，无法进行告警,并且任务将会被停止！！！");
             return;
         }
 
@@ -288,10 +278,12 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             try {
                 switch (deployModeEnum) {
                     case YARN_PER:
-                        jobYarnServerAO.start(callbackDTO.getJobConfigId(), null, SystemConstants.USER_NAME_TASK_AUTO);
+                        jobYarnServerAO.start(callbackDTO.getJobConfigId(), null,
+                                SystemConstants.USER_NAME_TASK_AUTO);
                         break;
                     case STANDALONE:
-                        jobStandaloneServerAO.start(callbackDTO.getJobConfigId(), null, SystemConstants.USER_NAME_TASK_AUTO);
+                        jobStandaloneServerAO.start(callbackDTO.getJobConfigId(), null,
+                                SystemConstants.USER_NAME_TASK_AUTO);
                         break;
                 }
 

@@ -41,7 +41,14 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <h3 style="text-align:center">只显示最近10次(每个一小时自动备份或者停止任务的时候备份) </h3>
-                        <h5 style="text-align:center;color: red">备注：如果sql语句发生变更或者业务逻辑发生变化，此时从savepoint恢复可能导致数据结果错误 </h5>
+                        <h5 style="text-align:center;color: red">
+                            备注1：如果sql语句发生变更或者业务逻辑发生变化，此时从savepoint恢复可能导致数据结果错误
+                        </h5>
+                        <h5 style="text-align:center;color: red">
+                            备注2：yarn模式下和集群模式下统一目录是(必须绑定hdfs)： hdfs:///flink/savepoint/flink-streaming-platform-web/
+                        </h5><h5 style="text-align:center;color: red">
+                            备注3：LOCAL模式本地模式下保存在flink根目录下
+                        </h5>
                     </div><!-- /.col -->
                 </div>
             </div><!-- /.page-content -->

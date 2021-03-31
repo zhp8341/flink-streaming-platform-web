@@ -96,13 +96,13 @@
                                 <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)：</label>
                                 <input class="form-control " type="text" name="flinkRunConfig" id="flinkRunConfig">
                             </div>
-                            <div class="form-group">
-                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"
-                                       title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ -externalizedCheckpointCleanup DELETE_ON_CANCELLATION or RETAIN_ON_CANCELLATION">Checkpoint信息：</label>
-                                <input class="form-control " type="text"
-                                       placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/"
-                                       name="flinkCheckpointConfig" id="flinkCheckpointConfig">
-                            </div>
+<#--                            <div class="form-group">-->
+<#--                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"-->
+<#--                                       title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ -externalizedCheckpointCleanup DELETE_ON_CANCELLATION or RETAIN_ON_CANCELLATION">Checkpoint信息：</label>-->
+<#--                                <input class="form-control " type="text"-->
+<#--                                       placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/"-->
+<#--                                       name="flinkCheckpointConfig" id="flinkCheckpointConfig">-->
+<#--                            </div>-->
 
                             <div class="form-group">
                                 <label for="inputfile">主类名*：</label>
@@ -158,7 +158,6 @@
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig: $('#flinkRunConfig').val(),
-                flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 alarmTypes:   chk_value.toString(),
                 jobType: $('#jobType').val(),
                 customArgs: $('#customArgs').val(),

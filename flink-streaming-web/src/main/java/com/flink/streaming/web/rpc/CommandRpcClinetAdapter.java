@@ -33,5 +33,14 @@ public interface CommandRpcClinetAdapter {
      */
     void savepointForPerYarn(String jobId, String targetDirectory, String yarnAppId) throws Exception;
 
+    /**
+     * 集群模式下执行savepoint
+     *
+     * @author zhuhuipei
+     * @date 2021/3/31
+     * @time 19:39
+     */
+    void savepointForPerCluster(String jobId, String targetDirectory) throws Exception;
+
 
 }

@@ -2,22 +2,22 @@ package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.common.constant.SystemConstant;
-import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
-import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
-import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.*;
 import com.flink.streaming.web.config.JobThreadPool;
 import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunLogDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
 import com.flink.streaming.web.model.dto.SystemConfigDTO;
+import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
+import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.JobRunLogService;
@@ -93,6 +93,40 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
     }
 
     @Override
+    public void checkSavepoint(JobConfigDTO jobConfigDTO) {
+        if (jobConfigDTO == null) {
+            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
+        }
+        if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
+            log.warn(MessageConstants.MESSAGE_006, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_006);
+        }
+
+        if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig()) &&
+                DeployModeEnum.STANDALONE.equals( jobConfigDTO.getDeployModeEnum())) {
+            log.error(MessageConstants.MESSAGE_004, jobConfigDTO);
+            throw new BizException(MessageConstants.MESSAGE_004);
+        }
+        if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+            log.warn(MessageConstants.MESSAGE_005, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_005);
+        }
+
+
+    }
+
+    @Override
+    public void checkClose(JobConfigDTO jobConfigDTO) {
+
+        if (jobConfigDTO.getStatus().equals(JobConfigStatus.RUN)) {
+            throw new BizException(MessageConstants.MESSAGE_002);
+        }
+        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
+            throw new BizException(MessageConstants.MESSAGE_003);
+        }
+    }
+
+    @Override
     public Long insertJobRunLog(JobConfigDTO jobConfigDTO, String userName) {
         JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
         jobRunLogDTO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
@@ -156,7 +190,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         case LOCAL:
                         case STANDALONE:
                             //1、构建执行命令
-                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO);
+                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO,savepointPath);
                             //2、提交任务
                             appId = this.submitJobForStandalone(command, jobConfigDTO, localLog);
 

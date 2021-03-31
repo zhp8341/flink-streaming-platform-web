@@ -113,10 +113,10 @@
                             </div>
 
 
-                            <div class="form-group">
-                                <label for="inputfile"  data-toggle="tooltip"   data-placement="bottom" title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ ">Checkpoint信息：</label>
-                                <input class="form-control " type="text" placeholder="Checkpoint信息" name="flinkCheckpointConfig"  value="${jobConfig.flinkCheckpointConfig!""}"  id="flinkCheckpointConfig" >
-                            </div>
+<#--                            <div class="form-group">-->
+<#--                                <label for="inputfile"  data-toggle="tooltip"   data-placement="bottom" title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ ">Checkpoint信息：</label>-->
+<#--                                <input class="form-control " type="text" placeholder="Checkpoint信息" name="flinkCheckpointConfig"  value="${jobConfig.flinkCheckpointConfig!""}"  id="flinkCheckpointConfig" >-->
+<#--                            </div>-->
 
                             <div class="form-group">
                                 <label for="inputfile">主类名*：</label>
@@ -176,8 +176,8 @@
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig:  $('#flinkRunConfig').val(),
-                flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 jobType: $('#jobType').val(),
+                alarmTypes:   chk_value.toString(),
                 customArgs: $('#customArgs').val(),
                 customMainClass: $('#customMainClass').val(),
                 customJarUrl: $('#customJarUrl').val()

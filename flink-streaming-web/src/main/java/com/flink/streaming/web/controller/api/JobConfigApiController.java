@@ -129,7 +129,7 @@ public class JobConfigApiController extends BaseController {
             return RestResult.error(e.getCode(), e.getErrorMsg());
         } catch (Exception e) {
             log.error("savepoint is error id={}", id, e);
-            return RestResult.error(SysErrorEnum.START_JOB_FAIL);
+            return RestResult.error(SysErrorEnum.SAVEPOINT_JOB_FAIL);
         }
         return RestResult.success();
     }
@@ -211,13 +211,12 @@ public class JobConfigApiController extends BaseController {
             }
         }
         //sql配置需要校验的参数JobType=null是兼容之前配置
-        if (JobTypeEnum.SQL.equals(upsertJobConfigParam.getJobType())||
-                upsertJobConfigParam.getJobType()==null){
-
+        if (JobTypeEnum.SQL.equals(upsertJobConfigParam.getJobType())
+                || upsertJobConfigParam.getJobType()==null
+                || JobTypeEnum.SQL.getCode()==upsertJobConfigParam.getJobType().intValue()){
             if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkSql())) {
                 return RestResult.error("sql语句不能为空");
             }
-
             if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
                 String[] urls = upsertJobConfigParam.getExtJarPath().split(SystemConstant.LINE_FEED);
                 for (String url : urls) {

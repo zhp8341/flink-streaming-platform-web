@@ -2,13 +2,13 @@ package com.flink.streaming.web.rpc.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.common.constant.SystemConstant;
-import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
 import com.flink.streaming.web.common.util.CommandUtil;
 import com.flink.streaming.web.config.WaitForPoolConfig;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -70,21 +70,34 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     @Override
     public void savepointForPerYarn(String jobId, String targetDirectory, String yarnAppId) throws Exception {
 
-        String command = CommandUtil.buildSavepointCommand(jobId, targetDirectory, yarnAppId,
+        String command = CommandUtil.buildSavepointCommandForYarn(jobId, targetDirectory, yarnAppId,
                 systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
         log.info("[savepointForPerYarn] command={}", command);
+        this.execSavepoint(command);
+
+    }
+
+    @Override
+    public void savepointForPerCluster(String jobId, String targetDirectory) throws Exception {
+        String command = CommandUtil.buildSavepointCommandForCluster(jobId, targetDirectory,
+                systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
+        log.info("[savepointForPerCluster] command={}", command);
+        this.execSavepoint(command);
+    }
+
+
+    private void execSavepoint(String command) throws Exception {
         Process pcs = Runtime.getRuntime().exec(command);
         //消费正常日志
-        this.clearLogStream(pcs.getInputStream(), String.format("%s-savepointForPerYarn-success", DateUtil.now()));
+        this.clearLogStream(pcs.getInputStream(), String.format("%s-savepoint-success", DateUtil.now()));
         //消费错误日志
-        this.clearLogStream(pcs.getErrorStream(), String.format("%s-savepointForPerYarn-error", DateUtil.now()));
+        this.clearLogStream(pcs.getErrorStream(), String.format("%s-savepoint-error", DateUtil.now()));
 
         int rs = pcs.waitFor();
         if (rs != 0) {
             throw new Exception("[savepointForPerYarn]执行savepoint失败 is error  rs=" + rs);
         }
     }
-
 
     /**
      * 清理pcs.waitFor()日志放置死锁

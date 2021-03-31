@@ -25,6 +25,7 @@ public enum SysErrorEnum {
     HTTP_REQUEST_IS_NULL("102", "appid参数为空"),
     START_JOB_FAIL("103", "开启任务失败"),
     STOP_JOB_FAIL("104", "关闭任务失败"),
+    SAVEPOINT_JOB_FAIL("105", "savepoint任务失败 详见错误日志"),
 
 
     USER_IS_NOT_NULL("10000", "帐号不存在"),

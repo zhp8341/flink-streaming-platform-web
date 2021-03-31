@@ -139,25 +139,18 @@
 
                                             <td>${jobConfigVO.createTime!""}</td>
                                             <td>
-                                                <#if jobConfigVO.deployMode=="YARN_PER">
-                                                    <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a>
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="LOCAL">
-                                                    本地模式不启用
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="STANDALONE">
-                                                    待开发中...
-                                                </#if>
+                                                <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史</a>
+                                                <a href="#" onclick="savePoint(${jobConfigVO.id!""})">手动备份</a>
                                             </td>
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
 
                                                     <#if jobConfigVO.stauts==1>
-                                                        <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
+                                                        <a href="#" onclick="stop(${jobConfigVO.id})">停止</a>
                                                     <#else>
-                                                        <a href="#" onclick="start(${jobConfigVO.id})">提交任务</a>
+                                                        <a href="#" onclick="start(${jobConfigVO.id})">提交</a>
                                                         <#if jobConfigVO.deployMode=="YARN_PER">
-                                                            <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">恢复任务</a>
+                                                            <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">恢复</a>
                                                         </#if>
                                                     </#if>
                                                 <#else>

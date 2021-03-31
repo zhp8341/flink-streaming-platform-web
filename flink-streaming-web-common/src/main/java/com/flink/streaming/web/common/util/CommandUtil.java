@@ -27,12 +27,18 @@ public class CommandUtil {
      * @time 09:59
      */
     public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO,
-                                                   JobConfigDTO jobConfigDTO) throws Exception {
+                                                   JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
         StringBuilder command = new StringBuilder();
         command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d ");
+
+        if (StringUtils.isNotEmpty(savepointPath)) {
+            command.append(" -s ").append(savepointPath).append(" ");
+        }
+
         if (jobConfigDTO.getDeployModeEnum() == DeployModeEnum.STANDALONE) {
             command.append(jobConfigDTO.getFlinkRunConfig());
         }
+
         if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
             String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
             for (String url : urls) {
@@ -54,7 +60,6 @@ public class CommandUtil {
                 command.append(" ").append(jobConfigDTO.getCustomArgs());
                 break;
         }
-
 
         log.info("buildRunCommandForLocal runCommand={}", command.toString());
         return command.toString();
@@ -105,8 +110,8 @@ public class CommandUtil {
     }
 
 
-    public static String buildSavepointCommand(String jobId, String targetDirectory, String yarnAppId,
-                                               String flinkHome) {
+    public static String buildSavepointCommandForYarn(String jobId, String targetDirectory, String yarnAppId,
+                                                      String flinkHome) {
         StringBuilder command = new StringBuilder(
                 SystemConstants.buildFlinkBin(flinkHome));
         command.append(" savepoint ")
@@ -115,5 +120,17 @@ public class CommandUtil {
                 .append("-yid ").append(yarnAppId);
         return command.toString();
     }
+
+
+    public static String buildSavepointCommandForCluster(String jobId, String targetDirectory,
+                                                         String flinkHome) {
+        StringBuilder command = new StringBuilder(
+                SystemConstants.buildFlinkBin(flinkHome));
+        command.append(" savepoint ")
+                .append(jobId).append(" ")
+                .append(targetDirectory).append(" ");
+        return command.toString();
+    }
+
 
 }

@@ -3,8 +3,6 @@ package com.flink.streaming.web.rpc;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 
-import java.util.List;
-
 /**
  * @author zhuhuipei
  * @Description:
@@ -13,8 +11,6 @@ import java.util.List;
  */
 public interface FlinkRestRpcAdapter {
 
-
-    List<String> queryRunJobInfo(DeployModeEnum deployModeEnum);
 
     /**
      * Standalone 模式下获取状态
@@ -34,6 +30,16 @@ public interface FlinkRestRpcAdapter {
      * @time 22:50
      */
     void cancelJobForFlinkByAppId(String jobId, DeployModeEnum deployModeEnum);
+
+
+    /**
+     * 获取savepoint路径
+     *
+     * @author zhuhuipei
+     * @date 2021/3/31
+     * @time 22:01
+     */
+    String savepointPath(String jobId, DeployModeEnum deployModeEnum);
 
 
 }

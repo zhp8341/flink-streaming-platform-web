@@ -6,8 +6,6 @@ import com.flink.streaming.web.rpc.model.JobInfo;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 /**
  * @author zhuhuipei
  * @Description:
@@ -29,11 +27,7 @@ public class TestFlinkYarnRestRpcAdapter extends TestRun {
         System.out.println(jobInfo);
     }
 
-    @Test
-    public void queryRunJobInfo() {
-        List<String> list = flinkRestRpcAdapter.queryRunJobInfo(DeployModeEnum.LOCAL);
-        System.out.println(list);
-    }
+
 
     @Test
     public void cancelJob() {
@@ -44,5 +38,12 @@ public class TestFlinkYarnRestRpcAdapter extends TestRun {
     @Test
     public void getSavepointPath() {
         yarnRestRpcAdapter.getSavepointPath("application_1592398631005_15496", "f4b53cd1e62fa42eeaf7bebd979fd665");
+    }
+
+    @Test
+    public void savepoint() {
+       String savepointPath= flinkRestRpcAdapter.savepointPath("d4951885fc4e6b7ccb774c4aae1d3415",
+               DeployModeEnum.LOCAL);
+       System.out.println(savepointPath);
     }
 }

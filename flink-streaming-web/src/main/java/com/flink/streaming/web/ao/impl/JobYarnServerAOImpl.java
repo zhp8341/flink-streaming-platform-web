@@ -1,24 +1,20 @@
 package com.flink.streaming.web.ao.impl;
 
-import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
-import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
-import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.enums.JobConfigStatus;
-import com.flink.streaming.web.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
+import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
 import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.service.JobConfigService;
-import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SavepointBackupService;
-import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,25 +34,17 @@ import java.util.Date;
 public class JobYarnServerAOImpl implements JobServerAO {
 
     //最大重试次数
-    private static final Integer tryTimes = 2;
+    private static final Integer TRY_TIMES = 2;
 
     @Autowired
     private JobConfigService jobConfigService;
 
-    @Autowired
-    private SystemConfigService systemConfigService;
 
     @Autowired
     private YarnRestRpcAdapter yarnRestRpcAdapter;
 
     @Autowired
-    private JobRunLogService jobRunLogService;
-
-    @Autowired
     private CommandRpcClinetAdapter commandRpcClinetAdapter;
-
-    @Autowired
-    private FlinkRestRpcAdapter flinkRestRpcAdapter;
 
     @Autowired
     private SavepointBackupService savepointBackupService;
@@ -106,8 +94,9 @@ public class JobYarnServerAOImpl implements JobServerAO {
         try {
             this.savepoint(id);
         } catch (Exception e) {
-            log.error("autoSavePoint is error");
+            log.error(MessageConstants.MESSAGE_008, e);
         }
+
 
         //2、停止任务
         this.stop(jobConfigDTO);
@@ -125,40 +114,27 @@ public class JobYarnServerAOImpl implements JobServerAO {
     @Override
     public void savepoint(Long id) {
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO == null) {
-            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
-        }
-        if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
-            log.warn(" FlinkCheckpointConfig is null jobConfigDTO={}", jobConfigDTO);
-            return;
-        }
-        if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-            log.warn("getJobId is null getJobName={}", jobConfigDTO.getJobName());
-            return;
-        }
-        if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
-            log.warn("自定义jar任务不支持savePoint  任务:{}", jobConfigDTO.getJobName());
-            return;
-        }
+
+       jobBaseServiceAO.checkSavepoint(jobConfigDTO);
 
         JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
         if (jobInfo == null) {
-            log.warn("jobInfo is null getJobName={}", jobConfigDTO.getJobName());
-            return;
+            log.warn(MessageConstants.MESSAGE_007, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_007);
         }
         //1、 执行savepoint
         try {
             commandRpcClinetAdapter.savepointForPerYarn(jobInfo.getId(),
                     SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
         } catch (Exception e) {
-            log.error("savepointForPerYarn is error", e);
-            return;
+            log.error(MessageConstants.MESSAGE_008, e);
+            throw new BizException(MessageConstants.MESSAGE_008);
         }
 
         String savepointPath = yarnRestRpcAdapter.getSavepointPath(jobConfigDTO.getJobId(), jobInfo.getId());
         if (StringUtils.isEmpty(savepointPath)) {
-            log.warn("getSavepointPath is null jobConfigDTO={}", jobConfigDTO);
-            return;
+            log.warn(MessageConstants.MESSAGE_009, jobConfigDTO);
+            throw new BizException(MessageConstants.MESSAGE_009);
         }
         //2、 执行保存Savepoint到本地数据库
         savepointBackupService.insertSavepoint(id, savepointPath, new Date());
@@ -172,20 +148,15 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
     @Override
     public void close(Long id, String userName) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO.getStatus().equals(JobConfigStatus.RUN)) {
-            throw new BizException(MessageConstants.MESSAGE_002);
-        }
-        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
-            throw new BizException(MessageConstants.MESSAGE_003);
-        }
+        jobBaseServiceAO.checkClose(jobConfigService.getJobConfigById(id));
+
         jobConfigService.openOrClose(id, YN.N, userName);
     }
 
 
     private void stop(JobConfigDTO jobConfigDTO) {
         Integer retryNum = 1;
-        while (retryNum <= tryTimes) {
+        while (retryNum <= TRY_TIMES) {
             JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
             if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
                 log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobInfo, retryNum, jobConfigDTO.getJobId());
