@@ -68,6 +68,11 @@ CREATE TABLE `job_config` (
   KEY `uk_index` (`job_name`) USING BTREE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置表';
 
+ALTER TABLE job_config add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '任务类型 0:sql 1:自定义jar' AFTER version ;
+ALTER TABLE job_config add `custom_args` varchar(128)  DEFAULT NULL COMMENT '启动jar可能需要使用的自定义参数' AFTER job_type;
+ALTER TABLE job_config add `custom_main_class` varchar(128)  DEFAULT NULL COMMENT '程序入口类' AFTER custom_args;
+ALTER TABLE job_config add `custom_jar_url` varchar(128)  DEFAULT NULL   COMMENT'自定义jar的http地址 如:http://ccblog.cn/xx.jar' AFTER custom_main_class;
+
 -- ----------------------------
 -- Table structure for job_run_log
 -- ----------------------------
@@ -167,7 +172,7 @@ CREATE TABLE `job_alarm_config`
   DEFAULT CHARSET = utf8mb4 COMMENT ='告警辅助配置表';
 
 -- ----------------------------
--- Records of user
+-- Records of user 默认密码是 123456
 -- ----------------------------
 BEGIN;
 INSERT INTO `user` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');

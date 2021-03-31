@@ -15,6 +15,9 @@
         <module>deployer</module>
         <module>flink-streaming-commom</module>
         <module>flink-streaming-validation</module>
+        <module>flink-streaming-web-config</module>
+        <module>flink-streaming-web-common</module>
+        <module>flink-streaming-web-alarm</module>
     </modules>
 
     <name>flink-streaming-platform-web</name>
@@ -52,6 +55,25 @@
                 <artifactId>flink-streaming-validation</artifactId>
                 <version>1.1</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-config</artifactId>
+                <version>1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-alarm</artifactId>
+                <version>1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-common</artifactId>
+                <version>1.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

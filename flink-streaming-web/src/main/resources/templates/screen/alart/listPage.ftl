@@ -65,6 +65,9 @@
                                 <div class="col-sm-1">
                                     <button type="button" class="btn btn-info btn-sm" onclick="searchForm(1)">搜索</button>
                                 </div>
+                                <div class="col-sm-2">
+                                    <h5  style="color: red">(只显示最近30天)</h5>
+                                </div>
                             </div>
                         </form>
                     </div><!-- /.col -->
@@ -131,7 +134,8 @@
 
                                 <#list 1..pageVO.pages as index>
                                     <#if pageVO.pageNum == index>
-                                        <li class="page-item active "><a class="page-link" href="#" onclick="searchForm(${index})" >${index}</a>
+                                        <li class="page-item active ">
+                                            <a class="page-link" href="#" onclick="searchForm(${index})" >${index}</a>
                                         </li>
                                     <#else>
                                         <li>

@@ -1,6 +1,7 @@
 package com.flink.streaming.web.controller.web;
 
 import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.PageModel;
@@ -42,6 +43,71 @@ public class JobConfigController {
 
     @RequestMapping(value = "/listPage")
     public String listPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
+        if (jobConfigParam==null){
+            jobConfigParam=new JobConfigParam();
+        }
+        jobConfigParam.setJobType(JobTypeEnum.SQL.getCode());
+        this.list(modelMap, jobConfigParam);
+        modelMap.put("active", "list");
+        return "screen/job_config/listPage";
+    }
+
+    @RequestMapping(value = "/jarListPage")
+    public String jarlistPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
+        if (jobConfigParam==null){
+            jobConfigParam=new JobConfigParam();
+        }
+        jobConfigParam.setJobType(JobTypeEnum.JAR.getCode());
+        this.list(modelMap, jobConfigParam);
+        modelMap.put("active", "jarlist");
+        return "screen/job_config/jarListPage";
+    }
+
+    @RequestMapping("/addPage")
+    public String addPage(ModelMap modelMap) {
+        modelMap.put("active", "addPage");
+        modelMap.put("open", "config");
+        return "screen/job_config/addPage";
+    }
+
+
+    @RequestMapping("/addJarPage")
+    public String addJarPage(ModelMap modelMap) {
+        modelMap.put("active", "addPage");
+        modelMap.put("open", "config");
+        return "screen/job_config/addJarPage";
+    }
+
+
+    @RequestMapping("/editPage")
+    public String editPage(ModelMap modelMap, Long id) {
+        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
+        return "screen/job_config/editPage";
+    }
+
+    @RequestMapping("/editJarPage")
+    public String editJarPage(ModelMap modelMap, Long id) {
+        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
+        return "screen/job_config/editJarPage";
+    }
+
+
+    @RequestMapping("/detailPage")
+    public String detailPage(ModelMap modelMap, Long id) {
+        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        if (jobConfigDTO == null) {
+            modelMap.put("message", "数据不存在");
+        } else {
+            modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
+        }
+        return "screen/job_config/detailPage";
+    }
+
+
+
+    private void list(ModelMap modelMap, JobConfigParam jobConfigParam){
         PageModel<JobConfigDTO> pageModel = jobConfigService.queryJobConfig(jobConfigParam);
         PageVO pageVO = new PageVO();
         pageVO.setPageNum(pageModel.getPageNum());
@@ -62,37 +128,7 @@ public class JobConfigController {
             jobConfigVOList = JobConfigVO.toListVO(pageModel.getResult(), domainKey);
         }
         modelMap.put("jobConfigList", jobConfigVOList);
-        modelMap.put("active", "list");
         modelMap.put("open", "config");
-        return "screen/job_config/listPage";
     }
-
-    @RequestMapping("/addPage")
-    public String addPage(ModelMap modelMap) {
-        modelMap.put("active", "addPage");
-        modelMap.put("open", "config");
-        return "screen/job_config/addPage";
-    }
-
-
-    @RequestMapping("/editPage")
-    public String editPage(ModelMap modelMap, Long id) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
-        return "screen/job_config/editPage";
-    }
-
-
-    @RequestMapping("/detailPage")
-    public String detailPage(ModelMap modelMap, Long id) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO == null) {
-            modelMap.put("message", "数据不存在");
-        } else {
-            modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
-        }
-        return "screen/job_config/detailPage";
-    }
-
 
 }

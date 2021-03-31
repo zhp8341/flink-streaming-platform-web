@@ -1,8 +1,8 @@
 package com.flink.streaming.web.ao.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.flink.streaming.web.alart.DingDingAlarm;
-import com.flink.streaming.web.alart.HttpAlarm;
+import com.flink.streaming.web.alarm.DingDingAlarm;
+import com.flink.streaming.web.alarm.HttpAlarm;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.enums.AlarmLogStatusEnum;
 import com.flink.streaming.web.enums.AlarmLogTypeEnum;

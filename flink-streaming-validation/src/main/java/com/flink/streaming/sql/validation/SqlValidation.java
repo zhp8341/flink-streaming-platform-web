@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.validate.SqlConformance;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.sql.parser.validate.FlinkSqlConformance;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -46,6 +47,10 @@ public class SqlValidation {
         TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
         List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
+        if (CollectionUtils.isEmpty(sqlCommandCallList)){
+            throw new RuntimeException("没解析出sql，请检查语句");
+        }
+
         TableConfig config = tEnv.getConfig();
         String value = null;
 

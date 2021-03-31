@@ -18,8 +18,13 @@
 
         <dependency>
             <groupId>com.streaming.platform.web</groupId>
-            <artifactId>flink-streaming-validation</artifactId>
+            <artifactId>flink-streaming-web-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.streaming.platform.web</groupId>
+            <artifactId>flink-streaming-web-alarm</artifactId>
+        </dependency>
+
 
         <!-- springboot 全家桶 start -->
         <dependency>

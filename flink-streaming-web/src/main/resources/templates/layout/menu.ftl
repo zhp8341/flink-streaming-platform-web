@@ -34,14 +34,14 @@
                 <li <#if active??&& active=="list" > class="active" </#if> >
                     <a href="/admin/listPage">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        任务列表
+                        SQL任务列表
                     </a>
                     <b class="arrow"></b>
                 </li>
-                <li <#if active??&& active=="addPage" > class="active" </#if>>
-                    <a href="/admin/addPage">
+                <li <#if active??&& active=="jarlist" > class="active" </#if>>
+                    <a href="/admin/jarListPage">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        新增配置
+                        JAR任务列表
                     </a>
                     <b class="arrow"></b>
                 </li>

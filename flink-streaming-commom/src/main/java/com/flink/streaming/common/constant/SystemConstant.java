@@ -18,6 +18,8 @@ public class SystemConstant {
 
     public final static String SPACE = "";
 
+    public final static String VIRGULE = "/";
+
     public static final int DEFAULT_PATTERN_FLAGS = Pattern.CASE_INSENSITIVE | Pattern.DOTALL;
 
 
@@ -27,5 +29,7 @@ public class SystemConstant {
     public static final String QUERY_JOBID_KEY_WORD = "job-submitted-success:";
 
     public static final String QUERY_JOBID_KEY_WORD_BACKUP = "Job has been submitted with JobID";
+
+
 
 }

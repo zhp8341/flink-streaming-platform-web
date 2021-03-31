@@ -1,6 +1,6 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.IpUtil;
 import com.flink.streaming.web.enums.IpStatusEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;

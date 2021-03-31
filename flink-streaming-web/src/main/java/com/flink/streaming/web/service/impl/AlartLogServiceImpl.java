@@ -48,6 +48,7 @@ public class AlartLogServiceImpl implements AlartLogService {
         }
         PageHelper.startPage(alartLogParam.getPageNum(), alartLogParam.getPageSize(), YN.Y.getCode());
 
+        //只能查最近30天的
         Page<AlartLog> page = alarmLogMapper.selectByParam(alartLogParam);
         if (page == null) {
             return null;

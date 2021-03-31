@@ -1,19 +1,19 @@
 package com.flink.streaming.web.ao.impl;
 
-import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
-import com.flink.streaming.web.adapter.HttpRequestAdapter;
+import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.ao.TaskServiceAO;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.YarnUtil;
 import com.flink.streaming.web.config.AlarmPoolConfig;
 import com.flink.streaming.web.config.SavePointThreadPool;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.model.flink.JobStandaloneInfo;
-import com.flink.streaming.web.model.flink.JobYarnInfo;
+import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
+import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.model.vo.CallbackDTO;
 import com.flink.streaming.web.service.JobAlarmConfigService;
 import com.flink.streaming.web.service.JobConfigService;
@@ -43,10 +43,10 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     private JobConfigService jobConfigService;
 
     @Autowired
-    private FlinkHttpRequestAdapter flinkHttpRequestAdapter;
+    private FlinkRestRpcAdapter flinkRestRpcAdapter;
 
     @Autowired
-    private HttpRequestAdapter httpRequestAdapter;
+    private YarnRestRpcAdapter yarnRestRpcAdapter;
 
     @Autowired
     private AlarmServiceAO alarmServiceAO;
@@ -111,7 +111,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                             continue;
                         }
                         log.info("check job getJobName={} queueName={}", jobConfigDTO.getJobName(), queueName);
-                        appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
+                        appId = yarnRestRpcAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
                     } catch (BizException be) {
                         if (SysErrorEnum.YARN_CODE.getCode().equals(be.getCode())) {
                             continue;
@@ -122,10 +122,10 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                         continue;
                     }
                     if (!StringUtils.isEmpty(appId)) {
-                        JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(appId);
-                        if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
-                            log.warn("执行停止操作 jobYarnInfo={} id={}", jobYarnInfo, appId);
-                            flinkHttpRequestAdapter.cancelJobForYarnByAppId(appId, jobYarnInfo.getId());
+                        JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(appId);
+                        if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
+                            log.warn("执行停止操作 jobYarnInfo={} id={}", jobInfo, appId);
+                            yarnRestRpcAdapter.cancelJobForYarnByAppId(appId, jobInfo.getId());
                         }
                     }
                     break;
@@ -147,6 +147,12 @@ public class TaskServiceAOImpl implements TaskServiceAO {
                 log.warn("没有配置Checkpoint不能执行SavePoint 任务:{}", jobConfigDTO.getJobName());
                 continue;
             }
+            if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())){
+                log.warn("自定义jar任务不支持savePoint  任务:{}", jobConfigDTO.getJobName());
+                continue;
+            }
+
+
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
                     SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
@@ -172,8 +178,8 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         @Override
         public void run() {
             try {
-                JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-                if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+                JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+                if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
                     jobYarnServerAO.savepoint(jobConfigDTO.getId());
                 }
             } catch (Exception e) {
@@ -197,14 +203,14 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         //查询任务状态
-        JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+        JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
 
-        if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
+        if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
             return;
         }
 
         //变更任务状态
-        log.error("发现本地任务状态和yarn上不一致,准备自动修复本地web任务状态 jobInfo={}", jobYarnInfo);
+        log.error("发现本地任务状态和yarn上不一致,准备自动修复本地web任务状态  {}", jobConfigDTO);
         JobConfigDTO jobConfig = JobConfigDTO.bulidStop(jobConfigDTO.getId());
         jobConfigService.updateJobConfigById(jobConfig);
 
@@ -225,7 +231,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         //查询任务状态
-        JobStandaloneInfo jobStandaloneInfo = flinkHttpRequestAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),
+        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),
                 jobConfigDTO.getDeployModeEnum());
 
         if (jobStandaloneInfo != null && SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {

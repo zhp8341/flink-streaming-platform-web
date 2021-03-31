@@ -6,11 +6,12 @@ import com.flink.streaming.web.ao.JobConfigAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.FlinkConstants;
 import com.flink.streaming.web.common.RestResult;
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.CliConfigUtil;
-import com.flink.streaming.web.common.util.HttpUtil;
+import com.flink.streaming.web.common.util.MatcherUtils;
 import com.flink.streaming.web.controller.web.BaseController;
 import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
@@ -157,7 +158,6 @@ public class JobConfigApiController extends BaseController {
     @RequestMapping(value = "/editConfig", method = {RequestMethod.POST})
     public RestResult editConfig(UpsertJobConfigParam upsertJobConfigParam) {
 
-
         try {
             RestResult restResult = checkUpsertJobConfigParam(upsertJobConfigParam);
             if (restResult != null) {
@@ -194,36 +194,60 @@ public class JobConfigApiController extends BaseController {
         if (!upsertJobConfigParam.getJobName().matches("[0-9A-Za-z_]*")) {
             return RestResult.error("任务名称仅能含数字,字母和下划线");
         }
-        if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkSql())) {
-            return RestResult.error("sql语句不能为空");
-        }
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getFlinkCheckpointConfig())) {
 
+
+        //jar需要校验参数
+        if (JobTypeEnum.JAR.equals(upsertJobConfigParam.getJobType())){
+
+            if (StringUtils.isEmpty(upsertJobConfigParam.getCustomMainClass())){
+                return RestResult.error("主类不能为空");
+            }
+
+            if (StringUtils.isEmpty(upsertJobConfigParam.getCustomJarUrl())){
+                return RestResult.error("主类jar的http地址不能为空");
+            }
+            if (MatcherUtils.isHttpsOrHttp(upsertJobConfigParam.getCustomJarUrl())){
+                return RestResult.error("主类jar的http地址 不是http或者https:" + upsertJobConfigParam.getCustomJarUrl());
+            }
+        }
+        //sql配置需要校验的参数JobType=null是兼容之前配置
+        if (JobTypeEnum.SQL.equals(upsertJobConfigParam.getJobType())||
+                upsertJobConfigParam.getJobType()==null){
+
+            if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkSql())) {
+                return RestResult.error("sql语句不能为空");
+            }
+
+            if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
+                String[] urls = upsertJobConfigParam.getExtJarPath().split(SystemConstant.LINE_FEED);
+                for (String url : urls) {
+                    if (StringUtils.isEmpty(url)) {
+                        continue;
+                    }
+                    if (!MatcherUtils.isHttpsOrHttp(url)) {
+                        return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
+                    }
+                }
+            }
+        }
+
+
+
+        if (StringUtils.isNotEmpty(upsertJobConfigParam.getFlinkCheckpointConfig())) {
             CheckPointParam checkPointParam = CliConfigUtil
                     .checkFlinkCheckPoint(upsertJobConfigParam.getFlinkCheckpointConfig());
-
             RestResult restResult = this.checkPointParam(checkPointParam);
             if (restResult != null && !restResult.isSuccess()) {
                 return restResult;
             }
         }
-        if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
-            String[] urls = upsertJobConfigParam.getExtJarPath().split(SystemConstant.LINE_FEED);
-            for (String url : urls) {
-                if (StringUtils.isEmpty(url)) {
-                    continue;
-                }
-                if (!HttpUtil.isHttpsOrHttp(url)) {
-                    return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
-                }
-            }
-        }
+
 
         if (DeployModeEnum.YARN_PER.name().equals(upsertJobConfigParam.getDeployMode())) {
             if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkRunConfig())) {
                 return RestResult.error("flink运行配置不能为空");
             }
-            RestResult restResult = CliConfigUtil.checkFlinkRunConfig(upsertJobConfigParam.getFlinkRunConfig());
+            RestResult restResult = CliConfigUtil.checkFlinkRunConfigForYarn(upsertJobConfigParam.getFlinkRunConfig());
             if (restResult != null) {
                 return restResult;
             }

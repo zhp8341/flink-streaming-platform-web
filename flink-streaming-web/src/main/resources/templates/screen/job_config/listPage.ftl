@@ -33,7 +33,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">任务列表</li>
+                    <li class="active">Flink-SQL任务列表</li>
                 </ul>
             </div>
 
@@ -84,7 +84,7 @@
                                 <button type="button" class="btn btn-purple btn-sm" onclick="searchForm(1)">搜索</button>
                             </div>
                              <div class="col-sm-1">
-                                 <button type="button" class="btn btn-pink btn-sm" onclick="refreshForm()">刷新</button>
+                                 <button type="button" class="btn btn-danger btn-sm" onclick="refreshForm()">刷新</button>
                              </div>
                             <div class="col-sm-1">
                                 <a class="btn btn-info btn-sm" href="/admin/addPage">新增</a>
