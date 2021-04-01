@@ -46,8 +46,12 @@
                         </h5>
                         <h5 style="text-align:center;color: red">
                             备注2：yarn模式下和集群模式下统一目录是(必须绑定hdfs)： hdfs:///flink/savepoint/flink-streaming-platform-web/
-                        </h5><h5 style="text-align:center;color: red">
-                            备注3：LOCAL模式本地模式下保存在flink根目录下
+                        </h5>
+                        <h5 style="text-align:center;color: red">
+                            备注3：LOCAL模式本地模式下保存在flink客户端的根目录下
+                        </h5>
+                        <h5 style="text-align:center;color: red">
+                            备注4： hdfs:///flink/savepoint/flink-streaming-platform-web/ 建议提前创建好
                         </h5>
                     </div><!-- /.col -->
                 </div>
@@ -91,6 +95,8 @@
                                         <td>
                                             <#if startButton>
                                                 <a href="#" onclick="start(${jobConfigId},${savepointBackupVO.id})">点击恢复任务</a>
+                                            <#else>
+                                                任务运行、关闭配置状态下不能使用
                                             </#if>
                                         </td>
                                     </tr>

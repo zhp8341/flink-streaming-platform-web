@@ -39,6 +39,19 @@
     </select>
 
 
+    <select id="selectByJobIdList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from job_alarm_config
+        where is_deleted=0 and job_id IN
+
+        <foreach collection="jobIdList" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+        </foreach>
+
+    </select>
+
+
 
     <update id="deleteByJobId" parameterType="java.lang.Long">
         update job_alarm_config

@@ -104,8 +104,8 @@ public class SchedulerTask {
      * @time 23:45
      */
     @Async("taskExecutor")
-    //@Scheduled(cron = "0 0 */1 * * ?")
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 0 */1 * * ?")
+//    @Scheduled(cron = "0 */10 * * * ?")
     public void autoSavePoint() {
         if (!ipStatusService.isLeader()) {
             return;

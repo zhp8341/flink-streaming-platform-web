@@ -1,9 +1,9 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.JobAlarmConfigMapper;
 import com.flink.streaming.web.model.entity.JobAlarmConfig;
 import com.flink.streaming.web.service.JobAlarmConfigService;
@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author zhuhuipei
@@ -70,6 +68,28 @@ public class JobAlarmConfigServiceImpl implements JobAlarmConfigService {
         }
 
         return alarmTypeEnumList;
+    }
+
+    @Override
+    public Map<Long, List<AlarmTypeEnum>> findByJobIdList(List<Long> jobIdList) {
+
+        List<JobAlarmConfig> list = jobAlarmConfigMapper.selectByJobIdList(jobIdList);
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.EMPTY_MAP;
+        }
+        Map<Long, List<AlarmTypeEnum>> jobId2List = new HashMap<>();
+
+        for (JobAlarmConfig jobAlarmConfig : list) {
+            List<AlarmTypeEnum> alarmTypeEnumList = jobId2List.get(jobAlarmConfig.getJobId());
+            if (CollectionUtils.isEmpty(alarmTypeEnumList)) {
+                alarmTypeEnumList = new ArrayList<>();
+            }
+            alarmTypeEnumList.add(AlarmTypeEnum.getAlarmTypeEnum(jobAlarmConfig.getType()));
+            jobId2List.put(jobAlarmConfig.getJobId(), alarmTypeEnumList);
+
+
+        }
+        return jobId2List;
     }
 
     private void checkSysConfig(List<AlarmTypeEnum> alarmTypeEnumList) {

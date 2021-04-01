@@ -1,8 +1,11 @@
 package com.flink.streaming.web.model.vo;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.util.DateFormatUtils;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
+import com.flink.streaming.web.common.util.HttpUtil;
+import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
@@ -72,6 +75,9 @@ public class JobConfigVO {
     private String editTime;
 
 
+    private String alarmStrs;
+
+
     public static JobConfigVO toVO(JobConfigDTO jobConfigDTO, Map<DeployModeEnum, String> map) {
         if (jobConfigDTO == null) {
             return null;
@@ -91,14 +97,18 @@ public class JobConfigVO {
         String domain = map.get(jobConfigDTO.getDeployModeEnum());
 
         if (StringUtils.isNotEmpty(domain)) {
-            if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-                jobConfigVO.setFlinkRunUrl(domain + FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId()));
+            if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum())
+                    && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+                jobConfigVO.setFlinkRunUrl(HttpUtil.buildUrl( domain ,
+                        FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId())));
             }
-            if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+            if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum())
+                    && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
                 jobConfigVO.setFlinkRunUrl(domain + String.format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW,
                         jobConfigDTO.getJobId()));
             }
-            if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
+            if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum())
+                    && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
                 String[] urls = domain.split(";");
                 for (String url : urls) {
                     if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
@@ -128,8 +138,35 @@ public class JobConfigVO {
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
             list.add(JobConfigVO.toVO(jobConfigDTO, map));
         }
-
         return list;
+    }
+
+    public static void buildAlarm(List<JobConfigVO> jobConfigVOList,
+                                  Map<Long, List<AlarmTypeEnum>> map) {
+        if (CollectionUtils.isEmpty(map)) {
+            return;
+        }
+        for (JobConfigVO jobConfigVO : jobConfigVOList) {
+            List<AlarmTypeEnum> list = map.get(jobConfigVO.getId());
+            if (CollectionUtil.isNotEmpty(list)) {
+                StringBuilder str = new StringBuilder("[");
+                for (AlarmTypeEnum alarmTypeEnum : list) {
+                    switch (alarmTypeEnum) {
+                        case DINGDING:
+                            str.append(" 钉钉");
+                            break;
+                        case CALLBACK_URL:
+                            str.append(" 回调");
+                            break;
+                        case AUTO_START_JOB:
+                            str.append(" 自动重启");
+                            break;
+                    }
+                }
+                str.append("]");
+                jobConfigVO.setAlarmStrs(str.toString());
+            }
+        }
 
     }
 }

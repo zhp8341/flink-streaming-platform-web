@@ -105,6 +105,7 @@
                                     <th>创建时间</th>
 <#--                                    <th>savePoint</th>-->
                                     <th>操作</th>
+                                    <th>辅助</th>
                                     <th>日志</th>
                                 </tr>
                                 </thead>
@@ -165,6 +166,7 @@
 
 
                                             </td>
+                                            <td>${jobConfigVO.alarmStrs!""}</td>
                                             <td>
                                                 <#if jobConfigVO.lastRunLogId??>
                                                     <a href="/admin/detailLog?id=${jobConfigVO.lastRunLogId!""}"  target="_blank">日志详情 </a>

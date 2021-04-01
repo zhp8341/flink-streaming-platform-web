@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 public class SystemConstants {
 
 
-    public static final String COOKIE_NAME_SESSION_ID = "sessionid";
+    public static final String COOKIE_NAME_SESSION_ID = "flink-streaming-platform-web-sessionid";
 
 
     public static final String STATUS_RUNNING = "RUNNING";
