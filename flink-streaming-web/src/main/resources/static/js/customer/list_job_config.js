@@ -1,4 +1,6 @@
 
+bootbox.setDefaults("locale","zh_CN");  //弹窗设置中文
+
 
 function stop(id) {
     $.post("../api/stop", {
@@ -6,8 +8,16 @@ function stop(id) {
         },
         function (data, status) {
             if (data!=null && data.success){
-                alert("提交成功 请稍后刷新");
-                window.location.reload();
+                bootbox.alert({
+                    message: "提交成功 请稍后刷新",
+                    onShown: function(e) {
+                        /* e is the shown.bs.modal event */
+                    },
+                    callback: function(e) {
+                        window.location.reload();
+                    }
+                });
+
             }else{
                 alert("执行失败："+data.message)
                 window.location.reload();
@@ -22,9 +32,22 @@ function start(id) {
 
         },
         function (data, status) {
+            // bootbox.confirm("投票已结束，是否直接查看投票结果？",function(re){
+            //     if(re) {
+            //     }
+            // });
+
+
+
             if (data!=null && data.success){
-                alert("提交成功 请稍后刷新");
-                window.location.reload();
+                bootbox.alert({
+                    message: "提交成功 请稍后刷新",
+                    backdrop: false,
+                    centerVertical: true,
+                    callback: function(e) {
+                        window.location.reload();
+                    }
+                });
             }else{
                 alert("执行失败："+data.message)
                 window.location.reload();

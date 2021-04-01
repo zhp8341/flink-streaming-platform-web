@@ -60,6 +60,7 @@
 
 <script src="/static/assets/js/jquery-ui.custom.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.ui.touch-punch.min.js?version=20210123"></script>
+<script src="/static/assets/js/bootbox.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.easypiechart.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.sparkline.index.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.flot.min.js?version=20210123"></script>
