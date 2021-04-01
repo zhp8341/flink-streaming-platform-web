@@ -67,6 +67,9 @@
                                 <div class="col-sm-1">
                                     <button type="button" class="btn btn-info btn-sm " onclick="searchForm(1)">搜索</button>
                                 </div>
+                                <div class="col-sm-2">
+                                    <h5  style="color: red">(只显示最近30天)</h5>
+                                </div>
 
                             </div>
                         </form>

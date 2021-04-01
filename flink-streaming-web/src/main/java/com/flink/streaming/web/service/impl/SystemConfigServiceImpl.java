@@ -3,7 +3,7 @@ package com.flink.streaming.web.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
 import com.flink.streaming.web.enums.DeployModeEnum;

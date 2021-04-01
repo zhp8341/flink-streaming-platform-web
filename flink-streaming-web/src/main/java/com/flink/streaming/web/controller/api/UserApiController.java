@@ -2,7 +2,7 @@ package com.flink.streaming.web.controller.api;
 
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.controller.web.BaseController;
 import com.flink.streaming.web.enums.UserStatusEnum;
 import com.flink.streaming.web.service.UserService;

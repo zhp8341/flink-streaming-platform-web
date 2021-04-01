@@ -1,28 +1,20 @@
 package com.flink.streaming.web.ao.impl;
 
-import cn.hutool.core.date.DateUtil;
-import com.flink.streaming.common.constant.SystemConstant;
-import com.flink.streaming.web.adapter.CommandAdapter;
-import com.flink.streaming.web.adapter.FlinkHttpRequestAdapter;
-import com.flink.streaming.web.adapter.HttpRequestAdapter;
+import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
-import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.common.TipsConstants;
-import com.flink.streaming.web.common.exceptions.BizException;
-import com.flink.streaming.web.common.util.*;
-import com.flink.streaming.web.config.JobThreadPool;
-import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.enums.JobConfigStatus;
+import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import com.flink.streaming.web.model.dto.JobRunLogDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
-import com.flink.streaming.web.model.dto.SystemConfigDTO;
-import com.flink.streaming.web.model.flink.JobYarnInfo;
+import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
+import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
+import com.flink.streaming.web.rpc.model.JobInfo;
 import com.flink.streaming.web.service.JobConfigService;
-import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SavepointBackupService;
-import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author zhuhuipei
@@ -44,28 +34,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class JobYarnServerAOImpl implements JobServerAO {
 
     //最大重试次数
-    private static final Integer tryTimes = 2;
+    private static final Integer TRY_TIMES = 2;
 
     @Autowired
     private JobConfigService jobConfigService;
 
-    @Autowired
-    private SystemConfigService systemConfigService;
 
     @Autowired
-    private HttpRequestAdapter httpRequestAdapter;
+    private YarnRestRpcAdapter yarnRestRpcAdapter;
 
     @Autowired
-    private JobRunLogService jobRunLogService;
-
-    @Autowired
-    private CommandAdapter commandAdapter;
-
-    @Autowired
-    private FlinkHttpRequestAdapter flinkHttpRequestAdapter;
+    private CommandRpcClinetAdapter commandRpcClinetAdapter;
 
     @Autowired
     private SavepointBackupService savepointBackupService;
+
+    @Autowired
+    private JobBaseServiceAO jobBaseServiceAO;
 
 
     @Override
@@ -73,76 +58,27 @@ public class JobYarnServerAOImpl implements JobServerAO {
     public void start(Long id, Long savepointId, String userName) {
 
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO == null) {
-            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
-        }
-        if (JobConfigStatus.RUN.getCode().equals(jobConfigDTO.getStatus().getCode())) {
-            throw new BizException("任务运行中请先停止任务");
-        }
-        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
-            throw new BizException("任务正在启动中 请稍等..");
-        }
-        if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()) {
-            throw new BizException("请先开启任务");
-        }
+
+        //1、检查jobConfigDTO 状态等参数
+        jobBaseServiceAO.checkStart(jobConfigDTO);
+
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
             this.stop(jobConfigDTO);
         }
-        try {
-            String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
-            if (StringUtils.isEmpty(queueName)) {
-                throw new BizException("无法获取队列名称，请检查你的 flink运行配置参数");
-            }
-            String appId = httpRequestAdapter.getAppIdByYarn(jobConfigDTO.getJobName(), queueName);
-            if (StringUtils.isNotEmpty(appId)) {
-                throw new BizException("该任务在yarn上有运行，请到集群上取消任务后再运行 任务名称是:" +
-                        jobConfigDTO.getJobName() + " 队列名称是:" + queueName + TipsConstants.TIPS_1);
-            }
-        } catch (BizException e) {
-            if (e != null && SysErrorEnum.YARN_CODE.getCode().equals(e.getCode())) {
-                log.info(e.getErrorMsg());
-            } else {
-                throw e;
-            }
 
-        } catch (Exception e) {
-            throw new BizException(e.getMessage());
-        }
+        //2、将配置的sql 写入本地文件并且返回运行所需参数
+        JobRunParamDTO jobRunParamDTO = jobBaseServiceAO.writeSqlToFile(jobConfigDTO);
 
-        RestResult restResult = CliConfigUtil.checkFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
-        if (restResult != null && !restResult.isSuccess()) {
-            throw new BizException("启动参数校验没有通过：" + restResult.getMessage());
-        }
+        //3、插一条运行日志数据
+        Long jobRunLogId = jobBaseServiceAO.insertJobRunLog(jobConfigDTO, userName);
 
-        Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
-        this.checkSysConfig(systemConfigMap);
-
-
-        //生产文件并且将sql写入次文件
-        String sqlPath = FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
-                + FileUtils.createFileName(String.valueOf(id));
-        FileUtils.writeText(sqlPath, jobConfigDTO.getFlinkSql(), Boolean.FALSE);
-
-        JobRunParamDTO jobRunParamDTO = JobRunParamDTO.getJobRunYarnDTO(systemConfigMap, jobConfigDTO, sqlPath);
-
-
-        //插入日志表数据
-        JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
-        jobRunLogDTO.setDeployMode(DeployModeEnum.YARN_PER.name());
-        jobRunLogDTO.setLocalLog(MessageConstants.MESSAGE_001);
-        jobRunLogDTO.setJobConfigId(jobConfigDTO.getId());
-        jobRunLogDTO.setStartTime(new Date());
-        jobRunLogDTO.setJobName(jobConfigDTO.getJobName());
-        jobRunLogDTO.setJobId(jobConfigDTO.getJobId());
-        jobRunLogDTO.setJobStatus(JobStatusEnum.STARTING.name());
-        Long jobRunLogId = jobRunLogService.insertJobRunLog(jobRunLogDTO);
-
-        //变更任务状态 有乐观锁 防止重复提交
+        //4、变更任务状态（变更为：启动中） 有乐观锁 防止重复提交
         jobConfigService.updateStatusByStart(jobConfigDTO.getId(), userName, jobRunLogId, jobConfigDTO.getVersion());
 
         String savepointPath = savepointBackupService.getSavepointPathById(id, savepointId);
 
-        this.aSyncExec(jobRunParamDTO, jobConfigDTO, jobRunLogId, savepointPath);
+        //异步提交任务
+        jobBaseServiceAO.aSyncExecJob(jobRunParamDTO, jobConfigDTO, jobRunLogId, savepointPath);
 
     }
 
@@ -158,8 +94,9 @@ public class JobYarnServerAOImpl implements JobServerAO {
         try {
             this.savepoint(id);
         } catch (Exception e) {
-            log.error("autoSavePoint is error");
+            log.error(MessageConstants.MESSAGE_008, e);
         }
+
 
         //2、停止任务
         this.stop(jobConfigDTO);
@@ -177,36 +114,27 @@ public class JobYarnServerAOImpl implements JobServerAO {
     @Override
     public void savepoint(Long id) {
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO == null) {
-            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
-        }
-        if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
-            log.warn(" FlinkCheckpointConfig is null jobConfigDTO={}", jobConfigDTO);
-            return;
-        }
-        if (StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-            log.warn("getJobId is null getJobName={}", jobConfigDTO.getJobName());
-            return;
-        }
 
-        JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-        if (jobYarnInfo == null) {
-            log.warn("jobInfo is null getJobName={}", jobConfigDTO.getJobName());
-            return;
+       jobBaseServiceAO.checkSavepoint(jobConfigDTO);
+
+        JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+        if (jobInfo == null) {
+            log.warn(MessageConstants.MESSAGE_007, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_007);
         }
         //1、 执行savepoint
         try {
-            commandAdapter.savepointForPerYarn(jobYarnInfo.getId(),
+            commandRpcClinetAdapter.savepointForPerYarn(jobInfo.getId(),
                     SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
         } catch (Exception e) {
-            log.error("savepointForPerYarn is error", e);
-            return;
+            log.error(MessageConstants.MESSAGE_008, e);
+            throw new BizException(MessageConstants.MESSAGE_008);
         }
 
-        String savepointPath = flinkHttpRequestAdapter.getSavepointPath(jobConfigDTO.getJobId(), jobYarnInfo.getId());
+        String savepointPath = yarnRestRpcAdapter.getSavepointPath(jobConfigDTO.getJobId(), jobInfo.getId());
         if (StringUtils.isEmpty(savepointPath)) {
-            log.warn("getSavepointPath is null jobConfigDTO={}", jobConfigDTO);
-            return;
+            log.warn(MessageConstants.MESSAGE_009, jobConfigDTO);
+            throw new BizException(MessageConstants.MESSAGE_009);
         }
         //2、 执行保存Savepoint到本地数据库
         savepointBackupService.insertSavepoint(id, savepointPath, new Date());
@@ -220,157 +148,21 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
     @Override
     public void close(Long id, String userName) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO.getStatus().equals(JobConfigStatus.RUN)) {
-            throw new BizException(MessageConstants.MESSAGE_002);
-        }
-        if (jobConfigDTO.getStatus().equals(JobConfigStatus.STARTING)) {
-            throw new BizException(MessageConstants.MESSAGE_003);
-        }
+        jobBaseServiceAO.checkClose(jobConfigService.getJobConfigById(id));
+
         jobConfigService.openOrClose(id, YN.N, userName);
-    }
-
-
-    /**
-     * 异步执行
-     *
-     * @author zhuhuipei
-     * @date 2020-08-07
-     * @time 19:18
-     */
-    private void aSyncExec(final JobRunParamDTO jobRunParamDTO, final JobConfigDTO jobConfig,
-                           final Long jobRunLogId, final String savepointPath) {
-
-
-        ThreadPoolExecutor threadPoolExecutor = JobThreadPool.getInstance().getThreadPoolExecutor();
-        threadPoolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                String jobStatus = JobStatusEnum.SUCCESS.name();
-                String appId = "";
-                boolean success = true;
-                StringBuilder localLog = new StringBuilder()
-                        .append("开始提交任务：")
-                        .append(DateUtil.now()).append(SystemConstant.LINE_FEED)
-                        .append("三方jar: ").append(SystemConstant.LINE_FEED)
-                        .append(jobConfig.getExtJarPath())
-                        .append(SystemConstant.LINE_FEED)
-                        .append("客户端IP：").append(IpUtil.getInstance().getLocalIP())
-                        .append(SystemConstant.LINE_FEED);
-
-                try {
-                    String command = BuildCommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO, jobConfig, savepointPath);
-                    commandAdapter.submitJob(command, localLog, jobRunLogId,DeployModeEnum.YARN_PER);
-                    Thread.sleep(1000 * 10);
-                    appId = httpRequestAdapter.getAppIdByYarn(jobConfig.getJobName(), YarnUtil.getQueueName(jobConfig.getFlinkRunConfig()));
-                } catch (Exception e) {
-                    log.error("exe is error", e);
-                    localLog.append(e).append(errorInfoDir());
-                    success = false;
-                    jobStatus = JobStatusEnum.FAIL.name();
-                } finally {
-                    localLog.append("\n启动结束时间: ").append(DateUtil.now()).append(SystemConstant.LINE_FEED);
-                    if (success) {
-                        localLog.append("######启动结果是 成功############################## ");
-                    } else {
-                        localLog.append("######启动结果是 失败############################## ");
-                    }
-                    this.updateStatusAndLog(jobConfig, jobRunLogId, jobStatus, localLog.toString(), appId);
-                }
-
-            }
-
-
-            /**
-             *错误日志目录提示
-             * @author zhuhuipei
-             * @date 2020-10-19
-             * @time 21:47
-             */
-            private String errorInfoDir() {
-                StringBuilder errorTips = new StringBuilder(SystemConstant.LINE_FEED)
-                        .append(SystemConstant.LINE_FEED)
-                        .append("详细错误日志可以登录服务器:")
-                        .append(IpUtil.getInstance().getLocalIP()).append(SystemConstant.LINE_FEED)
-                        .append("web系统日志目录：")
-                        .append(systemConfigService
-                                .getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
-                        .append("logs/error.log").append(SystemConstant.LINE_FEED)
-                        .append("flink提交日志目录：")
-                        .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
-                        .append("log/").append(SystemConstant.LINE_FEED)
-                        .append(SystemConstant.LINE_FEED)
-                        .append(SystemConstant.LINE_FEED);
-                return errorTips.toString();
-            }
-
-
-            /**
-             * 更新日志、更新配置信息
-             * @param jobConfig
-             * @param jobRunLogId
-             * @param jobStatus
-             * @param localLog
-             * @param appId
-             */
-            private void updateStatusAndLog(JobConfigDTO jobConfig, Long jobRunLogId,
-                                            String jobStatus, String localLog, String appId) {
-                try {
-                    JobConfigDTO jobConfigDTO = new JobConfigDTO();
-                    jobConfigDTO.setId(jobConfig.getId());
-                    JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
-                    jobRunLogDTO.setId(jobRunLogId);
-                    if (JobStatusEnum.SUCCESS.name().equals(jobStatus) && !StringUtils.isEmpty(appId)) {
-                        jobConfigDTO.setStatus(JobConfigStatus.RUN);
-                        jobConfigDTO.setLastStartTime(new Date());
-                        jobConfigDTO.setJobId(appId);
-                        jobRunLogDTO.setJobId(appId);
-                        jobRunLogDTO.setRemoteLogUrl(systemConfigService.getYarnRmHttpAddress()
-                                + SystemConstants.HTTP_YARN_CLUSTER_APPS + jobConfigDTO.getJobId());
-                    } else {
-                        jobConfigDTO.setStatus(JobConfigStatus.FAIL);
-                    }
-                    jobConfigService.updateJobConfigById(jobConfigDTO);
-
-                    jobRunLogDTO.setJobStatus(jobStatus);
-                    jobRunLogDTO.setLocalLog(localLog);
-                    jobRunLogService.updateJobRunLogById(jobRunLogDTO);
-
-                    //最后更新一次日志 (更新日志和更新信息分开 防止日志更新失败导致相关状态更新也失败)
-                    jobRunLogService.updateLogById(localLog, jobRunLogId);
-                } catch (Exception e) {
-                    log.error(" localLog.length={} 异步更新数据失败：", localLog.length(), e);
-                }
-            }
-        });
-    }
-
-
-    private void checkSysConfig(Map<String, String> systemConfigMap) {
-        if (systemConfigMap == null) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL);
-        }
-        if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_HOME.getKey())) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_HOME);
-        }
-        if (!systemConfigMap.containsKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey())) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
-        }
-        if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())) {
-            throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME);
-        }
     }
 
 
     private void stop(JobConfigDTO jobConfigDTO) {
         Integer retryNum = 1;
-        while (retryNum <= tryTimes) {
-            JobYarnInfo jobYarnInfo = flinkHttpRequestAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-            if (jobYarnInfo != null && SystemConstants.STATUS_RUNNING.equals(jobYarnInfo.getStatus())) {
-                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobYarnInfo, retryNum, jobConfigDTO.getJobId());
-                flinkHttpRequestAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobYarnInfo.getId());
+        while (retryNum <= TRY_TIMES) {
+            JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+            if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
+                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobInfo, retryNum, jobConfigDTO.getJobId());
+                yarnRestRpcAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobInfo.getId());
             } else {
-                log.info("任务已经停止 jobYarnInfo={} id={}", jobYarnInfo, jobConfigDTO.getJobId());
+                log.info("任务已经停止 jobYarnInfo={} id={}", jobInfo, jobConfigDTO.getJobId());
                 break;
             }
             retryNum++;

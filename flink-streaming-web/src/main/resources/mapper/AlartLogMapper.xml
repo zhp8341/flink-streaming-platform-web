@@ -48,7 +48,7 @@
         <include refid="Base_Column_List"/>
 
         from alart_log
-        where is_deleted=0
+        where is_deleted=0 and  create_time>=DATE_SUB(CURDATE(), INTERVAL 30 DAY)
         <if test="jobConfigId!= null">
             and job_config_id = #{jobConfigId,jdbcType=BIGINT}
         </if>

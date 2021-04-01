@@ -43,11 +43,11 @@ public class SchedulerTask {
     @Async("taskExecutor")
     @Scheduled(cron = "0 */1 * * * ?")
     public void checkHeartbeat() {
-        log.info("#####心跳检查checkHeartbeat#######");
+        log.debug("#####心跳检查checkHeartbeat#######");
         try {
             ipStatusService.updateHeartbeatBylocalIp();
         } catch (Exception e) {
-            log.error("checkHeartbeat is error", e);
+            log.error("心跳检查失败", e);
         }
     }
 
@@ -65,7 +65,7 @@ public class SchedulerTask {
         if (!ipStatusService.isLeader()) {
             return;
         }
-        log.info("#####checkJobStatusByYarn#######");
+        log.info("#####[task]一致性校验检查#######");
         try {
             taskServiceAO.checkJobStatus();
         } catch (Exception e) {
@@ -105,11 +105,12 @@ public class SchedulerTask {
      */
     @Async("taskExecutor")
     @Scheduled(cron = "0 0 */1 * * ?")
+//    @Scheduled(cron = "0 */10 * * * ?")
     public void autoSavePoint() {
         if (!ipStatusService.isLeader()) {
             return;
         }
-        log.info("#####autoSavePoint#######");
+        log.info("#####[task]开始自动执行savePoint#######");
         try {
             taskServiceAO.autoSavePoint();
         } catch (Exception e) {

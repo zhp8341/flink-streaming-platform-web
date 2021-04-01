@@ -1,6 +1,6 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.Base64Coded;
 import com.flink.streaming.web.common.util.Md5Utils;
 import com.flink.streaming.web.enums.SysErrorEnum;

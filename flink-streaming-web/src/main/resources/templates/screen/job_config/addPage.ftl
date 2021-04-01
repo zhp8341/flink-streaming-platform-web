@@ -55,7 +55,7 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-
+                        <input type="hidden" name="jobType" id="jobType" value="0">
                         <div class="panel-body">
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
@@ -244,6 +244,7 @@
                 flinkRunConfig: $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
+                jobType: $('#jobType').val(),
                 alarmTypes:   chk_value.toString(),
                 extJarPath: $('#extJarPath').val()
             },

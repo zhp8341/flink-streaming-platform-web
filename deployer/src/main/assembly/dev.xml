@@ -118,6 +118,11 @@
                 <exclude>com.sun.*:*:*</exclude>
                 <exclude>javax.*:*:*</exclude>
 
+                <exclude>com.streaming.platform.web:flink-streaming-commom</exclude>
+                <exclude>com.streaming.platform.web:flink-streaming-web-config</exclude>
+                <exclude>com.streaming.platform.web:flink-streaming-web-alarm</exclude>
+                <exclude>com.streaming.platform.web:flink-streaming-web-common</exclude>
+
             </excludes>
         </dependencySet>
     </dependencySets>

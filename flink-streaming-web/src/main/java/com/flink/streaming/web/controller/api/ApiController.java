@@ -26,17 +26,6 @@ public class ApiController extends BaseController {
         return RestResult.success();
     }
 
-    @RequestMapping("/testsavePoint")
-    public RestResult savePoint(Long id) {
-        try {
-            jobYarnServerAO.savepoint(id);
-            return RestResult.success();
-        } catch (Exception e) {
-            log.error("error", e);
-            return RestResult.error(e.getMessage());
-        }
-    }
-
     @RequestMapping("/alarmCallback")
     public RestResult alarmCallback(String appId, String jobName, String deployMode) {
         log.info("测试回调 appId={} jobName={} deployMode={}", appId, jobName, deployMode);

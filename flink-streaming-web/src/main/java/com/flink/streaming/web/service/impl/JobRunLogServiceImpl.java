@@ -58,6 +58,7 @@ public class JobRunLogServiceImpl implements JobRunLogService {
         }
         PageHelper.startPage(jobRunLogParam.getPageNum(), jobRunLogParam.getPageSize(), YN.Y.getCode());
 
+        //只能查最近30天的
         Page<JobRunLog> page = jobRunLogMapper.selectByParam(jobRunLogParam);
         if (page == null) {
             return null;

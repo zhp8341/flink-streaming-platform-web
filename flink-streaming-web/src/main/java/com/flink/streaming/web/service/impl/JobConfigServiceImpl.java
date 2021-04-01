@@ -1,6 +1,6 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.mapper.JobConfigMapper;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
@@ -93,7 +93,8 @@ public class JobConfigServiceImpl implements JobConfigService {
     @Override
     public void updateStatusByStart(Long id, String userName,
                                     Long jobRunLogId, Integer version) {
-        int num = jobConfigMapper.updateStatusByStart(id, JobConfigStatus.STARTING.getCode(), userName, jobRunLogId, version);
+        int num = jobConfigMapper.updateStatusByStart(id, JobConfigStatus.STARTING.getCode(), userName,
+                jobRunLogId, version);
         if (num < 1) {
             throw new BizException("启动状态更新失败");
         }
@@ -136,7 +137,8 @@ public class JobConfigServiceImpl implements JobConfigService {
         if (jobConfigDTO == null) {
             throw new BizException("配置不存在！");
         }
-        if (JobConfigStatus.RUN.equals(jobConfigDTO.getStatus()) || JobConfigStatus.STARTING.equals(jobConfigDTO.getStatus())) {
+        if (JobConfigStatus.RUN.equals(jobConfigDTO.getStatus()) ||
+                JobConfigStatus.STARTING.equals(jobConfigDTO.getStatus())) {
             throw new BizException("任务正在启动中或者正在运行，请先停止任务");
         }
         if (YN.Y.getValue() == jobConfigDTO.getIsOpen().intValue()) {

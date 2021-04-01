@@ -33,7 +33,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">任务列表</li>
+                    <li class="active">Flink-SQL任务列表</li>
                 </ul>
             </div>
 
@@ -84,7 +84,7 @@
                                 <button type="button" class="btn btn-purple btn-sm" onclick="searchForm(1)">搜索</button>
                             </div>
                              <div class="col-sm-1">
-                                 <button type="button" class="btn btn-pink btn-sm" onclick="refreshForm()">刷新</button>
+                                 <button type="button" class="btn btn-danger btn-sm" onclick="refreshForm()">刷新</button>
                              </div>
                             <div class="col-sm-1">
                                 <a class="btn btn-info btn-sm" href="/admin/addPage">新增</a>
@@ -105,6 +105,7 @@
                                     <th>创建时间</th>
                                     <th>savePoint</th>
                                     <th>操作</th>
+                                    <th>辅助</th>
                                     <th>日志</th>
                                 </tr>
                                 </thead>
@@ -139,25 +140,18 @@
 
                                             <td>${jobConfigVO.createTime!""}</td>
                                             <td>
-                                                <#if jobConfigVO.deployMode=="YARN_PER">
-                                                    <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a>
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="LOCAL">
-                                                    本地模式不启用
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="STANDALONE">
-                                                    待开发中...
-                                                </#if>
+                                                <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史</a>
+                                                <a href="#" onclick="savePoint(${jobConfigVO.id!""})">手动备份</a>
                                             </td>
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
 
                                                     <#if jobConfigVO.stauts==1>
-                                                        <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
+                                                        <a href="#" onclick="stop(${jobConfigVO.id})">停止</a>
                                                     <#else>
-                                                        <a href="#" onclick="start(${jobConfigVO.id})">提交任务</a>
+                                                        <a href="#" onclick="start(${jobConfigVO.id})">提交</a>
                                                         <#if jobConfigVO.deployMode=="YARN_PER">
-                                                            <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">恢复任务</a>
+                                                            <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">恢复</a>
                                                         </#if>
                                                     </#if>
                                                 <#else>
@@ -168,6 +162,7 @@
 
 
                                             </td>
+                                            <td>${jobConfigVO.alarmStrs!""}</td>
                                             <td>
                                                 <#if jobConfigVO.lastRunLogId??>
                                                     <a href="/admin/detailLog?id=${jobConfigVO.lastRunLogId!""}"  target="_blank">日志详情 </a>
