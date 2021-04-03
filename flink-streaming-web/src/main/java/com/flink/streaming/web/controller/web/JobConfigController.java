@@ -45,10 +45,6 @@ public class JobConfigController {
 
     @Autowired
     public JobAlarmConfigService jobAlarmConfigService;
-
-    @Autowired
-    private JobConfigAO jobConfigAO;
-
     
     @RequestMapping(value = "/listPage")
     public String listPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
@@ -101,6 +97,7 @@ public class JobConfigController {
         modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
         return "screen/job_config/editJarPage";
     }
+
 
     @RequestMapping("/detailPage")
     public String detailPage(ModelMap modelMap, Long id) {
