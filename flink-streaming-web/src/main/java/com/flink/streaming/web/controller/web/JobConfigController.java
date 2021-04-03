@@ -1,7 +1,9 @@
 package com.flink.streaming.web.controller.web;
 
-import com.flink.streaming.web.ao.JobConfigAO;
-import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.enums.AlarmTypeEnum;
+import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobTypeEnum;
+import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.param.JobConfigParam;
@@ -12,8 +14,6 @@ import com.flink.streaming.web.service.JobAlarmConfigService;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -45,7 +45,8 @@ public class JobConfigController {
 
     @Autowired
     public JobAlarmConfigService jobAlarmConfigService;
-    
+
+
     @RequestMapping(value = "/listPage")
     public String listPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
         if (jobConfigParam==null){
