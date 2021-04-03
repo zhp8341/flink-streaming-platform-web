@@ -102,29 +102,6 @@ public class JobConfigController {
         return "screen/job_config/editJarPage";
     }
 
-    @RequestMapping("/copyJob")
-    public String copyJob(ModelMap modelMap, Long id) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-
-        // copy job conf
-        // 默认将id去除
-        // 默认在任务名称后面+copy字符
-        // 状态默认重置为停止
-        // 开启配置 isOpen 1
-        jobConfigDTO.setId(null);
-        jobConfigDTO.setJobName(String.format("%s_%s_copy", jobConfigDTO.getJobName(), StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(4))));
-        jobConfigDTO.setStatus(JobConfigStatus.STOP);
-        jobConfigDTO.setIsOpen(0);
-        jobConfigDTO.setJobId(null);
-        jobConfigDTO.setLastRunLogId(null);
-        jobConfigDTO.setVersion(0);
-        jobConfigDTO.setLastStartTime(null);
-
-        jobConfigAO.addJobConfig(jobConfigDTO);
-
-        return "redirect:listPage";
-    }
-
     @RequestMapping("/detailPage")
     public String detailPage(ModelMap modelMap, Long id) {
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);

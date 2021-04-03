@@ -6,18 +6,16 @@ import com.flink.streaming.web.ao.JobConfigAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.FlinkConstants;
 import com.flink.streaming.web.common.RestResult;
+import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.CliConfigUtil;
 import com.flink.streaming.web.common.util.MatcherUtils;
 import com.flink.streaming.web.controller.web.BaseController;
-import com.flink.streaming.web.enums.DeployModeEnum;
-import com.flink.streaming.web.enums.JobTypeEnum;
-import com.flink.streaming.web.enums.SysErrorEnum;
-import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.param.UpsertJobConfigParam;
 import com.flink.streaming.web.service.JobConfigService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -176,6 +174,42 @@ public class JobConfigApiController extends BaseController {
             return RestResult.error(biz.getErrorMsg());
         } catch (Exception e) {
             log.error("updateJobConfigById is error", e);
+            return RestResult.error(e.getMessage());
+        }
+        return RestResult.success();
+    }
+
+    @RequestMapping(value = "/copyConfig", method = {RequestMethod.POST})
+    public RestResult copyConfig(UpsertJobConfigParam upsertJobConfigParam) {
+        try {
+            JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
+            if (jobConfigDTO == null) {
+                return RestResult.error("原始拷贝数据不存在");
+            }
+            /*
+             copy job conf
+             默认将id去除
+             默认在任务名称后面+copy字符
+             状态默认重置为停止
+             开启配置 isOpen 1
+             */
+            jobConfigDTO.setId(null);
+            jobConfigDTO.setJobName(String.format("%s_%s_copy", jobConfigDTO.getJobName(), StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(4))));
+            jobConfigDTO.setStatus(JobConfigStatus.STOP);
+            jobConfigDTO.setIsOpen(YN.N.getValue());
+            jobConfigDTO.setJobId(null);
+            jobConfigDTO.setLastRunLogId(null);
+            jobConfigDTO.setVersion(0);
+            jobConfigDTO.setLastStartTime(null);
+            jobConfigDTO.setLastRunLogId(null);
+
+            jobConfigAO.addJobConfig(jobConfigDTO);
+
+        } catch (BizException biz) {
+            log.warn("copyJobConfigById is error ", biz);
+            return RestResult.error(biz.getErrorMsg());
+        } catch (Exception e) {
+            log.error("copyJobConfigById is error", e);
             return RestResult.error(e.getMessage());
         }
         return RestResult.success();
