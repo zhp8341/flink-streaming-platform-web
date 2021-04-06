@@ -207,8 +207,16 @@
                 if (data!=null && data.success){
                     $("#errorInfo").html(data.data)
                 }else{
-                    alert("查询失败："+data.message)
-
+                    $.gritter.add({
+                        title: 'Fail!',
+                        text: '查询失败：' + data.message,
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 3000,
+                        // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
+                        after_close: function(e) {
+                        }
+                    });
                 }
 
             }

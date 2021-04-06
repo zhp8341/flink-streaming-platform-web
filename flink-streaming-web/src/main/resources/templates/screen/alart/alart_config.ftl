@@ -156,9 +156,27 @@
         $.post("../api/testDingdingAlert", {},
             function (data, status) {
                 if (data!=null && data.success){
-                    alert("测试通过成功 ");
+                    $.gritter.add({
+                        title: 'Success!',
+                        text: '测试通过',
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 2000,
+                        class_name: 'gritter-light,gritter-fontsize',
+                        after_close: function(e) {
+                        }
+                    });
                 }else{
-                    alert("执行失败："+data.message)
+                    $.gritter.add({
+                        title: 'Fail!',
+                        text: '执行失败：' + data.message,
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 3000,
+                        // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
+                        after_close: function(e) {
+                        }
+                    });
                 }
 
             }
@@ -169,9 +187,27 @@
         $.post("../api/testHttpAlert", {},
             function (data, status) {
                 if (data!=null && data.success){
-                    alert("测试通过成功 ");
+                    $.gritter.add({
+                        title: 'Success!',
+                        text: '测试通过',
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 2000,
+                        class_name: 'gritter-light,gritter-fontsize',
+                        after_close: function(e) {
+                        }
+                    });
                 }else{
-                    alert("执行失败："+data.message)
+                    $.gritter.add({
+                        title: 'Fail!',
+                        text: '执行失败：' + data.message,
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 3000,
+                        // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
+                        after_close: function(e) {
+                        }
+                    });
                 }
 
             }
