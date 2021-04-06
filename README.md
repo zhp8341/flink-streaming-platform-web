@@ -47,7 +47,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ## 二、环境搭建及安装
 
-1、 [Flink 和 flink-streaming-platform-web 安装部署](/docs/img.md)
+1、 [Flink 和 flink-streaming-platform-web 安装部署](/docs/deploy.md)
 
 
 
@@ -56,9 +56,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ### 3.1 配置操作
 
-1、[sql任务配置](/docs/manual-sql.md)
+1、[sql任务配置使用手册](/docs/manual-sql.md)
 
-2、[jar任务配置](/docs/manual-jar.md)
+2、[jar任务配置使用手册](/docs/manual-jar.md)
 
 
 ### 3.2 sql配置demo

@@ -7,9 +7,8 @@ function stop(id) {
                 $.gritter.add({
                     title: 'Success!',
                     text: '提交成功，请稍后刷新',
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
-                    time: 2000,
+                    time: 1500,
                     class_name: 'gritter-light,gritter-fontsize',
                     after_close: function(e) {
                         window.location.reload();
@@ -20,12 +19,9 @@ function stop(id) {
                 $.gritter.add({
                     title: 'Fail!',
                     text: '执行失败：' + data.message,
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
                     time: 3000,
-                    // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
                     after_close: function(e) {
-                        window.location.reload();
                     }
                 });
             }
@@ -42,10 +38,9 @@ function start(id) {
                 $.gritter.add({
                     title: 'Success!',
                     text: '提交成功，请稍后刷新',
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
-                    time: 2000,
-                    class_name: 'gritter-light,gritter-fontsize',
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
                     after_close: function(e) {
                         window.location.reload();
                     }
@@ -54,12 +49,9 @@ function start(id) {
                 $.gritter.add({
                     title: 'Fail!',
                     text: '执行失败：' + data.message,
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
                     time: 3000,
-                    // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
                     after_close: function(e) {
-                        window.location.reload();
                     }
                 });
             }
@@ -80,10 +72,8 @@ function deleteConfig(id) {
                     $.gritter.add({
                         title: 'Fail!',
                         text: '执行失败：' + data.message,
-                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                         sticky: false,
                         time: 3000,
-                        // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
                         after_close: function(e) {
                         }
                     });
@@ -102,7 +92,16 @@ function copyConfig(id) {
         },
         function (data, status) {
             if (data != null && data.success){
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '复制成功',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
                 return true;
             }
 
@@ -119,11 +118,10 @@ function openConfig(id) {
             if (data!=null && data.success){
                 $.gritter.add({
                     title: 'Success!',
-                    text: '成功，请稍后刷新',
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                    text: '执行成功',
                     sticky: false,
-                    time: 2000,
-                    class_name: 'gritter-light,gritter-fontsize',
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
                     after_close: function(e) {
                         window.location.reload();
                     }
@@ -133,10 +131,8 @@ function openConfig(id) {
                 $.gritter.add({
                     title: 'Fail!',
                     text: '执行失败：' + data.message,
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
                     time: 3000,
-                    // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
                     after_close: function(e) {
                     }
                 });
@@ -155,11 +151,10 @@ function closeConfig(id) {
             if (data!=null && data.success){
                 $.gritter.add({
                     title: 'Success!',
-                    text: '成功，请稍后刷新',
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                    text: '执行成功',
                     sticky: false,
-                    time: 2000,
-                    class_name: 'gritter-light,gritter-fontsize',
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
                     after_close: function(e) {
                         window.location.reload();
                     }
@@ -168,10 +163,8 @@ function closeConfig(id) {
                 $.gritter.add({
                     title: 'Fail!',
                     text: '执行失败：' + data.message,
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
-                    time: 3000,
-                    // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
+                    time: 1500,
                     after_close: function(e) {
                     }
                 });
@@ -191,9 +184,8 @@ function  savePoint(id){
                 $.gritter.add({
                     title: 'Success!',
                     text: '执行成功，请稍后刷新',
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
-                    time: 2000,
+                    time: 1500,
                     class_name: 'gritter-light,gritter-fontsize',
                     after_close: function(e) {
                         window.location.reload();
@@ -203,10 +195,8 @@ function  savePoint(id){
                 $.gritter.add({
                     title: 'Fail!',
                     text: '执行失败：' + data.message,
-                    // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
                     sticky: false,
                     time: 3000,
-                    // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
                     after_close: function(e) {
                     }
                 });

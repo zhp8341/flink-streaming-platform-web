@@ -233,6 +233,33 @@ https://github.com/zhp8341/flink-streaming-platform-web/blob/master/flink-stream
 
 
 
+### 请使用下面的sql进行环境测试 用于新用户跑一个hello word 对平台有个感知的认识
+
+```sql
+
+  CREATE TABLE source_table (
+  f0 INT,
+  f1 INT,
+  f2 STRING
+ ) WITH (
+  'connector' = 'datagen',
+  'rows-per-second'='5'
+ );
+  
+  
+ CREATE TABLE print_table (
+  f0 INT,
+  f1 INT,
+  f2 STRING
+ ) WITH (
+  'connector' = 'print'
+ );
+  
+  
+  insert into print_table select f0,f1,f2 from source_table;
+ 
+```
+
 ```diff
 + 备注：如果有开发条件的同学可以将错误日志接入你们的日志报警系统
 ```

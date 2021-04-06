@@ -189,12 +189,13 @@ public class JobConfigApiController extends BaseController {
             /*
              copy job conf
              默认将id去除
-             默认在任务名称后面+copy字符
+             默认在任务名称后面copy_随机字符_${jobConfigDTO.getJobName()}字符
              状态默认重置为停止
-             开启配置 isOpen 1
+             开启配置 isOpen 0
              */
             jobConfigDTO.setId(null);
-            jobConfigDTO.setJobName(String.format("%s_%s_copy", jobConfigDTO.getJobName(), StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(4))));
+            jobConfigDTO.setJobName(String.format("copy_%s_%s",
+                    StringUtils.lowerCase(RandomStringUtils.randomAlphanumeric(4)),jobConfigDTO.getJobName()));
             jobConfigDTO.setStatus(JobConfigStatus.STOP);
             jobConfigDTO.setIsOpen(YN.N.getValue());
             jobConfigDTO.setJobId(null);

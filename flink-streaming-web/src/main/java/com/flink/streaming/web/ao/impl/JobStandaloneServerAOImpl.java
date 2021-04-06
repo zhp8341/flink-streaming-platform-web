@@ -82,7 +82,8 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
+        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId()
+                , jobConfigDTO.getDeployModeEnum());
         if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
             log.warn("getJobInfoForStandaloneByAppId is error jobStandaloneInfo={}", jobStandaloneInfo);
         } else {
@@ -107,8 +108,8 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 
         jobBaseServiceAO.checkSavepoint(jobConfigDTO);
 
-        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),
-                jobConfigDTO.getDeployModeEnum());
+        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId()
+                , jobConfigDTO.getDeployModeEnum());
         if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())
                 || !SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
             log.warn(MessageConstants.MESSAGE_007, jobConfigDTO.getJobName());

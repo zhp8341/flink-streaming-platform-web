@@ -1,8 +1,10 @@
 package com.flink.streaming.sql.validation;
 
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.SqlCommand;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
+import com.flink.streaming.sql.util.ValidationConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.parser.SqlParser;
@@ -29,8 +31,8 @@ import java.util.List;
 public class SqlValidation {
 
     //TODO 暂时没有找到好的解决方案
+
     /**
-     *
      * @author zhuhuipei
      * @date 2021/3/27
      * @time 10:10
@@ -47,13 +49,16 @@ public class SqlValidation {
         TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
         List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
-        if (CollectionUtils.isEmpty(sqlCommandCallList)){
-            throw new RuntimeException("没解析出sql，请检查语句");
+        if (CollectionUtils.isEmpty(sqlCommandCallList)) {
+            throw new RuntimeException("没解析出sql，请检查语句 如 缺少;号");
         }
 
         TableConfig config = tEnv.getConfig();
         String value = null;
 
+        boolean isInsertSql = false;
+
+        boolean isSelectSql = false;
         try {
             for (SqlCommandCall sqlCommandCall : sqlCommandCallList) {
 
@@ -64,19 +69,26 @@ public class SqlValidation {
                     case SET:
                         String key = sqlCommandCall.operands[0];
                         String val = sqlCommandCall.operands[1];
-                        if (val.contains(SystemConstant.LINE_FEED)){
-                           throw new RuntimeException("set 语法值异常："+val) ;
+                        if (val.contains(SystemConstant.LINE_FEED)) {
+                            throw new RuntimeException("set 语法值异常：" + val);
                         }
                         if (TableConfigOptions.TABLE_SQL_DIALECT.key().equalsIgnoreCase(key.trim())
                                 && SqlDialect.HIVE.name().equalsIgnoreCase(val.trim())) {
                             config.setSqlDialect(SqlDialect.HIVE);
-                        }else{
+                        } else {
                             config.setSqlDialect(SqlDialect.DEFAULT);
                         }
 
                         break;
                     //其他
                     default:
+                        if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.sqlCommand)
+                                || SqlCommand.INSERT_OVERWRITE.equals(sqlCommandCall.sqlCommand)) {
+                            isInsertSql = true;
+                        }
+                        if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.sqlCommand)) {
+                            isSelectSql = true;
+                        }
                         CalciteParser parser = new CalciteParser(getSqlParserConfig(config));
                         parser.parse(sqlCommandCall.operands[0]);
                         break;
@@ -85,6 +97,13 @@ public class SqlValidation {
         } catch (Exception e) {
             log.warn("语法异常：  sql={}  原因是: {}", value, e);
             throw new RuntimeException("语法异常   sql=" + value + "  原因:   " + e.getMessage());
+        }
+        if (!isInsertSql) {
+            throw new RuntimeException(ValidationConstants.MESSAGE_010);
+        }
+
+        if (isSelectSql) {
+            throw new RuntimeException(ValidationConstants.MESSAGE_011);
         }
 
     }
@@ -106,6 +125,7 @@ public class SqlValidation {
     private static CalciteConfig getCalciteConfig(TableConfig tableConfig) {
         return TableConfigUtils.getCalciteConfig(tableConfig);
     }
+
     private static FlinkSqlConformance getSqlConformance(SqlDialect sqlDialect) {
         switch (sqlDialect) {
             case HIVE:
@@ -116,9 +136,9 @@ public class SqlValidation {
                 throw new TableException("Unsupported SQL dialect: " + sqlDialect);
         }
     }
+
     /**
      * 字符串转sql
-     *
      */
     public static List<String> toSqlList(String sql) {
         if (StringUtils.isEmpty(sql)) {

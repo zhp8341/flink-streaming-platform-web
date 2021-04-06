@@ -80,6 +80,13 @@
     .gritter-fontsize {
         font-size: 24px;
     }
+
+    .gritter-center{
+        position:fixed;
+        left:33%;
+        right:33%;
+        top:33%
+    }
 </style>
 
 
