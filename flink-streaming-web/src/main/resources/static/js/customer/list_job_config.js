@@ -93,9 +93,22 @@ function deleteConfig(id) {
 
     }else{
         return false;
-
     }
+}
 
+function copyConfig(id) {
+    $.post("../api/copyConfig", {
+            id: id,
+        },
+        function (data, status) {
+            if (data != null && data.success){
+                window.location.reload();
+                return true;
+            }
+
+            alert("复制失败：" + data.message);
+        }
+    );
 }
 
 function openConfig(id) {

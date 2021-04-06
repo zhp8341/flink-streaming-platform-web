@@ -159,7 +159,7 @@
                                                 </#if>
                                                 <a href="/admin/editPage?id=${jobConfigVO.id}"  target="_blank">修改</a>
                                                 <a href="/admin/detailPage?id=${jobConfigVO.id}" target="_blank">详情</a>
-
+                                                <a href="#" onclick="copyConfig(${jobConfigVO.id})">复制</a>
 
                                             </td>
                                             <td>${jobConfigVO.alarmStrs!""}</td>
