@@ -75,7 +75,8 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
         if (StringUtils.isEmpty(appId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL_YARN_APPID);
         }
-        String url = systemConfigService.getYarnRmHttpAddress() + SystemConstants.HTTP_YARN_APPS + appId + "/state";
+        String url = HttpUtil.buildUrl(systemConfigService.getYarnRmHttpAddress(),
+                SystemConstants.HTTP_YARN_APPS + appId + "/state");
         log.info("请求关闭 URL ={}", url);
 
         HttpHeaders headers = new HttpHeaders();
@@ -91,7 +92,8 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL_YARN_APPID);
         }
 
-        String url = systemConfigService.getYarnRmHttpAddress() + SystemConstants.HTTP_YARN_APPS + appId + "/state";
+        String url = HttpUtil.buildUrl(systemConfigService.getYarnRmHttpAddress(),
+                SystemConstants.HTTP_YARN_APPS + appId + "/state");
         RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M);
         String res = restTemplate.getForObject(url, String.class);
         if (StringUtils.isEmpty(res)) {
@@ -108,7 +110,8 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
         }
         String res = null;
         try {
-            String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriJobsForYarn(appId);
+            String url = HttpUtil.buildUrl(systemConfigService.getYarnRmHttpAddress(),
+                    FlinkYarnRestUriConstants.getUriJobsForYarn(appId));
             log.info("[getJobInfoForPerYarnByAppId]请求参数 appId={} url={}", appId, url);
             res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
             if (StringUtils.isEmpty(res)) {
@@ -131,7 +134,8 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
         if (StringUtils.isEmpty(appId) || StringUtils.isEmpty(jobId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
-        String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriCancelForYarn(appId, jobId);
+        String url = HttpUtil.buildUrl(systemConfigService.getYarnRmHttpAddress(),
+                FlinkYarnRestUriConstants.getUriCancelForYarn(appId, jobId));
         log.info("[cancelJobByAppId]请求参数 appId={} jobId={} url={}", appId, jobId, url);
         String res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).getForObject(url, String.class);
         log.info("[cancelJobByAppId]请求参数结果: res={}", res);
@@ -144,7 +148,8 @@ public class YarnRestRpcAdapterImpl implements YarnRestRpcAdapter {
         if (StringUtils.isEmpty(appId) || StringUtils.isEmpty(jobId)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
-        String url = systemConfigService.getYarnRmHttpAddress() + FlinkYarnRestUriConstants.getUriCheckpointForYarn(appId, jobId);
+        String url = HttpUtil.buildUrl(systemConfigService.getYarnRmHttpAddress(),
+                FlinkYarnRestUriConstants.getUriCheckpointForYarn(appId, jobId));
         log.info("[getSavepointPath]请求参数 appId={} jobId={} url={}", appId, jobId, url);
         String res = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_5_M).getForObject(url, String.class);
         log.info("[getSavepointPath]请求参数结果: res={}", res);

@@ -86,7 +86,7 @@ public class SqlValidation {
                                 || SqlCommand.INSERT_OVERWRITE.equals(sqlCommandCall.sqlCommand)) {
                             isInsertSql = true;
                         }
-                        if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.sqlCommand)) {
+                        if (SqlCommand.SELECT.equals(sqlCommandCall.sqlCommand)) {
                             isSelectSql = true;
                         }
                         CalciteParser parser = new CalciteParser(getSqlParserConfig(config));
