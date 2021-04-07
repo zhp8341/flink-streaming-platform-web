@@ -75,13 +75,13 @@ public class CommandUtil {
     public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO,
                                                        JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
         StringBuilder command = new StringBuilder();
-        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run ");
+        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -m yarn-cluster ");
         if (StringUtils.isNotEmpty(savepointPath)) {
             command.append(" -s ").append(savepointPath).append(" ");
         }
         command.append(jobRunParamDTO.getFlinkRunParam()).append(" ");
         command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfigDTO.getJobName())).append(" ");
-        command.append(" -yd -m yarn-cluster ").append(" ");
+        command.append(" -yd ");
 
         if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
             String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
