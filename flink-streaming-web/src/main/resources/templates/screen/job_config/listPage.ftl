@@ -8,6 +8,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <#include "../../control/public_css_js.ftl">
 </head>
+<style>
+    .ant-tag-green{
+        color: #52c41a;
+        background: #f6ffed;
+        border-color: #52c41b;
+        border: 1px solid #52c41a ;
+        padding:0 4px;
+        border-radius:6px;
+    }
+
+    .ant-tag-magenta{
+        color: #eb2f96;
+        background: #fff0f6;
+        border-color: #ffadd2;
+        border: 1px solid #eb2f96 ;
+        padding:0 4px;
+        border-radius:6px;
+    }
+
+    .ant-tag-b1{
+        border: 3px solid #D15B47;
+        padding: 0 1px;
+        border-radius: 3px;
+    }
+
+    .ant-tag-b2{
+        border: 3px solid #87B87F;
+        padding: 0 1px;
+        border-radius: 3px;
+    }
+
+</style>
 
 <body class="no-skin">
 <!-- start top-->
@@ -59,7 +91,7 @@
                                 <select class="form-control" name="stauts">
                                     <option value=""> 运行状态</option>
                                     <option value="1" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==1> selected</#if> >
-                                        运行中
+                                       运行中
                                     </option>
                                     <option value="0" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==0> selected</#if> >
                                         停止中
@@ -93,13 +125,13 @@
                         </div>
 
                         <div class="panel-body">
-                            <table class="table table-striped table-bordered">
+                            <table class="table table-striped table-bordered" style="text-align: center;">
                                 <thead>
                                 <tr>
                                     <th>配置ID</th>
                                     <th>任务名称</th>
+                                    <th width="90px">是否开启</th>
                                     <th>运行模式</th>
-                                    <th>是否开启</th>
                                     <th>运行状态</th>
                                     <th>任务id</th>
                                     <th>创建时间</th>
@@ -123,15 +155,32 @@
                                         <tr>
                                             <td>${jobConfigVO.id!""}</td>
                                             <td>${jobConfigVO.jobName!""}</td>
-                                            <td>${jobConfigVO.deployMode!""}</td>
-                                            <td>${jobConfigVO.isOpenStr!""}
+                                            <td align="center" height="34px">
                                                 <#if jobConfigVO.isOpen==1>
-                                                    <a  href="#" onclick="closeConfig(${jobConfigVO.id})">关闭配置</a>
+                                                    <a href="#" class="btn-success ant-tag-b2"
+                                                            onclick="closeConfig(${jobConfigVO.id})">关闭配置</a>
                                                 <#else>
-                                                    <a href="#"  onclick="openConfig(${jobConfigVO.id})">开启配置</a>
+                                                    <a href="#" class="btn-danger ant-tag-b1"
+                                                            onclick="openConfig(${jobConfigVO.id})">开启配置 </a>
                                                 </#if>
                                             </td>
-                                            <td>${jobConfigVO.stautsStr!""} </td>
+                                            <td>${jobConfigVO.deployMode!""}</td>
+                                            <td>
+                                                <#if jobConfigVO.stauts==1>
+                                                    <span class="ant-tag-green">
+                                                     ${jobConfigVO.stautsStr!""}
+                                                 </span>
+                                                <#else>
+                                                    <#if jobConfigVO.stauts==-1>
+                                                        <span  class="ant-tag-magenta">
+                                                     ${jobConfigVO.stautsStr!""}
+                                                    </span>
+                                                    <#else>
+                                                        ${jobConfigVO.stautsStr!""}
+                                                    </#if>
+                                                </#if>
+
+                                            </td>
                                             <#if (jobConfigVO.jobId)??>
                                                 <td> <a href="${jobConfigVO.flinkRunUrl!""}" target="_blank"> ${jobConfigVO.jobId!""}</a>  </td>
                                             <#else>
