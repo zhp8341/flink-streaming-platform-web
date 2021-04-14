@@ -242,9 +242,14 @@ http://img.ccblog.cn/flink/dd2.png
 
  
  
- ##  十、捐赠
+ 
+ ##  十、使用情况 
 
  
+[2021-03-18 和 2021-03-19 两天 做的调研 ](/docs/img2.md)
+
+## 十一、 捐赠
+
 [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
  
 [点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
