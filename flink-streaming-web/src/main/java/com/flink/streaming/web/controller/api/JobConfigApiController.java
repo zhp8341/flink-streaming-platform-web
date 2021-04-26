@@ -246,9 +246,9 @@ public class JobConfigApiController extends BaseController {
             }
         }
         //sql配置需要校验的参数JobType=null是兼容之前配置
-        if (JobTypeEnum.SQL.equals(upsertJobConfigParam.getJobType())
+        if (JobTypeEnum.SQL_STREAMING.equals(upsertJobConfigParam.getJobType())
                 || upsertJobConfigParam.getJobType()==null
-                || JobTypeEnum.SQL.getCode()==upsertJobConfigParam.getJobType().intValue()){
+                || JobTypeEnum.SQL_STREAMING.getCode()==upsertJobConfigParam.getJobType().intValue()){
             if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkSql())) {
                 return RestResult.error("sql语句不能为空");
             }

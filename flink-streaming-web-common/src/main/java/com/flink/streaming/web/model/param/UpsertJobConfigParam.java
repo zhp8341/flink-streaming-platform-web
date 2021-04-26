@@ -61,7 +61,6 @@ public class UpsertJobConfigParam {
     private String alarmTypes;
 
 
-
     /**
      * 任务类型 0:sql 1:自定义jar'
      */
@@ -107,9 +106,10 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setFlinkCheckpointConfig(upsertJobConfigParam.getFlinkCheckpointConfig());
 
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getFlinkSql())
-                &&JobTypeEnum.SQL.getCode()== upsertJobConfigParam.getJobType().intValue() ){
+                && (JobTypeEnum.SQL_STREAMING.getCode() == upsertJobConfigParam.getJobType().intValue()
+                || JobTypeEnum.SQL_BATCH.getCode() == upsertJobConfigParam.getJobType().intValue())) {
             jobConfigDTO.setFlinkSql(upsertJobConfigParam.getFlinkSql());
-        }else{
+        } else {
             jobConfigDTO.setFlinkSql(SystemConstant.SPACE);
         }
 

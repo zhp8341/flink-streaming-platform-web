@@ -101,6 +101,10 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             log.warn(MessageConstants.MESSAGE_006, jobConfigDTO.getJobName());
             throw new BizException(MessageConstants.MESSAGE_006);
         }
+        if (JobTypeEnum.SQL_BATCH.equals(jobConfigDTO.getJobTypeEnum())) {
+            log.warn(MessageConstants.MESSAGE_010, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_010);
+        }
 
         if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig()) &&
                 DeployModeEnum.STANDALONE.equals( jobConfigDTO.getDeployModeEnum())) {
@@ -330,8 +334,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             private String submitJobForYarn(String command, JobConfigDTO jobConfigDTO, StringBuilder localLog)
                     throws Exception {
                 commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId, jobConfigDTO.getDeployModeEnum());
-
-                Thread.sleep(1000 * 10);
+                Thread.sleep(1000 * 2);
                 return yarnRestRpcAdapter.getAppIdByYarn(jobConfigDTO.getJobName(),
                         YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig()));
             }

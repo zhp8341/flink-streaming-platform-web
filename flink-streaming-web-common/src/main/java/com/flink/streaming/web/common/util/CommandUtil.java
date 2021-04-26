@@ -3,6 +3,7 @@ package com.flink.streaming.web.common.util;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobTypeEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -46,13 +47,14 @@ public class CommandUtil {
             }
         }
         switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL:
+            case SQL_STREAMING:
                 command.append("-c  ").append(APP_CLASS_NAME).append(" ");
                 command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
                 command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
                 if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
                     command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
                 }
+                command.append(" -type ").append(JobTypeEnum.getType(jobConfigDTO.getJobTypeEnum())).append(" ");
                 break;
             case JAR:
                 command.append("-c  ").append(jobConfigDTO.getCustomMainClass()).append(" ");
@@ -91,13 +93,15 @@ public class CommandUtil {
         }
 
         switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL:
+            case SQL_STREAMING:
+            case SQL_BATCH:
                 command.append("-c ").append(APP_CLASS_NAME).append(" ");
                 command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
                 command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
                 if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
                     command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
                 }
+                command.append(" -type ").append(JobTypeEnum.getType(jobConfigDTO.getJobTypeEnum())).append(" ");
                 break;
             case JAR:
                 command.append("-c  ").append(jobConfigDTO.getCustomMainClass()).append(" ");

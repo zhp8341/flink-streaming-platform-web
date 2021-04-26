@@ -7,7 +7,7 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>新增配置</title>
+    <title>新增批任务配置</title>
     <#include "../../control/public_css_js.ftl">
 
     <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css?version=20210123"/>
@@ -46,7 +46,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">新增流任务</li>
+                    <li class="active">新增批任务</li>
                 </ul>
             </div>
 
@@ -55,7 +55,7 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-                        <input type="hidden" name="jobType" id="jobType" value="0">
+                        <input type="hidden" name="jobType" id="jobType" value="2">
                         <div class="panel-body">
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
@@ -95,14 +95,6 @@
                                 <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)：</label>
                                 <input class="form-control " type="text" name="flinkRunConfig" id="flinkRunConfig">
                             </div>
-                            <div class="form-group">
-                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"
-                                       title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ -externalizedCheckpointCleanup DELETE_ON_CANCELLATION or RETAIN_ON_CANCELLATION">Checkpoint信息：</label>
-                                <input class="form-control " type="text"
-                                       placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/"
-                                       name="flinkCheckpointConfig" id="flinkCheckpointConfig">
-                            </div>
-
                             <div class="form-group">
                                 <label for="inputfile" >三方jar地址 (自定义udf、连接器等jar地址
                                     多个用换行(如 http://xxxx.com/udf.jar) 目前只支持http )</label>
@@ -242,7 +234,6 @@
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig: $('#flinkRunConfig').val(),
-                flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
                 jobType: $('#jobType').val(),
                 alarmTypes:   chk_value.toString(),
@@ -251,7 +242,7 @@
             function (data, status) {
                 $("#errorMessage").removeClass();
                 if (data != null && data.success) {
-                    skipUrl("/admin/listPage")
+                    skipUrl("/admin/batchListPage")
                 } else {
                     $("#errorMessage").addClass("form-group alert alert-danger")
                     $("#errorMessage").html(data.message);

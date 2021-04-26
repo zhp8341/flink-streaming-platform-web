@@ -2,6 +2,7 @@ package com.flink.streaming.core;
 
 
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.ExecMode;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.core.checkpoint.CheckPointParams;
@@ -44,11 +45,21 @@ public class JobApplication {
             JobRunParam jobRunParam = buildParam(args);
 
             StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+            EnvironmentSettings settings = null;
+            if (jobRunParam.getExecMode() != null && ExecMode.BATCH.equals(jobRunParam.getExecMode())) {
+                //批处理
+                settings = EnvironmentSettings.newInstance()
+                        .useBlinkPlanner()
+                        .inBatchMode()
+                        .build();
+            } else {
+                //默认是流 流处理
+                settings = EnvironmentSettings.newInstance()
+                        .useBlinkPlanner()
+                        .inStreamingMode()
+                        .build();
+            }
 
-            EnvironmentSettings settings = EnvironmentSettings.newInstance()
-                    .useBlinkPlanner()
-                    .inStreamingMode()
-                    .build();
 
             TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
 
@@ -64,17 +75,16 @@ public class JobApplication {
             ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
 
 
-
             TableResult tableResult = statementSet.execute();
             if (tableResult == null || tableResult.getJobClient().get() == null ||
                     tableResult.getJobClient().get().getJobID() == null) {
                 throw new RuntimeException("任务运行失败 没有获取到JobID");
             }
-            JobID jobID=tableResult.getJobClient().get().getJobID();
+            JobID jobID = tableResult.getJobClient().get().getJobID();
 
-            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD  + jobID);
+            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD + jobID);
 
-            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}",jobID);
+            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}", jobID);
 
         } catch (Exception e) {
             System.err.println("任务执行失败:" + e.getMessage());

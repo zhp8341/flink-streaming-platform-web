@@ -65,7 +65,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">Flink-SQL流任务列表</li>
+                    <li class="active">Flink-SQL批任务列表</li>
                 </ul>
             </div>
 
@@ -76,7 +76,7 @@
                     <div class="col-xs-12">
 
                         <div class="panel-body">
-                            <form action="/admin/listPage" name="search" method="post">
+                            <form action="/admin/batchListPage" name="search" method="post">
                             <input type="hidden" name="pageNum" id="pageNum" value="${jobConfigParam.pageNum}">
                             <input type="hidden" name="pageSize" id="pageSize"  value="${jobConfigParam.pageSize}">
                             <div class="col-sm-3">
@@ -119,7 +119,7 @@
                                  <button type="button" class="btn btn-danger btn-sm" onclick="refreshForm()">刷新</button>
                              </div>
                             <div class="col-sm-1">
-                                <a class="btn btn-info btn-sm" href="/admin/addPage">新增流任务</a>
+                                <a class="btn btn-info btn-sm" href="/admin/addSqlBatchPage">新增批任务</a>
                             </div>
                             </form>
                         </div>
@@ -135,7 +135,6 @@
                                     <th>运行状态</th>
                                     <th>任务id</th>
                                     <th>创建时间</th>
-                                    <th>savePoint</th>
                                     <th>操作</th>
                                     <th>辅助</th>
                                     <th>日志</th>
@@ -145,7 +144,7 @@
 
                                 <#if jobConfigList?size == 0>
                                     <tr>
-                                        <td colspan="11" align="center">
+                                        <td colspan="10" align="center">
                                             没有数据
                                         </td>
                                     </tr>
@@ -189,11 +188,6 @@
 
                                             <td>${jobConfigVO.createTime!""}</td>
                                             <td>
-                                                <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"
-                                                   target="_blank">恢复任务</a>
-                                                <a href="#" onclick="savePoint(${jobConfigVO.id!""})">手动备份</a>
-                                            </td>
-                                            <td>
                                                 <#if jobConfigVO.isOpen==1>
 
                                                     <#if jobConfigVO.stauts==1>
@@ -204,7 +198,7 @@
                                                 <#else>
                                                     <a href="#" onclick="deleteConfig(${jobConfigVO.id})">删除</a>
                                                 </#if>
-                                                <a href="/admin/editPage?id=${jobConfigVO.id}"  target="_blank">修改</a>
+                                                <a href="/admin/editBatchPage?id=${jobConfigVO.id}"  target="_blank">修改</a>
                                                 <a href="/admin/detailPage?id=${jobConfigVO.id}" target="_blank">详情</a>
                                                 <a href="#" onclick="copyConfig(${jobConfigVO.id})">复制</a>
 
