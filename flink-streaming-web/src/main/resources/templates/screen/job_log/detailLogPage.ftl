@@ -54,20 +54,26 @@
                                 <pre>${jobRunLogDetail.deployMode!""}</pre>
                             </div>
 
-                            <#if jobRunLogDetail.jobId??>
-                                <div class="form-group ">
-                                    <label for="inputfile">远程日志地址：</label>
-                                    <pre> <a href="${jobRunLogDetail.remoteLogUrl!""}" target="_blank">${jobRunLogDetail.remoteLogUrl!""}</a>  </pre>
-                                </div>
-                            </#if>
-
-
                             <div class="form-group ">
                                 <label for="inputfile">日志内容：</label>
                                 <pre>${jobRunLogDetail.localLog!""}</pre>
                             </div>
                         <#else>
-                            <div  id="message"> 没有找到改记录日志</div>
+                            <div  id="message"> 没有找到该记录日志</div>
+                        </#if>
+
+                        <#if jobRunLogDetail.clinetJobUrl??>
+                            <div class="form-group ">
+                            <label for="inputfile">Flink客户端日志（只能看到最新运行的cli日志，建议不要同时提交多个任务）：</label>
+                            <pre> <a href="${jobRunLogDetail.clinetJobUrl!""}" target="_blank">点击查看Flink客户端日志</a>(连接跳转后 如果要看最新日志 需要手动刷新页面) </pre>
+                            </div>
+                        </#if>
+
+                        <#if jobRunLogDetail.remoteLogUrl??>
+                            <div class="form-group ">
+                                <label for="inputfile">查看Flink集群日志：</label>
+                                <pre> <a href="${jobRunLogDetail.remoteLogUrl!""}" target="_blank">查看Flink集群日志</a>  </pre>
+                            </div>
                         </#if>
 
                         <div class="form-group ">

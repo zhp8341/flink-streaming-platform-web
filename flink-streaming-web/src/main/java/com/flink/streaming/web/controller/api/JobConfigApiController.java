@@ -325,14 +325,14 @@ public class JobConfigApiController extends BaseController {
             return RestResult.success();
         }
         if (StringUtils.isNotEmpty(checkPointParam.getCheckpointingMode())) {
-            if (!(FlinkConstants.EXACTLY_ONCE.equals(checkPointParam.getCheckpointingMode().toUpperCase())
-                    || FlinkConstants.AT_LEAST_ONCE.equals(checkPointParam.getCheckpointingMode().toUpperCase()))) {
+            if (!(FlinkConstants.EXACTLY_ONCE.equalsIgnoreCase(checkPointParam.getCheckpointingMode())
+                    || FlinkConstants.AT_LEAST_ONCE.equalsIgnoreCase(checkPointParam.getCheckpointingMode()))) {
                 return RestResult.error("checkpointingMode 参数必须是  AT_LEAST_ONCE 或者 EXACTLY_ONCE");
             }
         }
         if (StringUtils.isNotEmpty(checkPointParam.getExternalizedCheckpointCleanup())) {
-            if (!(FlinkConstants.DELETE_ON_CANCELLATION.equals(checkPointParam.getExternalizedCheckpointCleanup().toUpperCase())
-                    || FlinkConstants.RETAIN_ON_CANCELLATION.equals(checkPointParam.getExternalizedCheckpointCleanup().toUpperCase()))) {
+            if (!(FlinkConstants.DELETE_ON_CANCELLATION.equalsIgnoreCase(checkPointParam.getExternalizedCheckpointCleanup())
+                    || FlinkConstants.RETAIN_ON_CANCELLATION.equalsIgnoreCase(checkPointParam.getExternalizedCheckpointCleanup()))) {
                 return RestResult.error("externalizedCheckpointCleanup 参数必须是DELETE_ON_CANCELLATION 或者 RETAIN_ON_CANCELLATION");
             }
         }

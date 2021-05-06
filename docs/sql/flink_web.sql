@@ -96,6 +96,8 @@ CREATE TABLE `job_run_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='运行任务日志';
 
+ALTER TABLE job_run_log add `run_ip`  varchar(64) DEFAULT NULL COMMENT '任务运行所在的机器' AFTER local_log ;
+
 -- ----------------------------
 -- Table structure for savepoint_backup
 -- ----------------------------

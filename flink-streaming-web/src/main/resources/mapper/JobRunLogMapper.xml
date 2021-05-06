@@ -11,6 +11,7 @@
         <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
         <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
         <result column="job_status" jdbcType="VARCHAR" property="jobStatus"/>
+        <result column="run_ip" jdbcType="VARCHAR" property="runIp"/>
         <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
@@ -29,6 +30,7 @@
         deploy_mode,
         job_id,
         remote_log_url,
+        run_ip,
         start_time,
         end_time,
         job_status,
@@ -51,12 +53,12 @@
         job_id, remote_log_url, start_time,
         end_time, job_status, is_deleted,
         create_time, edit_time, creator,
-        editor, local_log)
+        editor, local_log, run_ip)
         values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
         #{jobId,jdbcType=VARCHAR}, #{remoteLogUrl,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
         #{endTime,jdbcType=TIMESTAMP}, #{jobStatus,jdbcType=VARCHAR}, 0,
         now(), now(), #{creator,jdbcType=VARCHAR},
-        #{editor,jdbcType=VARCHAR}, #{localLog,jdbcType=LONGVARCHAR})
+        #{editor,jdbcType=VARCHAR}, #{localLog,jdbcType=LONGVARCHAR},#{runIp,jdbcType=VARCHAR})
     </insert>
 
     <update id="update" parameterType="com.flink.streaming.web.model.entity.JobRunLog">

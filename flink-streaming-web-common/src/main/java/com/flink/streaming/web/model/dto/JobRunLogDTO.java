@@ -80,6 +80,8 @@ public class JobRunLogDTO implements Serializable {
      */
     private String localLog;
 
+    private String runIp;
+
 
     public static JobRunLog toEntity(JobRunLogDTO jobRunLogDTO) {
         if (jobRunLogDTO == null) {
@@ -100,6 +102,7 @@ public class JobRunLogDTO implements Serializable {
         jobRunLog.setCreateTime(jobRunLogDTO.getCreateTime());
         jobRunLog.setEditTime(jobRunLogDTO.getEditTime());
         jobRunLog.setLocalLog(jobRunLogDTO.getLocalLog());
+        jobRunLog.setRunIp(jobRunLogDTO.getRunIp());
         return jobRunLog;
     }
 
@@ -123,6 +126,7 @@ public class JobRunLogDTO implements Serializable {
         jobRunLogDTO.setCreator(jobRunLog.getCreator());
         jobRunLogDTO.setEditor(jobRunLog.getEditor());
         jobRunLogDTO.setLocalLog(jobRunLog.getLocalLog());
+        jobRunLogDTO.setRunIp(jobRunLog.getRunIp());
         return jobRunLogDTO;
     }
 
