@@ -122,6 +122,8 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()));
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
             jobConfigDTO.setExtJarPath(upsertJobConfigParam.getExtJarPath().trim());
+        }else{
+            jobConfigDTO.setExtJarPath(SystemConstant.SPACE);
         }
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getAlarmTypes())) {
             List<AlarmTypeEnum> list = new ArrayList<>();

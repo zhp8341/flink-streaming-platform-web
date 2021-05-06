@@ -28,4 +28,6 @@ public class MessageConstants {
 
     public static final String MESSAGE_009 = "没有获取到savepointPath路径目录  任务:{}";
 
+    public static final String MESSAGE_010 = "无法获取 user.name";
+
 }

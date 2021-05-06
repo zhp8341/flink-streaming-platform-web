@@ -148,10 +148,13 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
                 log.info(result);
                 if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD)) {
                     appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD, SystemConstant.SPACE).trim();
+                    localLog.append("[job-submitted-success] 解析得到的appId是:").append(appId).append(SystemConstant.LINE_FEED);
                 }
                 if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP)) {
                     appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP, SystemConstant.SPACE).trim();
+                    localLog.append("[Job has been submitted with JobID] 解析得到的appId是:").append(appId).append(SystemConstant.LINE_FEED);
                 }
+
                 localLog.append(result).append(SystemConstant.LINE_FEED);
                 //每隔2s更新日志
                 if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME_TWO) {
@@ -159,6 +162,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
                     lastTime = System.currentTimeMillis();
                 }
             }
+            log.info("获取到的appId是 {}",appId);
             return appId;
         } catch (Exception e) {
             log.error("[clearInfoLogStream] is error", e);

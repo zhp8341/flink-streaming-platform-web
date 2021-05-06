@@ -75,5 +75,7 @@ public class JobRunLog implements Serializable {
      */
     private String localLog;
 
+    private String runIp;
+
 
 }
