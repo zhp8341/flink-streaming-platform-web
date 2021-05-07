@@ -139,13 +139,14 @@
                                     <th>操作</th>
                                     <th>辅助</th>
                                     <th>日志</th>
+                                    <th>历史版本</th>
                                 </tr>
                                 </thead>
                                 <tbody>
 
                                 <#if jobConfigList?size == 0>
                                     <tr>
-                                        <td colspan="10" align="center">
+                                        <td colspan="11" align="center">
                                             没有数据
                                         </td>
                                     </tr>
@@ -195,7 +196,6 @@
                                             </td>
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
-
                                                     <#if jobConfigVO.stauts==1>
                                                         <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
                                                     <#else>
@@ -215,7 +215,9 @@
                                                     <a href="/admin/detailLog?id=${jobConfigVO.lastRunLogId!""}"  target="_blank">日志详情 </a>
                                                     <a href="/admin/logList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史日志 </a>
                                                 </#if>
-
+                                            </td>
+                                            <td>
+                                                <a href="/admin/jobConfigHistoryPage?jobConfigId=${jobConfigVO.id!""}" target="_blank">历史版本 </a>
                                             </td>
                                         </tr>
                                     </#list>

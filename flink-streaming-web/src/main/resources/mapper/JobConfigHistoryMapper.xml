@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flink.streaming.web.mapper.JobConfigHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfigHistory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="job_config_id" jdbcType="BIGINT" property="jobConfigId" />
+    <result column="job_name" jdbcType="VARCHAR" property="jobName" />
+    <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode" />
+    <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig" />
+    <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig" />
+    <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="editor" jdbcType="VARCHAR" property="editor" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.flink.streaming.web.model.entity.JobConfigHistory">
+    <result column="flink_sql" jdbcType="LONGVARCHAR" property="flinkSql" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, job_config_id, job_name, deploy_mode, flink_run_config, flink_checkpoint_config,
+    ext_jar_path, version, is_deleted, create_time, edit_time, creator, editor
+  </sql>
+  <sql id="Blob_Column_List">
+    flink_sql
+  </sql>
+
+
+  <insert id="insert" parameterType="com.flink.streaming.web.model.entity.JobConfigHistory">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into job_config_history (job_config_id, job_name, deploy_mode,
+    flink_run_config, flink_checkpoint_config,
+    ext_jar_path, version, is_deleted,
+    create_time, edit_time, creator,
+    editor, flink_sql)
+    values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
+    #{flinkRunConfig,jdbcType=VARCHAR}, #{flinkCheckpointConfig,jdbcType=VARCHAR},
+    #{extJarPath,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER},0,
+    now(), now(), #{creator,jdbcType=VARCHAR},
+    #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR})
+  </insert>
+
+
+
+  <select id="selectByJobConfigId" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from job_config_history
+
+    where job_config_id = #{jobConfigId,jdbcType=BIGINT} and is_deleted=0
+
+    order by create_time desc
+
+    limit 50
+  </select>
+
+  <select id="selectById" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from job_config_history
+
+    where id = #{id,jdbcType=BIGINT} and is_deleted=0
+
+  </select>
+
+</mapper>

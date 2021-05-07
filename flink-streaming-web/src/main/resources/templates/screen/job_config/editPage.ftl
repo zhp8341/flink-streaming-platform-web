@@ -65,6 +65,11 @@
                                    target="_blank">点击查看</a>
                             </div>
                             <div class="form-group">
+                                <label for="inputfile">历史修改版本查看：</label>
+                                <a href="/admin/jobConfigHistoryPage?jobConfigId=${jobConfig.id}" target="_blank">历史版本 </a>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="inputfile">告警辅助配置：</label>
 
                                 <label class="checkbox-inline">
