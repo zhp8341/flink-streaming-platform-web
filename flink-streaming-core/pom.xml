@@ -172,6 +172,14 @@
             </exclusions>
         </dependency>
 
+        <!-- rocksdb-->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-statebackend-rocksdb_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Hive Connector的支持，仅在编译时生效-->
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -179,6 +187,7 @@
             <version>${flink.version}</version>
             <scope>provided</scope>
         </dependency>
+       
 
 
         <!-- Flink modules  end -->

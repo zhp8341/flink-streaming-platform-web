@@ -13,6 +13,8 @@ public interface JobAlarmConfigMapper {
 
     List<JobAlarmConfig> selectByJobId(@Param("jobId")Long jobId);
 
+    List<JobAlarmConfig> selectByJobIdList(@Param("jobIdList")List<Long> jobIdList);
+
     int deleteByJobId(@Param("jobId")Long jobId);
 
 

@@ -14,6 +14,12 @@
         <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
         <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
+
+        <result column="job_type" jdbcType="INTEGER" property="jobType"/>
+        <result column="custom_args" jdbcType="VARCHAR" property="customArgs"/>
+        <result column="custom_main_class" jdbcType="VARCHAR" property="customMainClass"/>
+        <result column="custom_jar_url" jdbcType="VARCHAR" property="customJarUrl"/>
+
         <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
@@ -38,6 +44,10 @@
         last_start_time,
         last_run_log_id,
         version,
+        job_type,
+        custom_args,
+        custom_main_class,
+        custom_jar_url,
         is_deleted,
         create_time,
         edit_time,
@@ -54,14 +64,15 @@
         </selectKey>
         insert into job_config (job_name, deploy_mode, flink_run_config,
         flink_checkpoint_config, job_id, is_open,
-        status, last_start_time, version,
+        status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
         is_deleted, create_time, edit_time,
         creator, editor, flink_sql,ext_jar_path
         )
         values (#{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
         #{flinkRunConfig,jdbcType=VARCHAR},
         #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
-        #{stauts,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,
+        #{stauts,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
+        #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
         0, now(), now(),
         #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
         #{extJarPath,jdbcType=VARCHAR}
@@ -95,9 +106,16 @@
 			 ]]>
         </if>
 
+
         <if test="stauts != null ">
             <![CDATA[
 	               and status = #{stauts,jdbcType=BIT}
+			 ]]>
+        </if>
+
+        <if test="jobType != null ">
+            <![CDATA[
+	               and job_type = #{jobType,jdbcType=BIT}
 			 ]]>
         </if>
 
@@ -196,6 +214,16 @@
 
             <if test="lastStartTime != null">
                 last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="customArgs != null">
+                custom_args = #{customArgs,jdbcType=VARCHAR},
+            </if>
+            <if test="customMainClass != null">
+                custom_main_class = #{customMainClass,jdbcType=VARCHAR},
+            </if>
+            <if test="customJarUrl != null">
+                custom_jar_url = #{customJarUrl,jdbcType=VARCHAR},
             </if>
 
             <if test="isDeleted != null">

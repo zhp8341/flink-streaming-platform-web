@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhuhuipei
@@ -36,6 +37,17 @@ public class TestJobAlarmConfigService extends TestRun {
         List<AlarmTypeEnum> list = jobAlarmConfigService.findByJobId(1L);
         Assert.assertNotNull(list);
         System.out.println(list);
+    }
+
+    @Test
+    public void findByJobIdList() {
+        List<Long> list= Lists.newArrayList();
+        list.add(14L);
+        list.add(11L);
+        list.add(3L);
+        Map<Long ,List<AlarmTypeEnum>>  map = jobAlarmConfigService.findByJobIdList(list);
+        Assert.assertNotNull(map);
+        System.out.println(map);
     }
 
 

@@ -55,11 +55,11 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-
+                        <input type="hidden" name="jobType" id="jobType" value="0">
                         <div class="panel-body">
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
-                                <a href="https://github.com/zhp8341/flink-streaming-platform-web#%E4%B8%89%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"
+                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-sql.md"
                                    target="_blank">点击查看</a>
                             </div>
                             <div class="form-group">
@@ -244,6 +244,7 @@
                 flinkRunConfig: $('#flinkRunConfig').val(),
                 flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
+                jobType: $('#jobType').val(),
                 alarmTypes:   chk_value.toString(),
                 extJarPath: $('#extJarPath').val()
             },

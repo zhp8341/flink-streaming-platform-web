@@ -1,16 +1,29 @@
-
-
 function stop(id) {
     $.post("../api/stop", {
             id: id
         },
         function (data, status) {
             if (data!=null && data.success){
-                alert("执行成功 请稍后刷新");
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '提交成功，请稍后刷新',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-light,gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
+
             }else{
-                alert("执行失败："+data.message)
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Fail!',
+                    text: '执行失败：' + data.message,
+                    sticky: false,
+                    time: 3000,
+                    after_close: function(e) {
+                    }
+                });
             }
 
         }
@@ -19,17 +32,29 @@ function stop(id) {
 function start(id) {
     $.post("../api/start", {
             id: id
-
         },
         function (data, status) {
-            if (data!=null && data.success){
-                alert("执行成功 请稍后刷新");
-                window.location.reload();
+            if (data !== null && data.success) {
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '提交成功，请稍后刷新',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
             }else{
-                alert("执行失败："+data.message)
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Fail!',
+                    text: '执行失败：' + data.message,
+                    sticky: false,
+                    time: 3000,
+                    after_close: function(e) {
+                    }
+                });
             }
-
         }
     );
 }
@@ -44,16 +69,45 @@ function deleteConfig(id) {
                 if (data!=null && data.success){
                     window.location.reload();
                 }else{
-                    alert("执行失败："+data.message)
+                    $.gritter.add({
+                        title: 'Fail!',
+                        text: '执行失败：' + data.message,
+                        sticky: false,
+                        time: 3000,
+                        after_close: function(e) {
+                        }
+                    });
                 }
             }
         );
 
     }else{
         return false;
-
     }
+}
 
+function copyConfig(id) {
+    $.post("../api/copyConfig", {
+            id: id,
+        },
+        function (data, status) {
+            if (data != null && data.success){
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '复制成功',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
+                return true;
+            }
+
+            alert("复制失败：" + data.message);
+        }
+    );
 }
 
 function openConfig(id) {
@@ -62,10 +116,26 @@ function openConfig(id) {
         },
         function (data, status) {
             if (data!=null && data.success){
-                alert("执行成功");
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '执行成功',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
+
             }else{
-                alert("执行失败："+data.message)
+                $.gritter.add({
+                    title: 'Fail!',
+                    text: '执行失败：' + data.message,
+                    sticky: false,
+                    time: 3000,
+                    after_close: function(e) {
+                    }
+                });
             }
 
         }
@@ -79,14 +149,64 @@ function closeConfig(id) {
         },
         function (data, status) {
             if (data!=null && data.success){
-                alert("执行成功");
-                window.location.reload();
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '执行成功',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
             }else{
-                alert("执行失败："+data.message)
+                $.gritter.add({
+                    title: 'Fail!',
+                    text: '执行失败：' + data.message,
+                    sticky: false,
+                    time: 1500,
+                    after_close: function(e) {
+                    }
+                });
             }
 
         }
     );
+}
+
+function  savePoint(id){
+    if(confirm('确定要手执行savePoint吗？')==true){
+    $.post("../api/savepoint", {
+            id: id
+        },
+        function (data, status) {
+            if (data!=null && data.success){
+                $.gritter.add({
+                    title: 'Success!',
+                    text: '执行成功，请稍后刷新',
+                    sticky: false,
+                    time: 1500,
+                    class_name: 'gritter-light,gritter-fontsize',
+                    after_close: function(e) {
+                        window.location.reload();
+                    }
+                });
+            }else{
+                $.gritter.add({
+                    title: 'Fail!',
+                    text: '执行失败：' + data.message,
+                    sticky: false,
+                    time: 3000,
+                    after_close: function(e) {
+                    }
+                });
+            }
+        }
+    );
+    }else{
+        return false;
+
+    }
 }
 
 function searchForm(pageNum) {
@@ -94,5 +214,12 @@ function searchForm(pageNum) {
     $("form[name='search']").submit();
 
 }
+
+function refreshForm() {
+    $("form[name='search']").submit();
+
+}
+
+
 
 

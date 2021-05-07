@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.web;
 
+import com.flink.streaming.web.config.CustomConfig;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobRunLogDTO;
 import com.flink.streaming.web.model.dto.PageModel;
@@ -27,6 +28,10 @@ public class JobRunLogController extends BaseController {
     @Autowired
     private JobRunLogService jobRunLogService;
 
+    @Autowired
+    private CustomConfig customConfig;
+
+
     @RequestMapping(value = "/logList")
     public String sysConfig(ModelMap modelMap, JobRunLogParam jobRunLogParam) {
         PageModel<JobRunLogDTO> pageModel = jobRunLogService.queryJobRunLog(jobRunLogParam);
@@ -46,7 +51,8 @@ public class JobRunLogController extends BaseController {
 
     @RequestMapping(value = "/detailLog")
     public String sysConfig(ModelMap modelMap, Long id) {
-        modelMap.put("jobRunLogDetail", JobRunLogVO.toVO(jobRunLogService.getDetailLogById(id), YN.Y.getCode()));
+        modelMap.put("jobRunLogDetail", JobRunLogVO.toVO(jobRunLogService.getDetailLogById(id),
+                YN.Y.getCode(),customConfig.getWebPort()));
         return "screen/job_log/detailLogPage";
     }
 }

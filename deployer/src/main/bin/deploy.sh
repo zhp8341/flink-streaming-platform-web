@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
 
+#具体执行哪个步骤
+ACTION=$1
+
+echo "开始执行脚本 启动参数 $1"
+
 source /etc/profile
 set -e
-
-export SQL_HOME="$(cd "`dirname "$0"`"/..; pwd)"
 
 # Find the java binary
 if [ -n "${JAVA_HOME}" ]; then
@@ -18,21 +21,21 @@ else
   fi
 fi
 
-#具体执行哪个步骤
-ACTION=$1
+
+echo "JAVA_HOME= ${JAVA_HOME}"
 
 ##变量设置##
-app_name=flink-streaming-web-1.2.0.RELEASE.jar
 env=prod
-project=../lib/$app_name
+project=$(find "../lib" -regex ".*flink-streaming-web.*.jar")
+echo "project= $project"
 time=$(date "+%Y%m%d-%H%M%S")
 
 ##JAVA_OPTS设置
 JAVA_OPTS="-Xmx1888M -Xms1888M -Xmn1536M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -Xdebug -Xrunjdwp:transport=dt_socket,address=9901,server=y,suspend=n  -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -Dcom.sun.management.jmxremote.port=8999 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:ErrorFile=../logs/hs_err_pid%p.log  -XX:HeapDumpPath=../logs -XX:+HeapDumpOnOutOfMemoryError"
 
 start(){
-     echo "开始启动服务 app_name=$app_name "
-         pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
+     echo "开始启动服务 app_name=$project "
+         pid=$(ps x | grep $project  | grep -v grep | awk '{print $1}')
          echo $pid
      if [ -z $pid ]
      then
@@ -40,8 +43,8 @@ start(){
          echo "开始启动进程执行命令  java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties  "
         
           java $JAVA_OPTS   -jar $project --spring.profiles.active=$env --spring.config.additional-location=../conf/application.properties      >/dev/null 2>&1  &
-          sleep 30
-          pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
+          sleep 20
+          pid=$(ps x | grep $project  | grep -v grep | awk '{print $1}')
 
            if [ -z $pid ]
            then
@@ -53,7 +56,7 @@ start(){
            echo "可通过命令  tail -fn 300  ../logs/info.log  查看web日志"
 
      else
-      echo " $app_name 进程已经存 pid=" $pid
+      echo " $project 进程已经存 pid=" $pid
      fi
 
 
@@ -61,14 +64,14 @@ start(){
 
 stop()
 {
-pid=$(ps x | grep $app_name  | grep -v grep | awk '{print $1}')
-echo $pid
+pid=$(ps x | grep $project  | grep -v grep | awk '{print $1}')
+echo "进程 $pid"
 
-echo "------>Check pid of $app_name"
+echo "------>Check pid of $project"
 
 if [ -z "$pid" ]
 then
-    echo "------>APP_NAME process [$app_name] is already stopped"
+    echo "------>APP_NAME process [$project] is already stopped"
 else
     for pid in ${pid[*]}
     do

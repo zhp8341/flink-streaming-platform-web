@@ -1,6 +1,7 @@
 package com.flink.streaming.web.controller.web;
 
 
+import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.model.vo.UserVO;
 import com.flink.streaming.web.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class UserController {
 
     private String decode(String message) {
         try {
-            return java.net.URLDecoder.decode(message, "UTF-8");
+            return java.net.URLDecoder.decode(message, SystemConstants.CODE_UTF_8);
         } catch (UnsupportedEncodingException e) {
             return "error";
         }

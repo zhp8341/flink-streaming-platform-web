@@ -65,6 +65,9 @@
                                 <div class="col-sm-1">
                                     <button type="button" class="btn btn-info btn-sm" onclick="searchForm(1)">搜索</button>
                                 </div>
+                                <div class="col-sm-2">
+                                    <h5  style="color: red">(只显示最近30天)</h5>
+                                </div>
                             </div>
                         </form>
                     </div><!-- /.col -->
@@ -131,7 +134,8 @@
 
                                 <#list 1..pageVO.pages as index>
                                     <#if pageVO.pageNum == index>
-                                        <li class="page-item active "><a class="page-link" href="#" onclick="searchForm(${index})" >${index}</a>
+                                        <li class="page-item active ">
+                                            <a class="page-link" href="#" onclick="searchForm(${index})" >${index}</a>
                                         </li>
                                     <#else>
                                         <li>
@@ -203,8 +207,16 @@
                 if (data!=null && data.success){
                     $("#errorInfo").html(data.data)
                 }else{
-                    alert("查询失败："+data.message)
-
+                    $.gritter.add({
+                        title: 'Fail!',
+                        text: '查询失败：' + data.message,
+                        // image: 'assets/images/avatars/avatar1.png', //in Ace demo ./dist will be replaced by correct assets path
+                        sticky: false,
+                        time: 3000,
+                        // class_name: (!$('#gritter-light').get(0).checked ? 'gritter-light' : ''),
+                        after_close: function(e) {
+                        }
+                    });
                 }
 
             }

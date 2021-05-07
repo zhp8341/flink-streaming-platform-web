@@ -9,7 +9,7 @@ package com.flink.streaming.web.ao;
 public interface JobServerAO {
 
     /**
-     * 启动服务器
+     * 启动任务
      *
      * @author zhuhuipei
      * @date 2020-07-20
@@ -19,7 +19,7 @@ public interface JobServerAO {
 
 
     /**
-     * 关闭服务
+     * 关闭任务
      *
      * @author zhuhuipei
      * @date 2020-07-20

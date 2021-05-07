@@ -3,6 +3,7 @@ package com.flink.streaming.web.service;
 import com.flink.streaming.web.enums.AlarmTypeEnum;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhuhuipei
@@ -30,6 +31,13 @@ public interface JobAlarmConfigService {
      * @time 17:53
      */
     List<AlarmTypeEnum>  findByJobId(Long jobId);
+
+
+    /**
+     *
+     * @author zhuhuipei
+     */
+    Map<Long ,List<AlarmTypeEnum>> findByJobIdList(List<Long> jobIdList);
 
 
 }

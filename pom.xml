@@ -15,6 +15,9 @@
         <module>deployer</module>
         <module>flink-streaming-commom</module>
         <module>flink-streaming-validation</module>
+        <module>flink-streaming-web-config</module>
+        <module>flink-streaming-web-common</module>
+        <module>flink-streaming-web-alarm</module>
     </modules>
 
     <name>flink-streaming-platform-web</name>
@@ -34,7 +37,7 @@
         <java_source_version>1.8</java_source_version>
         <java_target_version>1.8</java_target_version>
         <file_encoding>UTF-8</file_encoding>
-        <flink_streaming_version>1.2.0.RELEASE</flink_streaming_version>
+        <flink_streaming_version>1.3.0.RELEASE</flink_streaming_version>
         <flink.version>1.12.0</flink.version>
         <scala.binary.version>2.11</scala.binary.version>
         <spring.boot.version>2.2.8.RELEASE</spring.boot.version>
@@ -52,6 +55,25 @@
                 <artifactId>flink-streaming-validation</artifactId>
                 <version>1.1</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-config</artifactId>
+                <version>1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-alarm</artifactId>
+                <version>1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.streaming.platform.web</groupId>
+                <artifactId>flink-streaming-web-common</artifactId>
+                <version>1.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

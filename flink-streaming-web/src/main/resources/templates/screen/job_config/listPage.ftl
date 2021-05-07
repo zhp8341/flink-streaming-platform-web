@@ -8,6 +8,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <#include "../../control/public_css_js.ftl">
 </head>
+<style>
+    .ant-tag-green{
+        color: #52c41a;
+        background: #f6ffed;
+        border-color: #52c41b;
+        border: 1px solid #52c41a ;
+        padding:0 4px;
+        border-radius:6px;
+    }
+
+    .ant-tag-magenta{
+        color: #eb2f96;
+        background: #fff0f6;
+        border-color: #ffadd2;
+        border: 1px solid #eb2f96 ;
+        padding:0 4px;
+        border-radius:6px;
+    }
+
+    .ant-tag-b1{
+        border: 3px solid #D15B47;
+        padding: 0 1px;
+        border-radius: 3px;
+    }
+
+    .ant-tag-b2{
+        border: 3px solid #87B87F;
+        padding: 0 1px;
+        border-radius: 3px;
+    }
+
+</style>
 
 <body class="no-skin">
 <!-- start top-->
@@ -33,7 +65,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">任务列表</li>
+                    <li class="active">Flink-SQL任务列表</li>
                 </ul>
             </div>
 
@@ -51,7 +83,7 @@
                                 <input type="text" class="form-control" placeholder="任务名称(模糊查询)"
                                        name="jobName" <#if (jobConfigParam??)> value="${jobConfigParam.jobName!""}" </#if> />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <input type="text" class="form-control" placeholder="任务id"
                                        name="jobId"  <#if (jobConfigParam??) >  value="${jobConfigParam.jobId!""}" </#if> />
                             </div>
@@ -59,7 +91,7 @@
                                 <select class="form-control" name="stauts">
                                     <option value=""> 运行状态</option>
                                     <option value="1" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==1> selected</#if> >
-                                        运行中
+                                       运行中
                                     </option>
                                     <option value="0" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==0> selected</#if> >
                                         停止中
@@ -83,6 +115,9 @@
                             <div class="col-sm-1">
                                 <button type="button" class="btn btn-purple btn-sm" onclick="searchForm(1)">搜索</button>
                             </div>
+                             <div class="col-sm-1">
+                                 <button type="button" class="btn btn-danger btn-sm" onclick="refreshForm()">刷新</button>
+                             </div>
                             <div class="col-sm-1">
                                 <a class="btn btn-info btn-sm" href="/admin/addPage">新增</a>
                             </div>
@@ -90,26 +125,28 @@
                         </div>
 
                         <div class="panel-body">
-                            <table class="table table-striped table-bordered">
+                            <table class="table table-striped table-bordered" style="text-align: center;">
                                 <thead>
                                 <tr>
                                     <th>配置ID</th>
                                     <th>任务名称</th>
+                                    <th width="90px">是否开启</th>
                                     <th>运行模式</th>
-                                    <th>是否开启</th>
                                     <th>运行状态</th>
                                     <th>任务id</th>
                                     <th>创建时间</th>
                                     <th>savePoint</th>
                                     <th>操作</th>
+                                    <th>辅助</th>
                                     <th>日志</th>
+                                    <th>历史版本</th>
                                 </tr>
                                 </thead>
                                 <tbody>
 
                                 <#if jobConfigList?size == 0>
                                     <tr>
-                                        <td colspan="10" align="center">
+                                        <td colspan="11" align="center">
                                             没有数据
                                         </td>
                                     </tr>
@@ -119,15 +156,32 @@
                                         <tr>
                                             <td>${jobConfigVO.id!""}</td>
                                             <td>${jobConfigVO.jobName!""}</td>
-                                            <td>${jobConfigVO.deployMode!""}</td>
-                                            <td>${jobConfigVO.isOpenStr!""}
+                                            <td align="center" height="34px">
                                                 <#if jobConfigVO.isOpen==1>
-                                                    <a  href="#" onclick="closeConfig(${jobConfigVO.id})">关闭配置</a>
+                                                    <a href="#" class="btn-success ant-tag-b2"
+                                                            onclick="closeConfig(${jobConfigVO.id})">关闭配置</a>
                                                 <#else>
-                                                    <a href="#"  onclick="openConfig(${jobConfigVO.id})">开启配置</a>
+                                                    <a href="#" class="btn-danger ant-tag-b1"
+                                                            onclick="openConfig(${jobConfigVO.id})">开启配置 </a>
                                                 </#if>
                                             </td>
-                                            <td>${jobConfigVO.stautsStr!""} </td>
+                                            <td>${jobConfigVO.deployMode!""}</td>
+                                            <td>
+                                                <#if jobConfigVO.stauts==1>
+                                                    <span class="ant-tag-green">
+                                                     ${jobConfigVO.stautsStr!""}
+                                                 </span>
+                                                <#else>
+                                                    <#if jobConfigVO.stauts==-1>
+                                                        <span  class="ant-tag-magenta">
+                                                     ${jobConfigVO.stautsStr!""}
+                                                    </span>
+                                                    <#else>
+                                                        ${jobConfigVO.stautsStr!""}
+                                                    </#if>
+                                                </#if>
+
+                                            </td>
                                             <#if (jobConfigVO.jobId)??>
                                                 <td> <a href="${jobConfigVO.flinkRunUrl!""}" target="_blank"> ${jobConfigVO.jobId!""}</a>  </td>
                                             <#else>
@@ -136,19 +190,12 @@
 
                                             <td>${jobConfigVO.createTime!""}</td>
                                             <td>
-                                                <#if jobConfigVO.deployMode=="YARN_PER">
-                                                    <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a>
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="LOCAL">
-                                                    本地模式不启用
-                                                </#if>
-                                                <#if jobConfigVO.deployMode=="STANDALONE">
-                                                    待开发中...
-                                                </#if>
+                                                <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"
+                                                   target="_blank">恢复任务</a>
+                                                <a href="#" onclick="savePoint(${jobConfigVO.id!""})">手动备份</a>
                                             </td>
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
-
                                                     <#if jobConfigVO.stauts==1>
                                                         <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
                                                     <#else>
@@ -159,15 +206,18 @@
                                                 </#if>
                                                 <a href="/admin/editPage?id=${jobConfigVO.id}"  target="_blank">修改</a>
                                                 <a href="/admin/detailPage?id=${jobConfigVO.id}" target="_blank">详情</a>
-
+                                                <a href="#" onclick="copyConfig(${jobConfigVO.id})">复制</a>
 
                                             </td>
+                                            <td>${jobConfigVO.alarmStrs!""}</td>
                                             <td>
                                                 <#if jobConfigVO.lastRunLogId??>
                                                     <a href="/admin/detailLog?id=${jobConfigVO.lastRunLogId!""}"  target="_blank">日志详情 </a>
                                                     <a href="/admin/logList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史日志 </a>
                                                 </#if>
-
+                                            </td>
+                                            <td>
+                                                <a href="/admin/jobConfigHistoryPage?jobConfigId=${jobConfigVO.id!""}" target="_blank">历史版本 </a>
                                             </td>
                                         </tr>
                                     </#list>
@@ -201,7 +251,7 @@
                                     </#list>
 
                                     <#if pageVO.pageNum gte pageVO.pages>
-                                        <li class="disabled "><a class="page-link" href="#">下一页</a></li>
+                                        <li class="disabled "><a class="page-link" href="#" onclick="">下一页</a></li>
                                     <#else>
                                         <li>
                                             <a class="page-link" onclick="searchForm(${pageVO.pageNum+1})"  href="#" >下一页</a>

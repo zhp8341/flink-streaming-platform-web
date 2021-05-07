@@ -1,7 +1,7 @@
 package com.flink.streaming.web.controller.api;
 
 import com.flink.streaming.web.common.RestResult;
-import com.flink.streaming.web.common.exceptions.BizException;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.service.SavepointBackupService;
 import lombok.extern.slf4j.Slf4j;

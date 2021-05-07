@@ -18,6 +18,7 @@
 <![endif]-->
 <link rel="stylesheet" href="/static/assets/css/ace-skins.min.css?version=20210123" />
 <link rel="stylesheet" href="/static/assets/css/ace-rtl.min.css?version=20210123" />
+<link rel="stylesheet" href="/static/assets/css/jquery.gritter.min.css?version=20210123" />
 
 <!--[if lte IE 9]>
 <link rel="stylesheet" href="/static/assets/css/ace-ie.min.css?version=20210123" />
@@ -60,6 +61,7 @@
 
 <script src="/static/assets/js/jquery-ui.custom.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.ui.touch-punch.min.js?version=20210123"></script>
+<script src="/static/assets/js/jquery.gritter.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.easypiechart.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.sparkline.index.min.js?version=20210123"></script>
 <script src="/static/assets/js/jquery.flot.min.js?version=20210123"></script>
@@ -69,5 +71,22 @@
 <!-- ace scripts -->
 <script src="/static/assets/js/ace-elements.min.js?version=20210123"></script>
 <script src="/static/assets/js/ace.min.js?version=20210123"></script>
+<style>
+    .gritter-blue {
+        background: #438EB9;
+        font-size: 24px;
+    }
+
+    .gritter-fontsize {
+        font-size: 24px;
+    }
+
+    .gritter-center{
+        position:fixed;
+        left:33%;
+        right:33%;
+        top:33%
+    }
+</style>
 
 
