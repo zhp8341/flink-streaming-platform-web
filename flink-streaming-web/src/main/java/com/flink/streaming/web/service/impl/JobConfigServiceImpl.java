@@ -1,16 +1,14 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.JobConfigMapper;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
+import com.flink.streaming.web.model.dto.JobConfigHistoryDTO;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.entity.JobConfig;
 import com.flink.streaming.web.model.param.JobConfigParam;
-import com.flink.streaming.web.service.JobAlarmConfigService;
-import com.flink.streaming.web.service.JobConfigService;
-import com.flink.streaming.web.service.JobRunLogService;
-import com.flink.streaming.web.service.SystemConfigService;
+import com.flink.streaming.web.service.*;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +44,9 @@ public class JobConfigServiceImpl implements JobConfigService {
     @Autowired
     private SystemConfigService systemConfigService;
 
+    @Autowired
+    private JobConfigHistoryService jobConfigHistoryService;
+
     @Override
     public Long addJobConfig(JobConfigDTO jobConfigDTO) {
         if (jobConfigDTO == null) {
@@ -55,6 +56,7 @@ public class JobConfigServiceImpl implements JobConfigService {
         this.checkSystemConfig(jobConfigDTO.getDeployModeEnum());
         JobConfig jobConfig = JobConfigDTO.toEntity(jobConfigDTO);
         jobConfigMapper.insert(jobConfig);
+        this.insertJobConfigHistory(jobConfig.getId());
         return jobConfig.getId();
     }
 
@@ -77,8 +79,11 @@ public class JobConfigServiceImpl implements JobConfigService {
         if (StringUtils.isNotEmpty(jobConfigDTO.getJobName())) {
             this.checkJobName(jobConfigDTO.getJobName(), jobConfigDTO.getId());
         }
+        JobConfig JobConfigUpdate = JobConfigDTO.toEntity(jobConfigDTO);
 
-        jobConfigMapper.updateByPrimaryKeySelective(JobConfigDTO.toEntity(jobConfigDTO));
+        jobConfigMapper.updateByPrimaryKeySelective(JobConfigUpdate);
+
+        this.insertJobConfigHistory(jobConfigDTO.getId());
     }
 
     @Override
@@ -243,5 +248,12 @@ public class JobConfigServiceImpl implements JobConfigService {
             throw new BizException("请在  系统管理-->系统设置 里面配置 " + tips.toString());
         }
 
+    }
+
+    private void insertJobConfigHistory(Long id) {
+        JobConfig jobConfig = jobConfigMapper.selectByPrimaryKey(id);
+        if (jobConfig != null && JobTypeEnum.SQL.getCode()== jobConfig.getJobType().intValue()) {
+            jobConfigHistoryService.insertJobConfigHistory(JobConfigHistoryDTO.to(jobConfig));
+        }
     }
 }
