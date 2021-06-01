@@ -1,7 +1,5 @@
 package com.flink.streaming.web.common.util;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.enums.SysErrorEnum;
@@ -13,7 +11,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Date;
 
 /**
  * @author zhuhuipei
@@ -103,18 +100,6 @@ public class FileUtils {
             }
         }
     }
-
-    public static String downJar(String downUrl,String sysHome){
-        String extJarPath = sysHome + "tmp/udf_jar/" + DateUtil.formatDate(new Date()) + "/" + UUID.fastUUID();
-        FileUtils.mkdirs(extJarPath);
-        String fileName = System.currentTimeMillis() + "_udf.jar";
-        String[] cmds = {"curl", "-o", extJarPath + "/" + fileName, downUrl};
-
-
-        return "";
-
-    }
-
 
     public static void mkdirs(String path) {
         File dir = new File(path);

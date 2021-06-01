@@ -1,6 +1,5 @@
-package com.flink.streaming.web.enums;
+package com.flink.streaming.common.enums;
 
-import com.flink.streaming.common.enums.ExecMode;
 import lombok.Getter;
 
 /**
@@ -32,17 +31,5 @@ public enum JobTypeEnum {
 
         return null;
     }
-
-    public static String getType(JobTypeEnum jobTypeEnum) {
-
-        switch (jobTypeEnum) {
-            case SQL_BATCH:
-                return ExecMode.BATCH.getName();
-            case SQL_STREAMING:
-                return ExecMode.STREAMING.getName();
-        }
-        return null;
-
-    }
-
+    
 }

@@ -1,6 +1,7 @@
 package com.flink.streaming.web.model.param;
 
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import lombok.Data;
@@ -122,6 +123,8 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()));
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
             jobConfigDTO.setExtJarPath(upsertJobConfigParam.getExtJarPath().trim());
+        }else{
+            jobConfigDTO.setExtJarPath(SystemConstant.SPACE);
         }
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getAlarmTypes())) {
             List<AlarmTypeEnum> list = new ArrayList<>();

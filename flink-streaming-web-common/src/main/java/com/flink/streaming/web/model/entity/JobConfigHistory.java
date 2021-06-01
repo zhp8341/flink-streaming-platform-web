@@ -6,17 +6,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ *
  * @author zhuhuipei
- * @date 2020-08-17
- * @time 00:14
+ * @date 2021/5/5
+ * @time 19:49
  */
 @Data
-public class JobRunLog implements Serializable {
+public class JobConfigHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
+    /**
+     * job_config主表Id
+     */
     private Long jobConfigId;
 
     /**
@@ -25,36 +29,31 @@ public class JobRunLog implements Serializable {
     private String jobName;
 
     /**
-     * 提交模式: standalone 、yarn 、yarn-session
+     * 提交模式: standalone 、yarn 、yarn-session 
      */
     private String deployMode;
 
     /**
-     * 运行后的任务id
+     * flink运行配置
      */
-    private String jobId;
+    private String flinkRunConfig;
 
     /**
-     * 远程日志url的地址
+     * checkPoint配置
      */
-    private String remoteLogUrl;
+    private String flinkCheckpointConfig;
 
     /**
-     * 启动时间
+     * udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar
      */
-    private Date startTime;
+    private String extJarPath;
 
     /**
-     * 启动时间
+     * 更新版本号
      */
-    private Date endTime;
+    private Integer version;
 
-    /**
-     * 任务状态
-     */
-    private String jobStatus;
-
-    private Integer isDeleted;
+    private Boolean isDeleted;
 
     /**
      * 创建时间
@@ -71,11 +70,10 @@ public class JobRunLog implements Serializable {
     private String editor;
 
     /**
-     * 启动时本地日志
+     * sql语句
      */
-    private String localLog;
+    private String flinkSql;
 
-    private String runIp;
 
 
 }

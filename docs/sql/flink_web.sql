@@ -73,6 +73,31 @@ ALTER TABLE job_config add `custom_args` varchar(128)  DEFAULT NULL COMMENT '启
 ALTER TABLE job_config add `custom_main_class` varchar(128)  DEFAULT NULL COMMENT '程序入口类' AFTER custom_args;
 ALTER TABLE job_config add `custom_jar_url` varchar(128)  DEFAULT NULL   COMMENT'自定义jar的http地址 如:http://ccblog.cn/xx.jar' AFTER custom_main_class;
 
+
+-- ----------------------------
+-- Table structure for job_config_history
+-- ----------------------------
+CREATE TABLE `job_config_history` (
+                                      `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+                                      `job_config_id` bigint(11) NOT NULL COMMENT 'job_config主表Id',
+                                      `job_name` varchar(64) NOT NULL COMMENT '任务名称',
+                                      `deploy_mode` varchar(64) NOT NULL COMMENT '提交模式: standalone 、yarn 、yarn-session ',
+                                      `flink_run_config` varchar(512) NOT NULL COMMENT 'flink运行配置',
+                                      `flink_sql` mediumtext NOT NULL COMMENT 'sql语句',
+                                      `flink_checkpoint_config` varchar(512) DEFAULT NULL COMMENT 'checkPoint配置',
+                                      `ext_jar_path` varchar(2048) DEFAULT NULL COMMENT 'udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar',
+                                      `version` int(11) NOT NULL DEFAULT '0' COMMENT '更新版本号',
+                                      `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+                                      `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                      `edit_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+                                      `creator` varchar(32) DEFAULT 'sys',
+                                      `editor` varchar(32) DEFAULT 'sys',
+                                      PRIMARY KEY (`id`),
+                                      KEY `index_job_config_id` (`job_config_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置历史变更表';
+
+
+
 -- ----------------------------
 -- Table structure for job_run_log
 -- ----------------------------
@@ -95,6 +120,9 @@ CREATE TABLE `job_run_log` (
   `editor` varchar(32) DEFAULT 'sys',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='运行任务日志';
+
+ALTER TABLE job_run_log add `run_ip`  varchar(64) DEFAULT NULL COMMENT '任务运行所在的机器' AFTER local_log ;
+
 
 -- ----------------------------
 -- Table structure for savepoint_backup

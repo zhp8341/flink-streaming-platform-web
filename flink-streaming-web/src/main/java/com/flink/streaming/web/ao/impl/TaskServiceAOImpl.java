@@ -1,5 +1,6 @@
 package com.flink.streaming.web.ao.impl;
 
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.ao.TaskServiceAO;

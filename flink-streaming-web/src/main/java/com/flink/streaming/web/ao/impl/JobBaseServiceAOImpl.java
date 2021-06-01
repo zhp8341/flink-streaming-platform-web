@@ -2,6 +2,7 @@ package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
@@ -142,6 +143,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         jobRunLogDTO.setJobStatus(JobStatusEnum.STARTING.name());
         jobRunLogDTO.setCreator(userName);
         jobRunLogDTO.setEditor(userName);
+        jobRunLogDTO.setRunIp(IpUtil.getInstance().getLocalIP());
         return jobRunLogService.insertJobRunLog(jobRunLogDTO);
     }
 
@@ -256,7 +258,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         .append("logs/error.log").append(SystemConstant.LINE_FEED)
                         .append("flink提交日志目录（flink客户端日志：")
                         .append(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()))
-                        .append("log/").append(SystemConstant.LINE_FEED)
+                        .append("log/)").append(SystemConstant.LINE_FEED)
                         .append(SystemConstant.LINE_FEED)
                         .append(SystemConstant.LINE_FEED);
                 return errorTips.toString();
@@ -319,13 +321,13 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         jobConfig.getDeployModeEnum());
 
                 if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
-                    log.error("[submitJobForYarn] is error jobStandaloneInfo={}", jobStandaloneInfo);
+                    log.error("[submitJobForStandalone] is error jobStandaloneInfo={}", jobStandaloneInfo);
                     localLog.append("\n 任务失败 appId=" + appId);
                     throw new BizException("任务失败");
                 } else {
                     if (!SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
                         localLog.append("\n 任务失败 appId=" + appId).append("状态是：" + jobStandaloneInfo.getState());
-                        throw new BizException("[submitJobForYarn]任务失败");
+                        throw new BizException("[submitJobForStandalone]任务失败");
                     }
                 }
                 return appId;

@@ -1,5 +1,7 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.web.exceptions.BizException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.InetAddress;
@@ -11,6 +13,7 @@ import java.net.UnknownHostException;
  * @date 2018/7/19
  * @time 下午6:18
  */
+@Slf4j
 public class IpUtil {
 
     private static String ip;
@@ -54,9 +57,22 @@ public class IpUtil {
         return ipAddrStr;
     }
 
+    public static String getHostName() {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            return addr.getHostName(); //获取本机计算机名称
+        } catch (Exception e) {
+            log.error("getHostName is error", e);
+            throw new BizException(e.getMessage());
+        }
+
+
+    }
+
     public static void main(String[] args) {
         System.out.println(IpUtil.getInstance().getLocalIP());
         System.out.println(IpUtil.getInstance().getLocalIP());
-        //System.out.println(IpUtil.getInstance().getLocalIP());
+        System.out.println(getHostName());
+        System.out.println(System.getProperty("user.name"));
     }
 }
