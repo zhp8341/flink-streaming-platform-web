@@ -2,12 +2,14 @@ package com.flink.streaming.core;
 
 
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.core.checkpoint.CheckPointParams;
 import com.flink.streaming.core.checkpoint.FsCheckPoint;
 import com.flink.streaming.core.execute.ExecuteSql;
 import com.flink.streaming.core.model.JobRunParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
@@ -31,7 +33,6 @@ import java.util.List;
  * @date 2020-06-23
  * @time 00:33
  */
-
 public class JobApplication {
 
     private static final Logger log = LoggerFactory.getLogger(JobApplication.class);
@@ -43,38 +44,52 @@ public class JobApplication {
 
             JobRunParam jobRunParam = buildParam(args);
 
-            StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
-            EnvironmentSettings settings = EnvironmentSettings.newInstance()
-                    .useBlinkPlanner()
-                    .inStreamingMode()
-                    .build();
-
-            TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
-
-            //设置checkPoint
-            FsCheckPoint.setCheckpoint(env, jobRunParam.getCheckPointParam());
-
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
             List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
+
+            EnvironmentSettings settings = null;
+
+            TableEnvironment tEnv = null;
+
+            if (jobRunParam.getJobTypeEnum() != null && JobTypeEnum.SQL_BATCH.equals(jobRunParam.getJobTypeEnum())) {
+                log.info("[SQL_BATCH]本次任务是批任务");
+                //批处理
+                settings = EnvironmentSettings.newInstance()
+                        .useBlinkPlanner()
+                        .inBatchMode()
+                        .build();
+                tEnv = TableEnvironment.create(settings);
+            } else {
+                log.info("[SQL_STREAMING]本次任务是流任务");
+                //默认是流 流处理 目的是兼容之前版本
+                StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+                settings = EnvironmentSettings.newInstance()
+                        .useBlinkPlanner()
+                        .inStreamingMode()
+                        .build();
+                tEnv = StreamTableEnvironment.create(env, settings);
+                //设置checkPoint
+                FsCheckPoint.setCheckpoint(env, jobRunParam.getCheckPointParam());
+
+            }
 
             StatementSet statementSet = tEnv.createStatementSet();
 
             ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
 
-
-
             TableResult tableResult = statementSet.execute();
-            if (tableResult == null || tableResult.getJobClient().get() == null ||
-                    tableResult.getJobClient().get().getJobID() == null) {
+
+            if (tableResult == null || tableResult.getJobClient().get() == null
+                    || tableResult.getJobClient().get().getJobID() == null) {
                 throw new RuntimeException("任务运行失败 没有获取到JobID");
             }
-            JobID jobID=tableResult.getJobClient().get().getJobID();
+            JobID jobID = tableResult.getJobClient().get().getJobID();
 
-            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD  + jobID);
+            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD + jobID);
 
-            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}",jobID);
+            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}", jobID);
 
         } catch (Exception e) {
             System.err.println("任务执行失败:" + e.getMessage());
@@ -92,6 +107,10 @@ public class JobApplication {
         JobRunParam jobRunParam = new JobRunParam();
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(CheckPointParams.buildCheckPointParam(parameterTool));
+        String type = parameterTool.get("type");
+        if (StringUtils.isNotEmpty(type)) {
+            jobRunParam.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(Integer.valueOf(type)));
+        }
         return jobRunParam;
     }
 

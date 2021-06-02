@@ -46,13 +46,15 @@ public class CommandUtil {
             }
         }
         switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL:
+            case SQL_BATCH:
+            case SQL_STREAMING:
                 command.append("-c  ").append(APP_CLASS_NAME).append(" ");
                 command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
                 command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
                 if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
                     command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
                 }
+                command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode()).append(" ");
                 break;
             case JAR:
                 command.append("-c  ").append(jobConfigDTO.getCustomMainClass()).append(" ");
@@ -91,13 +93,15 @@ public class CommandUtil {
         }
 
         switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL:
+            case SQL_STREAMING:
+            case SQL_BATCH:
                 command.append("-c ").append(APP_CLASS_NAME).append(" ");
                 command.append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
                 command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
                 if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
                     command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
                 }
+                command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode()).append(" ");
                 break;
             case JAR:
                 command.append("-c  ").append(jobConfigDTO.getCustomMainClass()).append(" ");

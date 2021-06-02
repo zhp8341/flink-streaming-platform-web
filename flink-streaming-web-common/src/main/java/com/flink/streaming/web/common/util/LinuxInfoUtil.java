@@ -17,7 +17,7 @@ public class LinuxInfoUtil {
         if (StringUtils.isNotEmpty(userName)){
             return userName;
         }
-        throw  new BizException(MessageConstants.MESSAGE_010);
+        throw  new BizException(MessageConstants.MESSAGE_011);
 
     }
 }

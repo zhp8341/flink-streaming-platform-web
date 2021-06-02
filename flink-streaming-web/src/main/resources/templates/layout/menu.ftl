@@ -34,7 +34,14 @@
                 <li <#if active??&& active=="list" > class="active" </#if> >
                     <a href="/admin/listPage">
                         <i class="menu-icon fa fa-caret-right"></i>
-                        SQL任务列表
+                        SQL流任务列表
+                    </a>
+                    <b class="arrow"></b>
+                </li>
+                <li <#if active??&& active=="batchlist" > class="active" </#if> >
+                    <a href="/admin/batchListPage">
+                        <i class="menu-icon fa fa-caret-right"></i>
+                        SQL批任务列表
                     </a>
                     <b class="arrow"></b>
                 </li>

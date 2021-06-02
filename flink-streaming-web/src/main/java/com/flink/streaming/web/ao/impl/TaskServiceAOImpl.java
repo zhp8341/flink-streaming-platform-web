@@ -1,5 +1,6 @@
 package com.flink.streaming.web.ao.impl;
 
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.AlarmServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.ao.TaskServiceAO;
@@ -74,6 +75,10 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
+            if (JobTypeEnum.SQL_BATCH.equals(jobConfigDTO.getJobTypeEnum())){
+                log.warn("批任务不需要状态校验");
+                return;
+            }
             List<AlarmTypeEnum> alarmTypeEnumList = jobAlarmConfigService.findByJobId(jobConfigDTO.getId());
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
@@ -101,6 +106,10 @@ public class TaskServiceAOImpl implements TaskServiceAO {
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
             if (jobConfigDTO.getIsOpen().intValue() == YN.N.getValue()) {
                 continue;
+            }
+            if (JobTypeEnum.SQL_BATCH.equals(jobConfigDTO.getJobTypeEnum())){
+                log.warn("批任务不需要状态校验");
+                return;
             }
             switch (jobConfigDTO.getDeployModeEnum()) {
                 case YARN_PER:
@@ -143,8 +152,15 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
-            sleep();
+
+            //sql、jar 流任务才执行SavePoint
+            if (JobTypeEnum.SQL_STREAMING.equals(jobConfigDTO.getJobTypeEnum())||
+                    JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
+                SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
+                sleep();
+            }
+
+
         }
     }
 

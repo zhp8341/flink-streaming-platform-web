@@ -7,7 +7,7 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>新增配置</title>
+    <title>新增批任务配置</title>
     <#include "../../control/public_css_js.ftl">
 
     <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css?version=20210123"/>
@@ -46,7 +46,7 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">新增流任务</li>
+                    <li class="active">新增批任务</li>
                 </ul>
             </div>
 
@@ -55,28 +55,12 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-                        <input type="hidden" name="jobType" id="jobType" value="0">
+                        <input type="hidden" name="jobType" id="jobType" value="2">
                         <div class="panel-body">
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
-                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-sql.md"
+                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-batch.md"
                                    target="_blank">点击查看</a>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputfile">告警辅助配置：</label>
-
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="1" />
-                                    钉钉告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="2" />
-                                    http回调告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="3" />
-                                    任务退出自动拉起
-                                </label>
                             </div>
                             <div class="form-group">
                                 <label for="inputfile">*任务名称：</label>
@@ -96,14 +80,6 @@
                                 <input class="form-control " type="text" name="flinkRunConfig" id="flinkRunConfig">
                             </div>
                             <div class="form-group">
-                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"
-                                       title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ -externalizedCheckpointCleanup DELETE_ON_CANCELLATION or RETAIN_ON_CANCELLATION">Checkpoint信息：</label>
-                                <input class="form-control " type="text"
-                                       placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/"
-                                       name="flinkCheckpointConfig" id="flinkCheckpointConfig">
-                            </div>
-
-                            <div class="form-group">
                                 <label for="inputfile" >三方jar地址 (自定义udf、连接器等jar地址
                                     多个用换行(如 http://xxxx.com/udf.jar) 目前只支持http )</label>
                                 <textarea class="form-control"  name="extJarPath" id="extJarPath" rows="5" ></textarea>
@@ -118,16 +94,15 @@
                                 <a class="btn btn-info btn-sm" onclick="addConfig()" href="#errorMessage">提交保存</a>
                                 <a class="btn btn-success btn-sm " style="margin-left: 60px"
                                    onclick="autoFormatSelection()"> 格式化代码</a>
-                                <a class="btn  btn-warning btn-sm" style="margin-left: 60px"  onclick="checkSql()">
-                                    sql预校验</a>
+
                             </div>
 
-                            <div class="form-group">
-                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,
-                                    不能校验上下文之间关系，如：这张表是否存在
-                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误
-                                </h5>
-                            </div>
+<#--                            <div class="form-group">-->
+<#--                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,-->
+<#--                                    不能校验上下文之间关系，如：这张表是否存在-->
+<#--                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误-->
+<#--                                </h5>-->
+<#--                            </div>-->
 
                             <div class="form-group">
                                 <label name="errorMessage" id="errorMessage"></label>
@@ -242,7 +217,6 @@
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
                 flinkRunConfig: $('#flinkRunConfig').val(),
-                flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
                 flinkSql: flinkSqlVal,
                 jobType: $('#jobType').val(),
                 alarmTypes:   chk_value.toString(),
@@ -251,7 +225,7 @@
             function (data, status) {
                 $("#errorMessage").removeClass();
                 if (data != null && data.success) {
-                    skipUrl("/admin/listPage")
+                    skipUrl("/admin/batchListPage")
                 } else {
                     $("#errorMessage").addClass("form-group alert alert-danger")
                     $("#errorMessage").html(data.message);
