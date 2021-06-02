@@ -134,7 +134,7 @@
                                     <th>运行状态</th>
                                     <th>任务id</th>
                                     <th>创建时间</th>
-<#--                                    <th>savePoint</th>-->
+                                    <th>savePoint</th>
                                     <th>操作</th>
                                     <th>辅助</th>
                                     <th>日志</th>
@@ -186,17 +186,11 @@
                                             </#if>
 
                                             <td>${jobConfigVO.createTime!""}</td>
-<#--                                            <td>-->
-<#--                                                <#if jobConfigVO.deployMode=="YARN_PER">-->
-<#--                                                    <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史备份</a>-->
-<#--                                                </#if>-->
-<#--                                                <#if jobConfigVO.deployMode=="LOCAL">-->
-<#--                                                    本地模式不启用-->
-<#--                                                </#if>-->
-<#--                                                <#if jobConfigVO.deployMode=="STANDALONE">-->
-<#--                                                    待开发中...-->
-<#--                                                </#if>-->
-<#--                                            </td>-->
+                                            <td>
+                                                <a href="/admin/savepointList?jobConfigId=${jobConfigVO.id!""}"
+                                                   target="_blank">恢复任务</a>
+                                                <a href="#" onclick="savePoint(${jobConfigVO.id!""})">手动备份</a>
+                                            </td>
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
 

@@ -61,29 +61,10 @@
                             <input type="hidden"  name="id"  id="id"  value="${jobConfig.id}" >
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
-                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-sql.md"
+                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-batch.md"
                                    target="_blank">点击查看</a>
                             </div>
-                            <div class="form-group">
-                                <label for="inputfile">告警辅助配置：</label>
 
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="1"  <#if jobConfig.types??&&
-                                    jobConfig.types?seq_contains(1) > checked </#if>  />
-                                    钉钉告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="2"  <#if jobConfig.types??&&
-                                    jobConfig.types?seq_contains(2) > checked </#if> />
-                                    http回调告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="3"
-                                            <#if jobConfig.types??&&
-                                            jobConfig.types?seq_contains(3) > checked </#if> />
-                                    任务退出自动拉起
-                                </label>
-                            </div>
                             <div class="form-group ">
                                 <label for="inputfile">任务状态：</label>
                                 <pre>${jobConfig.stautsStr!""}</pre>
@@ -129,19 +110,19 @@
                             <div class="form-group">
                                 <a class="btn btn-info btn-sm " onclick="editConfig()" href="#errorMessage">提交保存</a>
                                 <a class="btn btn-success btn-sm" style="margin-left: 60px" onclick="autoFormatSelection()"> 格式化代码</a>
-                                <a class="btn btn-warning btn-sm" style="margin-left: 60px" onclick="checkSql()"> sql预校验</a>
+<#--                                <a class="btn btn-warning btn-sm" style="margin-left: 60px" onclick="checkSql()"> sql预校验</a>-->
                             </div>
 <#--                            <div class="form-group">-->
 <#--                                <h5  style="color: #87B87F"> 代码格式化 备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果-->
 <#--                                    tips: win系统 CTRL+A 全选     mac系统 command+A  全选-->
 <#--                                </h5>-->
 <#--                            </div>-->
-                            <div class="form-group">
-                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,
-                                    不能校验上下文之间关系，如：这张表是否存在
-                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误
-                                </h5>
-                            </div>
+<#--                            <div class="form-group">-->
+<#--                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,-->
+<#--                                    不能校验上下文之间关系，如：这张表是否存在-->
+<#--                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误-->
+<#--                                </h5>-->
+<#--                            </div>-->
 
                             <div class="form-group">
                                 <label   name="errorMessage" id="errorMessage"></label>

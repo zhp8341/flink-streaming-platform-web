@@ -32,6 +32,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
    * **[7] 支持自定义Jar提交任务。**
    * **[8] 支持多版本flink版本（需要用户编译对应flink版本）。**
    * **[9] 支持自动、手动savepoint备份，并且从savepoint恢复任务。**
+   * **[10] 支持批任务如：hive。**
 
   **目前flink版本已经升级到1.12**
 
@@ -81,6 +82,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 7、[demo7 datagen简介](/docs/sql_demo/demo_datagen.md)
 
 8、[catalog 使用示例](/docs/catalog.md)
+
+9、[hive批任务 使用示例](/docs/sql_demo/demo_batch.md)
 
 
 ###  3.2 hello-word demo

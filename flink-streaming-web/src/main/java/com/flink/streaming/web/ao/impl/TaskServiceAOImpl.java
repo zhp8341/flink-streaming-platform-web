@@ -152,8 +152,15 @@ public class TaskServiceAOImpl implements TaskServiceAO {
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {
-            SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
-            sleep();
+
+            //sql、jar 流任务才执行SavePoint
+            if (JobTypeEnum.SQL_STREAMING.equals(jobConfigDTO.getJobTypeEnum())||
+                    JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
+                SavePointThreadPool.getInstance().getThreadPoolExecutor().execute(new SavePoint(jobConfigDTO));
+                sleep();
+            }
+
+
         }
     }
 

@@ -99,6 +99,9 @@
                                     <option value="-1" <#if (jobConfigParam??)&&(jobConfigParam.stauts??) && jobConfigParam.stauts==-1> selected</#if> >
                                         运行失败
                                     </option>
+                                    <option value="3" <#if (jobConfigParam??)&&(jobConfigParam.stauts??) &&jobConfigParam.stauts==3> selected</#if> >
+                                        成功（提交成功）
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-2">
@@ -133,11 +136,11 @@
                                     <th width="90px">是否开启</th>
                                     <th>运行模式</th>
                                     <th>运行状态</th>
-                                    <th>任务id</th>
+                                    <th>最后一次任务id</th>
                                     <th>创建时间</th>
                                     <th>操作</th>
-                                    <th>辅助</th>
                                     <th>日志</th>
+                                    <th>历史版本</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -203,13 +206,15 @@
                                                 <a href="#" onclick="copyConfig(${jobConfigVO.id})">复制</a>
 
                                             </td>
-                                            <td>${jobConfigVO.alarmStrs!""}</td>
                                             <td>
                                                 <#if jobConfigVO.lastRunLogId??>
                                                     <a href="/admin/detailLog?id=${jobConfigVO.lastRunLogId!""}"  target="_blank">日志详情 </a>
                                                     <a href="/admin/logList?jobConfigId=${jobConfigVO.id!""}"  target="_blank">历史日志 </a>
                                                 </#if>
 
+                                            </td>
+                                            <td>
+                                                <a href="/admin/jobConfigHistoryPage?jobConfigId=${jobConfigVO.id!""}" target="_blank">历史版本 </a>
                                             </td>
                                         </tr>
                                     </#list>

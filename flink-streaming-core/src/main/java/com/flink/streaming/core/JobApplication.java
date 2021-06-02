@@ -43,26 +43,28 @@ public class JobApplication {
             Arrays.stream(args).forEach(arg -> log.info("{}", arg));
 
             JobRunParam jobRunParam = buildParam(args);
+
             List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
+
             List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
 
-            TableEnvironment tEnv = null;
-            TableResult tableResult = null;
+            EnvironmentSettings settings = null;
 
+            TableEnvironment tEnv = null;
 
             if (jobRunParam.getJobTypeEnum() != null && JobTypeEnum.SQL_BATCH.equals(jobRunParam.getJobTypeEnum())) {
                 log.info("[SQL_BATCH]本次任务是批任务");
                 //批处理
-                EnvironmentSettings settings = EnvironmentSettings.newInstance()
+                settings = EnvironmentSettings.newInstance()
                         .useBlinkPlanner()
                         .inBatchMode()
                         .build();
-                tEnv=TableEnvironment.create(settings);
+                tEnv = TableEnvironment.create(settings);
             } else {
                 log.info("[SQL_STREAMING]本次任务是流任务");
                 //默认是流 流处理 目的是兼容之前版本
                 StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-                EnvironmentSettings settings = null;
+
                 settings = EnvironmentSettings.newInstance()
                         .useBlinkPlanner()
                         .inStreamingMode()
@@ -73,12 +75,14 @@ public class JobApplication {
 
             }
 
-
             StatementSet statementSet = tEnv.createStatementSet();
+
             ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
-            statementSet.execute();
-            if (tableResult == null || tableResult.getJobClient().get() == null ||
-                    tableResult.getJobClient().get().getJobID() == null) {
+
+            TableResult tableResult = statementSet.execute();
+
+            if (tableResult == null || tableResult.getJobClient().get() == null
+                    || tableResult.getJobClient().get().getJobID() == null) {
                 throw new RuntimeException("任务运行失败 没有获取到JobID");
             }
             JobID jobID = tableResult.getJobClient().get().getJobID();
