@@ -1,0 +1,39 @@
+version: '3'
+services:
+  flink-stream-web:
+    image: flink-streaming-web:0.0.1
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: 192.168.200.159
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: 123456
+      JVM_OPTS: ""
+      SPRING_ENV: prod
+      SERVER_PORT: 8080
+    volumes:
+    - ./data/sql:/application/sql
+  jobmanager:
+    image: flink:1.12.0-scala_2.11
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+    volumes:
+#      - ./data/flink/:/opt/flink/
+      - ./data/sql:/application/sql
+  taskmanager:
+    image: flink:1.12.0-scala_2.11
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2

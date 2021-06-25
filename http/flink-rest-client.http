@@ -1,0 +1,28 @@
+### 上传 jar
+#curl -X POST -H "Expect:" -F "jarfile=@/Users/earthchen/study/flink/flink-streaming-platform-web/lib/flink-streaming-core.jar" http://127.0.0.1:8081/jars/upload
+POST http://localhost:8081/jars/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: name="jarfile";
+
+< /Users/earthchen/study/flink/flink-streaming-platform-web/lib/flink-streaming-core.jar
+--WebAppBoundary--
+
+
+
+### 运行 job
+POST http://localhost:8081/jars/f3b73878-7764-401e-8992-e6507b6569d2_flink-streaming-core.jar/run
+Content-Type: application/json
+
+{
+  "entryClass": "com.flink.streaming.core.JobApplication",
+  "programArgs": "--sql /Users/earthchen/code-tool/flink/upload/sql/test.sql --type 0"
+}
+
+### 查询 jars
+GET http://localhost:8081/jars
+
+
+# command =/Users/earthchen/code-tool/flink/flink-1.12.4/bin/flink run -d -c  com.flink.streaming.core.JobApplication /Users/earthchen/study/flink/flink-streaming-platform-web/lib/flink-streaming-core.jar -sql /Users/earthchen/study/flink/flink-streaming-platform-web/sql/job_sql_1.sql  -type 0
+

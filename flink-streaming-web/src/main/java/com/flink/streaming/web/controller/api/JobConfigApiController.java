@@ -315,6 +315,8 @@ public class JobConfigApiController extends BaseController {
             case STANDALONE:
                 log.info(" STANDALONE模式启动 {}", deployModeEnum);
                 return jobStandaloneServerAO;
+            case REST:
+                return jobStandaloneServerAO;
             default:
                 throw new RuntimeException("不支持该模式系统");
         }

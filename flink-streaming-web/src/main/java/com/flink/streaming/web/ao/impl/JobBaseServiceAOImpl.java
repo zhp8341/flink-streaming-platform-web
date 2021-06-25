@@ -19,6 +19,7 @@ import com.flink.streaming.web.model.dto.SystemConfigDTO;
 import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
 import com.flink.streaming.web.rpc.YarnRestRpcAdapter;
+import com.flink.streaming.web.model.flink.JobRunRequestInfo;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.JobRunLogService;
@@ -87,7 +88,8 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                 break;
         }
 
-        Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
+        Map<String, String> systemConfigMap =
+                SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
         this.checkSysConfig(systemConfigMap, jobConfigDTO.getDeployModeEnum());
 
 
@@ -150,10 +152,12 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
     @Override
     public JobRunParamDTO writeSqlToFile(JobConfigDTO jobConfigDTO) {
 
-        Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
+        Map<String, String> systemConfigMap =
+                SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
 
-        String sqlPath = FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
-                + FileUtils.createFileName(String.valueOf(jobConfigDTO.getId()));
+        String sqlPath =
+                FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
+                        + FileUtils.createFileName(String.valueOf(jobConfigDTO.getId()));
         FileUtils.writeText(sqlPath, jobConfigDTO.getFlinkSql(), Boolean.FALSE);
 
         return JobRunParamDTO.buildJobRunParam(systemConfigMap, jobConfigDTO, sqlPath);
@@ -196,10 +200,17 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         case LOCAL:
                         case STANDALONE:
                             //1、构建执行命令
-                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO, savepointPath);
+                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO,
+                                    savepointPath);
                             //2、提交任务
                             appId = this.submitJobForStandalone(command, jobConfigDTO, localLog);
 
+                            break;
+                        case REST:
+                            //  todo 提交任务到 flink 中
+                            JobRunRequestInfo requestInfo = CommandUtil.buildRunRestJobInfoForCluster(jobRunParamDTO,
+                                    jobConfigDTO, savepointPath);
+                            appId = this.submitJobForStandaloneRpc(jobConfigDTO, localLog, requestInfo);
                             break;
                     }
 
@@ -321,7 +332,30 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             private String submitJobForStandalone(String command, JobConfigDTO jobConfig, StringBuilder localLog)
                     throws Exception {
 
-                String appId = commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId, jobConfig.getDeployModeEnum());
+                String appId = commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId,
+                        jobConfig.getDeployModeEnum());
+                JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(appId,
+                        jobConfig.getDeployModeEnum());
+
+                if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
+                    log.error("[submitJobForStandalone] is error jobStandaloneInfo={}", jobStandaloneInfo);
+                    localLog.append("\n 任务失败 appId=" + appId);
+                    throw new BizException("任务失败");
+                } else {
+                    if (!SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+                        localLog.append("\n 任务失败 appId=" + appId).append("状态是：" + jobStandaloneInfo.getState());
+                        throw new BizException("[submitJobForStandalone]任务失败");
+                    }
+                }
+                return appId;
+            }
+
+            private String submitJobForStandaloneRpc(JobConfigDTO jobConfig,
+                                                     StringBuilder localLog, JobRunRequestInfo requestInfo) {
+
+                String appId =
+                        flinkRestRpcAdapter.runJarByJarId(systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_SQL_CORE_JAR_ID.getKey()),
+                                requestInfo, jobConfig.getDeployModeEnum());
                 JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(appId,
                         jobConfig.getDeployModeEnum());
 

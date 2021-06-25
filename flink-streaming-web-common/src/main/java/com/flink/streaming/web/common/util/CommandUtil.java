@@ -5,6 +5,7 @@ import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
+import com.flink.streaming.web.model.flink.JobRunRequestInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class CommandUtil {
 
-    private static final String APP_CLASS_NAME = "com.flink.streaming.core.JobApplication";
+    public static final String APP_CLASS_NAME = "com.flink.streaming.core.JobApplication";
 
     /**
      * 本地/Standalone Cluster模式
@@ -65,6 +66,42 @@ public class CommandUtil {
 
         log.info("buildRunCommandForLocal runCommand={}", command.toString());
         return command.toString();
+    }
+
+
+    public static JobRunRequestInfo buildRunRestJobInfoForCluster(JobRunParamDTO jobRunParamDTO,
+                                                       JobConfigDTO jobConfigDTO,String savepointPath) throws Exception {
+        JobRunRequestInfo requestInfo = new JobRunRequestInfo();
+        // todo parallelism allowNonRestoredState 参数从哪传
+        requestInfo.setEntryClass(jobConfigDTO.getCustomMainClass());
+        if (StringUtils.isNotBlank(savepointPath)) {
+            requestInfo.setSavepointPath(savepointPath);
+        }
+        StringBuilder command = new StringBuilder();
+
+        if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
+            String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
+            for (String url : urls) {
+                command.append(" -C ").append(url.trim()).append(" ");
+            }
+        }
+        switch (jobConfigDTO.getJobTypeEnum()) {
+            case SQL_BATCH:
+            case SQL_STREAMING:
+                requestInfo.setEntryClass(CommandUtil.APP_CLASS_NAME);
+                command.append(" -sql ").append(jobRunParamDTO.getSqlPath()).append(" ");
+                if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
+                    command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
+                }
+                command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode()).append(" ");
+                break;
+            case JAR:
+                command.append(" ").append(jobConfigDTO.getCustomArgs());
+                break;
+        }
+        requestInfo.setProgramArgs(command.toString());
+        log.info("buildRestRunJobInfo={}", requestInfo);
+        return requestInfo;
     }
 
     /**

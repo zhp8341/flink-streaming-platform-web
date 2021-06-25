@@ -98,6 +98,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
                     return urlLocal.trim();
                 }
                 throw new BizException("网络异常 url=" + urlLocal);
+            case REST:
             case STANDALONE:
                 String urlHA = this.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey());
                 if (StringUtils.isEmpty(urlHA)) {

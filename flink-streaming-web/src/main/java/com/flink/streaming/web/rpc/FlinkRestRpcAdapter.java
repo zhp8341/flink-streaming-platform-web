@@ -1,7 +1,10 @@
 package com.flink.streaming.web.rpc;
 
 import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.model.flink.JobRunRequestInfo;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
+
+import java.io.File;
 
 /**
  * @author zhuhuipei
@@ -10,6 +13,14 @@ import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
  * @time 23:43
  */
 public interface FlinkRestRpcAdapter {
+
+    String uploadJarAndReturnJarId(File file, DeployModeEnum deployModeEnum);
+
+    default String uploadJarAndReturnJarId(String filePath, DeployModeEnum deployModeEnum) {
+        return uploadJarAndReturnJarId(new File(filePath), deployModeEnum);
+    }
+
+    String runJarByJarId(String jarId, JobRunRequestInfo info, DeployModeEnum deployModeEnum);
 
 
     /**

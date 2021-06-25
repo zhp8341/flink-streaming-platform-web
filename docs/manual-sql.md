@@ -16,6 +16,7 @@ b: 运行模式
 
    LOCAL(本地集群 https://ci.apache.org/projects/flink/flink-docs-release-1.11/zh/ops/deployment/local.html )
 
+  REST(使用 rest api 进行任务提交)
 
    <font color=red size=5>LOCAL 需要在本地单机启动flink 服务  ./bin/start-cluster.sh </font>
 
@@ -62,7 +63,14 @@ c: flink运行配置
 其他运行参数可通过 flink -h查看
 ~~~~
 
+<font color=red size=5>4、REST模式 </font>
 
+- sql 目录和jobmanager挂载到一起,使 sql 文件可以直接写到 jobmanager 中
+- 使用flink 的 rest 接口提交任务(预先将 core.jar 提交到 flink 中记录下 jarId)
+```bash
+curl -X POST -H "Expect:" -F "jarfile=@/Users/earthchen/study/flink/flink-streaming-platform-web/lib/flink-streaming-core.jar" http://127.0.0.1:8081/jars/upload
+```
+- 将 jarid 配置到系统配置中
 
 
 d: Checkpoint信息

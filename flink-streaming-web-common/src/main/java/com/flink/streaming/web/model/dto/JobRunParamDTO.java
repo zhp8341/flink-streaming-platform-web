@@ -59,7 +59,8 @@ public class JobRunParamDTO {
         this.flinkCheckpointConfig = flinkCheckpointConfig;
     }
 
-    public static JobRunParamDTO buildJobRunParam(Map<String, String> systemConfigMap, JobConfigDTO jobConfigDTO, String sqlPath) {
+    public static JobRunParamDTO buildJobRunParam(Map<String, String> systemConfigMap, JobConfigDTO jobConfigDTO,
+                                                  String sqlPath) {
 
         String flinkBinPath = SystemConstants.buildFlinkBin(systemConfigMap.get(SysConfigEnum.FLINK_HOME.getKey()));
 

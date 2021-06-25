@@ -140,3 +140,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+lib/flink-streaming-core.jar
+sql
+data
