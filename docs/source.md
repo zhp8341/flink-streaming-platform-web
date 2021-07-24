@@ -41,3 +41,55 @@
 
 ### 3、各代码模块详细设计思路及流程
 
+1. 任务提交启动流程代码片段.
+
+```java
+/**
+ * Controller 层.
+ * 加载任务详情
+ * 加载任务报警配置
+ * 确定任务运行模式,使用对应的实现类启动任务.接口类:JobServerAO
+ */
+JobConfigApiController.start(Long id,Long savepointId);
+```
+
+```java
+/**
+ * 任务提交主流程
+ */
+JobYarnServerAOImpl.start(Long id,Long savepointId,String userName){
+        //1、检查jobConfigDTO 状态等参数
+        jobBaseServiceAO.checkStart(jobConfigDTO);
+
+        //2、将配置的sql 写入本地文件并且返回运行所需参数
+        JobRunParamDTO jobRunParamDTO=jobBaseServiceAO.writeSqlToFile(jobConfigDTO);
+
+        //3、插一条运行日志数据
+        Long jobRunLogId=jobBaseServiceAO.insertJobRunLog(jobConfigDTO,userName);
+
+        //4、变更任务状态（变更为：启动中） 有乐观锁 防止重复提交
+        jobConfigService.updateStatusByStart(jobConfigDTO.getId(),userName,jobRunLogId,jobConfigDTO.getVersion());
+
+        String savepointPath=savepointBackupService.getSavepointPathById(id,savepointId);
+
+        //异步提交任务
+        jobBaseServiceAO.aSyncExecJob(jobRunParamDTO,jobConfigDTO,jobRunLogId,savepointPath);
+        }
+```
+
+```java
+/**
+ * 异步提交任务
+ */
+JobBaseServiceAOImpl.aSyncExecJob(JobRunParamDTO jobRunParamDTO,JobConfigDTO jobConfigDTO,Long jobRunLogId,String savepointPath){
+        // 以yarn-per-job为例
+        case YARN_PER:
+        //1、构建执行命令
+        command=CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO,jobConfigDTO,savepointPath);
+        //2、提交任务
+        appId=this.submitJobForYarn(command,jobConfigDTO,localLog);
+        break;
+        }
+        //提交完成后更新状态.
+        this.updateStatusAndLog(jobConfigDTO,jobRunLogId,jobStatus,localLog.toString(),appId);
+```
