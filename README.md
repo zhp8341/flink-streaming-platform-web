@@ -52,8 +52,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 1、 [Flink 和 flink-streaming-platform-web 安装部署](/docs/deploy.md)
 
+2、 [在IDEA中执行运行调试](/docs/idea-run.md)
 
-
+ 
 
 ## 三、功能介绍
 
