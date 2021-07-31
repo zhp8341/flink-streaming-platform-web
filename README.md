@@ -234,6 +234,7 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connector
 
  ##  九、联系方式 
  
+ 请加钉钉群： 34315096 
 
 钉钉 
  [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
