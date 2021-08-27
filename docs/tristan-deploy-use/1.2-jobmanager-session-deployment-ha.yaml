@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-jobmanager
+  namespace: bigdata-sync
+spec:
+  replicas: 1 # Set the value to greater than 1 to start standby JobManagers
+  selector:
+    matchLabels:
+      app: flink-jobmanager
+  template:
+    metadata:
+      labels:
+        app: flink-jobmanager
+    spec:
+      containers:
+        - name: jobmanager
+          image: flink:1.12.0-scala_2.11-java8
+          imagePullPolicy: IfNotPresent
+#          env:
+#            - name: POD_IP
+#              valueFrom:
+#                fieldRef:
+#                  apiVersion: v1
+#                  fieldPath: status.podIP
+          # The following args overwrite the value of jobmanager.rpc.address configured in the configuration config map to POD_IP.
+          args: ["jobmanager"]
+#          不能通过pod id注册, 这样会导致task manager无法连接注册上来
+#          args: ["jobmanager", "$(POD_IP)"]
+          ports:
+            - containerPort: 6123
+              name: rpc
+            - containerPort: 6124
+              name: blob-server
+            - containerPort: 8081
+              name: webui
+          livenessProbe:
+            tcpSocket:
+              port: 6123
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          volumeMounts:
+            - name: flink-config-volume
+              mountPath: /opt/flink/conf
+          securityContext:
+            runAsUser: 9999  # refers to user _flink_ from official flink image, change if necessary
+#      serviceAccountName: flink-service-account # Service account which has the permissions to create, edit, delete ConfigMaps
+      volumes:
+        - name: flink-config-volume
+          configMap:
+            name: flink-config
+            items:
+              - key: flink-conf.yaml
+                path: flink-conf.yaml
+              - key: log4j-console.properties
+                path: log4j-console.properties
