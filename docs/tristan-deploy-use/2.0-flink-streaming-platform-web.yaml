@@ -259,6 +259,6 @@ spec:
                 path: log4j-console.properties
         - name: promtail-config
           configMap:
-            name: mysql-canal-server-loki-promtail-config
+            name: loki-promtail
         - name: logs-dir
           emptyDir: {}
