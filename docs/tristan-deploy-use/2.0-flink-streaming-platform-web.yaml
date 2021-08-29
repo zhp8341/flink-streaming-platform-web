@@ -116,6 +116,17 @@ spec:
         app: flink-streaming-platform-web
     spec:
       restartPolicy: Always
+      initContainers:
+        - name: wait-jobmanager
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              set -ex
+              until nc -zv flink-jobmanager 8081; do sleep 5; done
+              sleep 10
       containers:
         - name: mysql
           image: mysql:8.0.25
@@ -192,45 +203,45 @@ spec:
           volumeMounts:
             - name: flink-config-volume
               mountPath: /opt/flink/conf
-#            - mountPath: /app/flink-streaming-platform-web/logs
-#              name: logs-dir
+            - mountPath: /app/flink-streaming-platform-web/logs
+              name: logs-dir
 #            - mountPath: /app/flink-streaming-platform-web/conf
 #              name: flink-streaming-platform-web
-#        - name: promtail
-#          image: grafana/promtail:2.2.1
-#          imagePullPolicy: IfNotPresent
-#          args:
-#            - -config.file=/etc/promtail/config.yaml
-#            - -config.expand-env=true
-#          env:
-#            - name: TZ
-#              value: Asia/Shanghai
-#            - name: ENVIRONMENT_NAME
-#              valueFrom:
-#                fieldRef:
-#                  fieldPath: metadata.namespace
-#            - name: REPLICASET_NAME
-#              valueFrom:
-#                fieldRef:
-#                  fieldPath: metadata.labels['app']
-#            - name: POD_NAME
-#              valueFrom:
-#                fieldRef:
-#                  fieldPath: metadata.name
-#          volumeMounts:
-#            - mountPath: /mnt
-#              name: logs-dir
-#            - mountPath: /etc/promtail
-#              name: promtail-config
-#          resources:
-#            requests:
-#              cpu: 50m
-#              memory: 0.05Gi
-#              ephemeral-storage: 1Gi
-#            limits:
-#              cpu: 500m
-#              memory: 0.5Gi
-#              ephemeral-storage: 10Gi
+        - name: promtail
+          image: grafana/promtail:2.2.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config.file=/etc/promtail/config.yaml
+            - -config.expand-env=true
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: ENVIRONMENT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: REPLICASET_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app']
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - mountPath: /mnt
+              name: logs-dir
+            - mountPath: /etc/promtail
+              name: promtail-config
+          resources:
+            requests:
+              cpu: 50m
+              memory: 0.05Gi
+              ephemeral-storage: 1Gi
+            limits:
+              cpu: 500m
+              memory: 0.5Gi
+              ephemeral-storage: 10Gi
       volumes:
         - name: flink-streaming-platform-web-mysql
           persistentVolumeClaim:
@@ -246,8 +257,8 @@ spec:
                 path: flink-conf.yaml
               - key: log4j-console.properties
                 path: log4j-console.properties
-#        - name: promtail-config
-#          configMap:
-#            name: mysql-canal-server-loki-promtail-config
-#        - name: logs-dir
-#          emptyDir: {}
+        - name: promtail-config
+          configMap:
+            name: mysql-canal-server-loki-promtail-config
+        - name: logs-dir
+          emptyDir: {}

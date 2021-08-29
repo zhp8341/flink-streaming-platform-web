@@ -13,6 +13,17 @@ spec:
       labels:
         app: flink-taskmanager
     spec:
+      initContainers:
+        - name: wait-jobmanager
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              set -ex
+              until nc -zv flink-jobmanager 8081; do sleep 5; done
+              sleep 10
       containers:
         - name: taskmanager
           image: flink:1.12.0-scala_2.11-java8
