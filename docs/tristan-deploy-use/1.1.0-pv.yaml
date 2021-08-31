@@ -1,0 +1,41 @@
+---
+# 存储
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bigdata-sync-flink
+  namespace: bigdata-sync
+spec:
+  capacity:
+    storage: 100Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /k8slpv/bigdata-sync/flink
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - 192.168.90.11
+---
+# 存储声明
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: flink
+  namespace: bigdata-sync
+spec:
+  storageClassName: local-storage
+  volumeName: bigdata-sync-flink
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
