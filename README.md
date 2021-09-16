@@ -54,7 +54,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 2、 [在IDEA中执行运行调试](/docs/idea-run.md)
 
- 
+3、 [docker容器化部署(参考)](/docs/tristan-deploy-use)
 
 ## 三、功能介绍
 
