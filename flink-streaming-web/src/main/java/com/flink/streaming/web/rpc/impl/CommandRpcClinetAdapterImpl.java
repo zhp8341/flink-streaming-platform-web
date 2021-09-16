@@ -8,6 +8,7 @@ import com.flink.streaming.web.common.util.CommandUtil;
 import com.flink.streaming.web.config.WaitForPoolConfig;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
@@ -16,9 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * @author zhuhuipei
@@ -43,14 +45,14 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
 
     @Override
     public String submitJob(String command, StringBuilder localLog, Long jobRunLogId,
-                            DeployModeEnum deployModeEnum) throws Exception {
+        DeployModeEnum deployModeEnum) throws Exception {
         log.info(" command ={} ", command);
         localLog.append("启动命令：").append(command).append(SystemConstant.LINE_FEED);
         Process pcs = Runtime.getRuntime().exec(command);
 
         //清理错误日志
         this.clearLogStream(pcs.getErrorStream(), String.format("%s#startForLocal-error#%s", DateUtil.now(),
-                deployModeEnum.name()));
+            deployModeEnum.name()));
         String appId = this.clearInfoLogStream(pcs.getInputStream(), localLog, jobRunLogId);
         int rs = pcs.waitFor();
         localLog.append("rs=").append(rs).append(SystemConstant.LINE_FEED);
@@ -71,7 +73,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     public void savepointForPerYarn(String jobId, String targetDirectory, String yarnAppId) throws Exception {
 
         String command = CommandUtil.buildSavepointCommandForYarn(jobId, targetDirectory, yarnAppId,
-                systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
+            systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
         log.info("[savepointForPerYarn] command={}", command);
         this.execSavepoint(command);
 
@@ -80,7 +82,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     @Override
     public void savepointForPerCluster(String jobId, String targetDirectory) throws Exception {
         String command = CommandUtil.buildSavepointCommandForCluster(jobId, targetDirectory,
-                systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
+            systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey()));
         log.info("[savepointForPerCluster] command={}", command);
         this.execSavepoint(command);
     }
@@ -108,22 +110,21 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
      */
     private void clearLogStream(InputStream stream, final String threadName) {
         WaitForPoolConfig.getInstance().getThreadPoolExecutor().execute(() -> {
-                    BufferedInputStream reader = null;
-                    try {
-                        Thread.currentThread().setName(threadName);
-                        reader = new BufferedInputStream(stream);
-                        int bytesRead = 0;
-                        byte[] buffer = new byte[1024];
-                        while ((bytesRead = reader.read(buffer)) != -1) {
-                            String result = new String(buffer, 0, bytesRead, SystemConstants.CODE_UTF_8);
-                            log.info(result);
-                        }
-                    } catch (Exception e) {
-                        log.error("threadName={}", threadName);
-                    } finally {
-                        this.close(reader, stream, "clearLogStream");
+                BufferedReader reader = null;
+                try {
+                    Thread.currentThread().setName(threadName);
+                    String result = null;
+                    reader = new BufferedReader(new InputStreamReader(stream, SystemConstants.CODE_UTF_8));
+                    //按行读取
+                    while ((result = reader.readLine()) != null) {
+                        log.info(result);
                     }
+                } catch (Exception e) {
+                    log.error("threadName={}", threadName);
+                } finally {
+                    this.close(reader, stream, "clearLogStream");
                 }
+            }
         );
     }
 
@@ -137,24 +138,26 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     private String clearInfoLogStream(InputStream stream, StringBuilder localLog, Long jobRunLogId) {
 
         String appId = null;
-        BufferedInputStream reader = null;
+        BufferedReader reader = null;
         try {
             long lastTime = System.currentTimeMillis();
-            byte[] buffer = new byte[1024];
-            int bytesRead = 0;
-            reader = new BufferedInputStream(stream);
-            while ((bytesRead = reader.read(buffer)) != -1) {
-                String result = new String(buffer, 0, bytesRead, SystemConstants.CODE_UTF_8);
-                log.info(result);
+            String result = null;
+            reader = new BufferedReader(new InputStreamReader(stream, SystemConstants.CODE_UTF_8));
+            //按行读取
+            while ((result = reader.readLine()) != null) {
+                log.info("read={}", result);
                 if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD)) {
                     appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD, SystemConstant.SPACE).trim();
-                    localLog.append("[job-submitted-success] 解析得到的appId是:").append(appId).append(SystemConstant.LINE_FEED);
+                    log.info("[job-submitted-success] 解析得到的appId是 {}  原始数据 :{}", appId, result);
+                    localLog.append("[job-submitted-success] 解析得到的appId是:")
+                        .append(appId).append(SystemConstant.LINE_FEED);
                 }
                 if (StringUtils.isEmpty(appId) && result.contains(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP)) {
                     appId = result.replace(SystemConstant.QUERY_JOBID_KEY_WORD_BACKUP, SystemConstant.SPACE).trim();
-                    localLog.append("[Job has been submitted with JobID] 解析得到的appId是:").append(appId).append(SystemConstant.LINE_FEED);
+                    log.info("[Job has been submitted with JobID] 解析得到的appId是 {}  原始数据 :{}", appId, result);
+                    localLog.append("[Job has been submitted with JobID] 解析得到的appId是:")
+                        .append(appId).append(SystemConstant.LINE_FEED);
                 }
-
                 localLog.append(result).append(SystemConstant.LINE_FEED);
                 //每隔2s更新日志
                 if (System.currentTimeMillis() >= lastTime + INTERVAL_TIME_TWO) {
@@ -162,8 +165,14 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
                     lastTime = System.currentTimeMillis();
                 }
             }
-            log.info("获取到的appId是 {}",appId);
+            if (appId == null || appId.length() != 32) {
+                log.error("解析appID异常 appId:{}", appId);
+                throw new BizException("解析appId异常");
+            }
+            log.info("获取到的appId是 {}", appId);
             return appId;
+        } catch (BizException e) {
+            throw e;
         } catch (Exception e) {
             log.error("[clearInfoLogStream] is error", e);
             throw new RuntimeException("clearInfoLogStream is error");
@@ -173,6 +182,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
         }
     }
 
+
     /**
      * 关闭流
      *
@@ -180,7 +190,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
      * @date 2021/3/28
      * @time 12:53
      */
-    private void close(BufferedInputStream reader, InputStream stream, String typeName) {
+    private void close(BufferedReader reader, InputStream stream, String typeName) {
         if (reader != null) {
             try {
                 reader.close();
