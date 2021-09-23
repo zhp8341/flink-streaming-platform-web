@@ -34,6 +34,9 @@ public enum SysConfigEnum {
             "flink Rest & web frontend 地址(Local Cluster模式)",
             SysConfigEnumType.SYS.name()),
 
+    FLINK_SQL_CORE_JAR_ID("flink_rest_sql_core_jar_id", "sql core jar 提交到 flink 后返回的 jarId",
+            SysConfigEnumType.SYS.name()),
+
 
     FLINK_REST_HA_HTTP_ADDRESS("flink_rest_ha_http_address",
             "flink Rest & web frontend HA 地址(Standalone Cluster模式 支持HA 可以填写多个地址 ;用分隔)",

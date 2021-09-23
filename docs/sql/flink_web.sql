@@ -1,4 +1,5 @@
-
+create database if not exists `flink_web` ;
+use `flink_web`;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 

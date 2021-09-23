@@ -108,6 +108,7 @@
                                     <option value="YARN_PER"  <#if jobConfig.deployMode??&& jobConfig.deployMode=="YARN_PER" > selected </#if> >YARN_PER</option>
                                     <option value="LOCAL"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="LOCAL" > selected </#if> >Local Cluster</option>
                                     <option value="STANDALONE"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="STANDALONE" > selected </#if> >Standalone Cluste</option>
+                                    <option value="REST"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="REST" > selected </#if> >REST</option>
                                 </select>
                             </div>
 

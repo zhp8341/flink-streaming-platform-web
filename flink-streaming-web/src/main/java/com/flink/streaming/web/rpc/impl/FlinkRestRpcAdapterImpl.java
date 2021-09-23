@@ -1,19 +1,32 @@
 package com.flink.streaming.web.rpc.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.flink.streaming.web.common.FlinkRestUriConstants;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.util.HttpUtil;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
+import com.flink.streaming.web.rpc.model.JobRunInfo;
+import com.flink.streaming.web.model.flink.JobRunRequestInfo;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
+import com.flink.streaming.web.rpc.model.UploadJarInfo;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
 
 /**
  * @author zhuhuipei
@@ -28,6 +41,45 @@ public class FlinkRestRpcAdapterImpl implements FlinkRestRpcAdapter {
     @Autowired
     private SystemConfigService systemConfigService;
 
+
+    @Override
+    public String uploadJarAndReturnJarId(File file, DeployModeEnum deployModeEnum) {
+        String url = HttpUtil.buildUrl(systemConfigService.getFlinkHttpAddress(deployModeEnum),
+                FlinkRestUriConstants.getUriJobsUploadForStandalone());
+        RestTemplate restTemplate = HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M);
+        //设置请求头
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("multipart/form-data");
+        headers.setContentType(type);
+
+        //设置请求体，注意是LinkedMultiValueMap
+        FileSystemResource fileSystemResource = new FileSystemResource(file);
+        MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
+        form.add("jarfile", fileSystemResource);
+        // 用HttpEntity封装整个请求报文
+        HttpEntity<MultiValueMap<String, Object>> files = new HttpEntity<>(form, headers);
+        String res = restTemplate.postForObject(url, files, String.class);
+        UploadJarInfo info = JSON.parseObject(res, UploadJarInfo.class);
+        if (info == null) {
+            throw new BizException("上传 jar 失败");
+        }
+        return info.getJarId();
+    }
+
+    @Override
+    public String runJarByJarId(String jarId, JobRunRequestInfo jobRunRequestInfo, DeployModeEnum deployModeEnum) {
+        String url = HttpUtil.buildUrl(systemConfigService.getFlinkHttpAddress(deployModeEnum),
+                FlinkRestUriConstants.getUriJobsRunForStandalone(jarId));
+        log.info("runJarByJarId url={}", url);
+        HttpEntity<String> request = new HttpEntity<>(JSON.toJSONString(jobRunRequestInfo));
+        String res =
+                HttpUtil.buildRestTemplate(HttpUtil.TIME_OUT_1_M).postForEntity(url, request, String.class).getBody();
+        JobRunInfo info = JSON.parseObject(res, JobRunInfo.class);
+        if (info == null) {
+            throw new BizException("run jar 失败");
+        }
+        return info.getJobId();
+    }
 
     @Override
     public JobStandaloneInfo getJobInfoForStandaloneByAppId(String appId, DeployModeEnum deployModeEnum) {

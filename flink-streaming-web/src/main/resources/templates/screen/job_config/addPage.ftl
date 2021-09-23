@@ -89,6 +89,7 @@
                                     <option value="YARN_PER">YARN_PER</option>
                                     <option value="LOCAL">Local Cluster</option>
                                     <option value="STANDALONE">Standalone Cluster</option>
+                                    <option value="REST">REST</option>
                                 </select>
                             </div>
                             <div class="form-group" id="configDiv">
