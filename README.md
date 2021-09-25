@@ -260,9 +260,14 @@ http://img.ccblog.cn/flink/dd2.png
 ## 十一、 捐赠
 
 [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
- 
+
+
 [点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
- 
+
+
+
+![支付宝](./docs/img/zfb.png)
+![微信](./docs/img/wx.png)
  
  
 
