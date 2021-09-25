@@ -1,8 +1,6 @@
 
 欢迎来到flink-streaming-platform-web系统
 
-
-
 ////////////////////////////////////////////////////////////////////
 //                          _ooOoo_                               //
 //                         o8888888o                              //
@@ -28,4 +26,6 @@
 
 
 
-当前适配的Flink版本是1.12 https://ci.apache.org/projects/flink/flink-docs-release-1.12/
+当前适配的Flink版本是1.13.2  https://ci.apache.org/projects/flink/flink-docs-release-1.13/
+
+flink-streaming-platform-web官方地址  https://github.com/zhp8341/flink-streaming-platform-web

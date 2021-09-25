@@ -54,7 +54,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 2、 [在IDEA中执行运行调试](/docs/idea-run.md)
 
-3、 [docker容器化部署(参考)](/docs/tristan-deploy-use)
+3、 [docker容器化制作镜像(参考)](/docs/tristan-deploy-use)
+
+4、[flink-streaming-platform-web 体验（基于docker）适合体验者](/docs/docker-demo.md)
 
 ## 三、功能介绍
 

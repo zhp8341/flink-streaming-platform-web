@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class CustomConfig {
 
-    @Value("${custom.core.jar.name}")
-    private String coreJarName;
 
     @Value("${server.port}")
     private  Integer webPort;
