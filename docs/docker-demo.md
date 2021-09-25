@@ -59,7 +59,7 @@ docker run -it  \
 docker run -it  -v  /Users/huipeizhu/git/flink-streaming-platform-web/deployer/src/main/conf:/data/projects/flink-streaming-platform-web/conf/   -v  /Users/huipeizhu/git/docker_file:/data/projects/flink-streaming-platform-web/logs  -p 9084:9084 -p 8081:8081 -d --name="flink-streaming-platform-web-demo" registry.cn-hangzhou.aliyuncs.com/flink-streaming-platform-web/flink-web:flink-1.13.2
 ```
 
-**注意：9084 和8081端口不要被占用**
+**注意：9084 和8081端口不要被占用. 8081映射端口不要修改 否则会导致任务无法提交 **
 
 
 #### 五、查看
