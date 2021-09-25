@@ -42,12 +42,12 @@ spring.datasource.password=root
 
 #### 四、启动docker
 ```shell
-docker run -it  -v  **${本地application-docker.properties文件所在的目录}**:/data/projects/flink-streaming-platform-web/conf/   -p 9084:9084 -p 8081:8081 -d --name="flink-streaming-platform-web-demo" registry.cn-hangzhou.aliyuncs.com/flink-streaming-platform-web/flink-web:flink-1.13.2
+docker run -it  -v  ${本地application-docker.properties文件所在的目录}:/data/projects/flink-streaming-platform-web/conf/  -v ${本地日志目录挂载地址}: /Users/huipeizhu/git/docker_file:/data/projects/flink-streaming-platform-web/logs  -p 9084:9084 -p 8081:8081 -d --name="flink-streaming-platform-web-demo" registry.cn-hangzhou.aliyuncs.com/flink-streaming-platform-web/flink-web:flink-1.13.2
 ```
 如：
 
 ```shell
-docker run -it  -v  /Users/huipeizhu/git/flink-streaming-platform-web/deployer/src/main/conf:/data/projects/flink-streaming-platform-web/conf/   -p 9084:9084 -p 8081:8081 -d --name="flink-streaming-platform-web-demo" registry.cn-hangzhou.aliyuncs.com/flink-streaming-platform-web/flink-web:flink-1.13.2
+docker run -it  -v  /Users/huipeizhu/git/flink-streaming-platform-web/deployer/src/main/conf:/data/projects/flink-streaming-platform-web/conf/   -v  /Users/huipeizhu/git/docker_file:/data/projects/flink-streaming-platform-web/logs  -p 9084:9084 -p 8081:8081 -d --name="flink-streaming-platform-web-demo" registry.cn-hangzhou.aliyuncs.com/flink-streaming-platform-web/flink-web:flink-1.13.2
 ```
 
 **注意：9084 和8081端口不要被占用**
