@@ -13,11 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
+import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.StatementSet;
-import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.TableResult;
+import org.apache.flink.table.api.*;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +73,10 @@ public class JobApplication {
 
             }
 
-            StatementSet statementSet = tEnv.createStatementSet();
 
+            StatementSet statementSet = tEnv.createStatementSet();
+            TableConfig tabConf = tEnv.getConfig();
+            tabConf.getConfiguration().setString(PipelineOptions.NAME, jobRunParam.getJobName());
             ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
 
             TableResult tableResult = statementSet.execute();
@@ -104,7 +104,9 @@ public class JobApplication {
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
         String sqlPath = parameterTool.get("sql");
         Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
+        String jobName = parameterTool.get("jobName");
         JobRunParam jobRunParam = new JobRunParam();
+        jobRunParam.setJobName(jobName);
         jobRunParam.setSqlPath(sqlPath);
         jobRunParam.setCheckPointParam(CheckPointParams.buildCheckPointParam(parameterTool));
         String type = parameterTool.get("type");

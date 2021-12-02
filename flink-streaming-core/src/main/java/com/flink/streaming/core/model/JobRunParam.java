@@ -27,6 +27,6 @@ public class JobRunParam {
      */
     private CheckPointParam checkPointParam;
 
-
+    private String jobName;
 
 }

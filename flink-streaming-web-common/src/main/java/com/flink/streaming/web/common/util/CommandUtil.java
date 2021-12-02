@@ -55,6 +55,7 @@ public class CommandUtil {
                     command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
                 }
                 command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode()).append(" ");
+                command.append(" -jobName ").append(jobConfigDTO.getJobName()).append(" ");
                 break;
             case JAR:
                 command.append("-c  ").append(jobConfigDTO.getCustomMainClass()).append(" ");
