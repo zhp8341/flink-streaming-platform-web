@@ -1,5 +1,6 @@
 package com.flink.streaming.web.service.impl;
 
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.JobConfigMapper;
@@ -252,8 +253,15 @@ public class JobConfigServiceImpl implements JobConfigService {
 
     private void insertJobConfigHistory(Long id) {
         JobConfig jobConfig = jobConfigMapper.selectByPrimaryKey(id);
-        if (jobConfig != null && JobTypeEnum.SQL.getCode()== jobConfig.getJobType().intValue()) {
+        if (jobConfig == null) {
+            log.warn("[insertJobConfigHistory] jobConfig is null id:{} ", id);
+            return;
+        }
+        if (JobTypeEnum.SQL_STREAMING.getCode() == jobConfig.getJobType().intValue() ||
+                JobTypeEnum.SQL_BATCH.getCode() == jobConfig.getJobType().intValue()) {
             jobConfigHistoryService.insertJobConfigHistory(JobConfigHistoryDTO.to(jobConfig));
         }
+
+
     }
 }

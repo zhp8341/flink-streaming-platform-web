@@ -32,6 +32,7 @@ public class FlinkLogApiController {
             String fileName=String.format("flink-%s-client-%s.log", LinuxInfoUtil.loginName(), IpUtil.getHostName());
             String flinkName=systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
             String logPath=flinkName+"log/"+fileName;
+            log.info("日志文件地址 logPath={}",logPath);
             File file = new File(logPath);
             InputStream fis = new BufferedInputStream(new FileInputStream(file));
             byte[] buffer = new byte[fis.available()];
@@ -46,6 +47,7 @@ public class FlinkLogApiController {
             toClient.close();
         } catch (Exception ex) {
             log.error("[getFlinkLocalJobLog is error]",ex);
+            return ex.getMessage();
         }
         return "ok";
     }

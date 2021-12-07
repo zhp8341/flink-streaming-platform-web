@@ -17,7 +17,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   
   **主要功能**:包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 
    
-  **目的**:减少开发、降低成本 完全实现sql化 流计算任务。
+  **目的**:减少开发、降低成本 完全实现sql化 流计算任务。 😂
+  
+   由于前端UI是本人自己写的，不够专业，样式有点丑 请多多包含！！！
 
 ### 1、主要功能
 
@@ -30,6 +32,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
    * **[7] 支持自定义Jar提交任务。**
    * **[8] 支持多版本flink版本（需要用户编译对应flink版本）。**
    * **[9] 支持自动、手动savepoint备份，并且从savepoint恢复任务。**
+   * **[10] 支持批任务如：hive。**
 
   **目前flink版本已经升级到1.12**
 
@@ -49,8 +52,11 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 1、 [Flink 和 flink-streaming-platform-web 安装部署](/docs/deploy.md)
 
+2、 [在IDEA中执行运行调试](/docs/idea-run.md)
 
+3、 [docker容器化制作镜像(参考)](/docs/tristan-deploy-use)
 
+4、[flink-streaming-platform-web 体验（基于docker）适合体验者](/docs/docker-demo.md)
 
 ## 三、功能介绍
 
@@ -79,6 +85,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 7、[demo7 datagen简介](/docs/sql_demo/demo_datagen.md)
 
 8、[catalog 使用示例](/docs/catalog.md)
+
+9、[hive批任务 使用示例](/docs/sql_demo/demo_batch.md)
 
 
 ###  3.2 hello-word demo
@@ -228,6 +236,7 @@ https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connector
 
  ##  九、联系方式 
  
+ 请加钉钉群： 34315096 
 
 钉钉 
  [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
@@ -251,9 +260,14 @@ http://img.ccblog.cn/flink/dd2.png
 ## 十一、 捐赠
 
 [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
- 
+
+
 [点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
- 
+
+
+
+![支付宝](./docs/img/zfb.png)
+![微信](./docs/img/wx.png)
  
  
 

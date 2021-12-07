@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-taskmanager
+  namespace: bigdata-sync
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flink-taskmanager
+  template:
+    metadata:
+      labels:
+        app: flink-taskmanager
+    spec:
+      initContainers:
+        - name: wait-jobmanager
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              set -ex
+              until nc -zv flink-jobmanager 8081; do sleep 5; done
+              sleep 10
+      containers:
+        - name: taskmanager
+          image: flink:1.12.0-scala_2.11-java8
+          imagePullPolicy: IfNotPresent
+          args: ["taskmanager"]
+#          command:
+#            - sh
+#            - -c
+#            - "sleep 9999"
+          ports:
+            - containerPort: 6122
+              name: rpc
+            - containerPort: 6125
+              name: query-state
+          livenessProbe:
+            tcpSocket:
+              port: 6122
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          volumeMounts:
+            - name: flink-config-volume
+              mountPath: /opt/flink/conf/
+            - mountPath: /opt/flink/lib
+              name: flink
+              subPath: lib
+            - name: logs-dir
+              mountPath: /opt/flink/log
+#          securityContext:
+#            runAsUser: 9999  # refers to user _flink_ from official flink image, change if necessary
+        - name: promtail
+          image: grafana/promtail:2.2.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config.file=/etc/promtail/config.yaml
+            - -config.expand-env=true
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: ENVIRONMENT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: REPLICASET_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app']
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - mountPath: /mnt
+              name: logs-dir
+            - mountPath: /etc/promtail
+              name: promtail-config
+      volumes:
+        - name: flink-config-volume
+          configMap:
+            name: flink-config
+            items:
+              - key: flink-conf.yaml
+                path: flink-conf.yaml
+              - key: log4j-console.properties
+                path: log4j-console.properties
+        - name: flink
+          persistentVolumeClaim:
+            claimName: flink
+        - name: promtail-config
+          configMap:
+            name: loki-promtail
+        - name: logs-dir
+          emptyDir: {}

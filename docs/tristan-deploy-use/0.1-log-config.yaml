@@ -1,0 +1,26 @@
+---
+# loki
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-promtail
+  namespace: bigdata-sync
+data:
+  config.yaml: |
+    server:
+        disable: true
+    positions:
+        filename: /mnt/promtail-positions.yaml
+    clients:
+        - url: http://loki.logging-loki/loki/api/v1/push
+    scrape_configs:
+      - job_name: bigdata-sync
+        static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: bigdata-sync
+            __path__: /mnt/**/*.log
+            environment: ${ENVIRONMENT_NAME}
+            replicaset: ${REPLICASET_NAME}
+            pod: ${POD_NAME}

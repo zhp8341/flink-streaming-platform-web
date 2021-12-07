@@ -1,4 +1,4 @@
-package com.flink.streaming.web.enums;
+package com.flink.streaming.common.enums;
 
 import lombok.Getter;
 
@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public enum JobTypeEnum {
 
-    SQL(0), JAR(1);
+    SQL_STREAMING(0), JAR(1), SQL_BATCH(2);
 
     private int code;
 
@@ -31,4 +31,5 @@ public enum JobTypeEnum {
 
         return null;
     }
+    
 }

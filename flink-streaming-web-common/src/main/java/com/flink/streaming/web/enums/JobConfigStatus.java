@@ -19,6 +19,8 @@ public enum JobConfigStatus {
 
     STARTING(2, "启动中"),
 
+    SUCCESS(3, "提交成功"),
+
     UNKNOWN(-2, "未知"),
     ;
 

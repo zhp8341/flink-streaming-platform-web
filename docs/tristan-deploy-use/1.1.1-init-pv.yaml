@@ -1,0 +1,35 @@
+---
+# 从镜像中读取配置文件写入到挂载目录中以完成首次初始化配置文件
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-flink
+  namespace: bigdata-sync
+spec:
+  template:
+    spec:
+      containers:
+        - name: copy-lib
+          image: flink:1.12.0-scala_2.11-java8
+          imagePullPolicy: IfNotPresent
+#          command: [ "sh", "-c", "sleep 99999"]
+          command: [ "sh", "-c", "cp -r /opt/flink/lib/* /mnt/"]
+          volumeMounts:
+            - mountPath: /mnt
+              name: flink
+              subPath: lib
+        - name: download-lib
+          image: flink:1.12.0-scala_2.11-java8
+          imagePullPolicy: IfNotPresent
+          #          command: [ "sh", "-c", "sleep 99999"]
+          command: [ "sh", "-c", "cd /mnt && wget https://repo1.maven.org/maven2/com/ververica/flink-sql-connector-mysql-cdc/2.0.1/flink-sql-connector-mysql-cdc-2.0.1.jar"]
+          volumeMounts:
+            - mountPath: /mnt
+              name: flink
+              subPath: lib
+      restartPolicy: Never
+      volumes:
+        - name: flink
+          persistentVolumeClaim:
+            claimName: flink
+  backoffLimit: 1

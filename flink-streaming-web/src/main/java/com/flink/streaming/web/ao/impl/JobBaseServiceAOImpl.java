@@ -2,6 +2,7 @@ package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
@@ -97,13 +98,17 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
-            log.warn(MessageConstants.MESSAGE_006, jobConfigDTO.getJobName());
-            throw new BizException(MessageConstants.MESSAGE_006);
+//        if (JobTypeEnum.JAR.equals(jobConfigDTO.getJobTypeEnum())) {
+//            log.warn(MessageConstants.MESSAGE_006, jobConfigDTO.getJobName());
+//            throw new BizException(MessageConstants.MESSAGE_006);
+//        }
+        if (JobTypeEnum.SQL_BATCH.equals(jobConfigDTO.getJobTypeEnum())) {
+            log.warn(MessageConstants.MESSAGE_010, jobConfigDTO.getJobName());
+            throw new BizException(MessageConstants.MESSAGE_010);
         }
 
         if (StringUtils.isEmpty(jobConfigDTO.getFlinkCheckpointConfig()) &&
-                DeployModeEnum.STANDALONE.equals( jobConfigDTO.getDeployModeEnum())) {
+                DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum())) {
             log.error(MessageConstants.MESSAGE_004, jobConfigDTO);
             throw new BizException(MessageConstants.MESSAGE_004);
         }
@@ -191,7 +196,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         case LOCAL:
                         case STANDALONE:
                             //1、构建执行命令
-                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO,savepointPath);
+                            command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO, savepointPath);
                             //2、提交任务
                             appId = this.submitJobForStandalone(command, jobConfigDTO, localLog);
 
@@ -276,7 +281,14 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                     JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
                     jobRunLogDTO.setId(jobRunLogId);
                     if (JobStatusEnum.SUCCESS.name().equals(jobStatus) && !StringUtils.isEmpty(appId)) {
-                        jobConfigDTO.setStatus(JobConfigStatus.RUN);
+
+                        //批任务提交完成后算成功
+                        if (JobTypeEnum.SQL_BATCH.equals(jobConfig.getJobTypeEnum())) {
+                            jobConfigDTO.setStatus(JobConfigStatus.SUCCESS);
+                        } else {
+                            jobConfigDTO.setStatus(JobConfigStatus.RUN);
+                        }
+
                         jobConfigDTO.setLastStartTime(new Date());
                         jobConfigDTO.setJobId(appId);
                         jobRunLogDTO.setJobId(appId);
@@ -310,8 +322,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                     throws Exception {
 
                 String appId = commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId, jobConfig.getDeployModeEnum());
-
-                Thread.sleep(1000 * 10);
                 JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(appId,
                         jobConfig.getDeployModeEnum());
 
@@ -331,8 +341,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             private String submitJobForYarn(String command, JobConfigDTO jobConfigDTO, StringBuilder localLog)
                     throws Exception {
                 commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId, jobConfigDTO.getDeployModeEnum());
-
-                Thread.sleep(1000 * 10);
                 return yarnRestRpcAdapter.getAppIdByYarn(jobConfigDTO.getJobName(),
                         YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig()));
             }

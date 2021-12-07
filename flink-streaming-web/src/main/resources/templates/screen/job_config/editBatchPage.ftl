@@ -7,9 +7,8 @@
 
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>新增配置</title>
+    <title>编辑配置</title>
     <#include "../../control/public_css_js.ftl">
-
     <link rel="stylesheet" type="text/css" href="/static/codemirror/css/codemirror.css?version=20210123"/>
     <link rel="stylesheet" type="text/css" href="/static/codemirror/theme/mbo.css?version=20210123"/>
     <link rel="stylesheet" type="text/css" href="/static/codemirror/hint/show-hint.css?version=20210123"/>
@@ -19,16 +18,19 @@
     <script type="text/javascript" src="/static/codemirror/hint/show-hint.js?version=20210123"></script>
     <script type="text/javascript" src="/static/codemirror/hint/sql-hint.js?version=20210123"></script>
     <script type="text/javascript" src="/static/codemirror/hint/formatting.js?version=20210123"></script>
+
     <style>
         label{font-weight: 800}
     </style>
 </head>
 
+
+
 <body class="no-skin">
 <!-- start top-->
-    <div id="navbar" class="navbar navbar-default          ace-save-state">
-        <#include "../../layout/top.ftl">
-    </div>
+<div id="navbar" class="navbar navbar-default          ace-save-state">
+    <#include "../../layout/top.ftl">
+</div>
 <!-- end top-->
 <div class="main-container ace-save-state" id="main-container">
     <script type="text/javascript">
@@ -46,10 +48,9 @@
                     <li>
                         <a href="#">配置管理</a>
                     </li>
-                    <li class="active">新增流任务</li>
+                    <li class="active">编辑配置</li>
                 </ul>
             </div>
-
 
             <div class="page-content">
 
@@ -57,83 +58,75 @@
                     <div class="col-xs-12">
                         <input type="hidden" name="jobType" id="jobType" value="0">
                         <div class="panel-body">
+                            <input type="hidden"  name="id"  id="id"  value="${jobConfig.id}" >
                             <div class="form-group">
                                 <label for="inputfile">相关配置说明详见：</label>
-                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-sql.md"
+                                <a href="https://github.com/zhp8341/flink-streaming-platform-web/blob/master/docs/manual-batch.md"
                                    target="_blank">点击查看</a>
                             </div>
-                            <div class="form-group">
-                                <label for="inputfile">告警辅助配置：</label>
 
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="1" />
-                                    钉钉告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="2" />
-                                    http回调告警
-                                </label>
-                                <label class="checkbox-inline">
-                                    <input type="checkbox" name="alarmType" value="3" />
-                                    任务退出自动拉起
-                                </label>
+                            <div class="form-group ">
+                                <label for="inputfile">任务状态：</label>
+                                <pre>${jobConfig.stautsStr!""}</pre>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputfile">配置是否开启：</label>
+                                <pre>${jobConfig.openStr!""}</pre>
                             </div>
                             <div class="form-group">
                                 <label for="inputfile">*任务名称：</label>
-                                <input class="form-control " type="text" placeholder="任务名称" name="jobName" id="jobName">
+                                <input class="form-control " type="text" placeholder="任务名称" name="jobName"  value="${jobConfig.jobName!""}"   id="jobName" >
                             </div>
+
                             <div class="form-group">
                                 <label for="inputfile">*运行模式：</label>
                                 <select class="form-control " id="deployMode">
-                                    <option value="">请选择</option>
-                                    <option value="YARN_PER">YARN_PER</option>
-                                    <option value="LOCAL">Local Cluster</option>
-                                    <option value="STANDALONE">Standalone Cluster</option>
+                                    <option value="YARN_PER"  <#if jobConfig.deployMode??&& jobConfig.deployMode=="YARN_PER" > selected </#if> >YARN_PER</option>
+                                    <option value="LOCAL"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="LOCAL" > selected </#if> >Local Cluster</option>
+                                    <option value="STANDALONE"     <#if jobConfig.deployMode??&& jobConfig.deployMode=="STANDALONE" > selected </#if> >Standalone Cluste</option>
                                 </select>
                             </div>
+
                             <div class="form-group" id="configDiv">
-                                <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)：</label>
-                                <input class="form-control " type="text" name="flinkRunConfig" id="flinkRunConfig">
-                            </div>
-                            <div class="form-group">
-                                <label for="inputfile" data-toggle="tooltip" data-placement="bottom"
-                                       title="不填默认不开启checkpoint机制 参数只支持 -checkpointInterval -checkpointingMode -checkpointTimeout -checkpointDir -tolerableCheckpointFailureNumber -asynchronousSnapshots 如  -asynchronousSnapshots true  -checkpointDir  hdfs//XXX/flink/checkpoint/ -externalizedCheckpointCleanup DELETE_ON_CANCELLATION or RETAIN_ON_CANCELLATION">Checkpoint信息：</label>
-                                <input class="form-control " type="text"
-                                       placeholder="Checkpoint信息 如   -checkpointDir  hdfs//XXX/flink/checkpoint/"
-                                       name="flinkCheckpointConfig" id="flinkCheckpointConfig">
+                                <label for="inputfile" >*flink运行配置(如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming)
+                                    ：</label>
+                                <input class="form-control " type="text"  name="flinkRunConfig" value="${jobConfig.flinkRunConfig!""}"   id="flinkRunConfig" >
                             </div>
 
+
                             <div class="form-group">
-                                <label for="inputfile" >三方jar地址 (自定义udf、连接器等jar地址
-                                    多个用换行(如 http://xxxx.com/udf.jar) 目前只支持http )</label>
-                                <textarea class="form-control"  name="extJarPath" id="extJarPath" rows="5" ></textarea>
+                                <label for="inputfile" >三方jar地址 (自定义udf、连接器等jar地址 多个用换行
+                                    (如 http://xxxx.com/udf.jar) 目前只支持http )：</label>
+                             <textarea class="form-control"  name="extJarPath" id="extJarPath" rows="5" >${jobConfig.extJarPath!""}</textarea>
                             </div>
+
 
                             <div class="form-group">
                                 <label for="inputfile">*sql语句：</label>
-                                <textarea name="flinkSql" id="flinkSql"> </textarea>
+                                <textarea  name="flinkSql" id="flinkSql">${jobConfig.flinkSql!""}</textarea>
                             </div>
+
 
                             <div class="form-group">
-                                <a class="btn btn-info btn-sm" onclick="addConfig()" href="#errorMessage">提交保存</a>
-                                <a class="btn btn-success btn-sm " style="margin-left: 60px"
-                                   onclick="autoFormatSelection()"> 格式化代码</a>
-                                <a class="btn  btn-warning btn-sm" style="margin-left: 60px"  onclick="checkSql()">
-                                    sql预校验</a>
+                                <a class="btn btn-info btn-sm " onclick="editConfig()" href="#errorMessage">提交保存</a>
+                                <a class="btn btn-success btn-sm" style="margin-left: 60px" onclick="autoFormatSelection()"> 格式化代码</a>
+<#--                                <a class="btn btn-warning btn-sm" style="margin-left: 60px" onclick="checkSql()"> sql预校验</a>-->
                             </div>
+<#--                            <div class="form-group">-->
+<#--                                <h5  style="color: #87B87F"> 代码格式化 备注： 需要选中对应的代码再点击"格式化代码" 按钮 才有效果-->
+<#--                                    tips: win系统 CTRL+A 全选     mac系统 command+A  全选-->
+<#--                                </h5>-->
+<#--                            </div>-->
+<#--                            <div class="form-group">-->
+<#--                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,-->
+<#--                                    不能校验上下文之间关系，如：这张表是否存在-->
+<#--                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误-->
+<#--                                </h5>-->
+<#--                            </div>-->
 
                             <div class="form-group">
-                                <h5  style="color: #FFB752"> sql预校验 备注：只能校验单个sql语法正确与否,
-                                    不能校验上下文之间关系，如：这张表是否存在
-                                    数据类型是否正确等无法校验,总之不能完全保证运行的时候sql没有异常，只是能校验出一些语法错误
-                                </h5>
+                                <label   name="errorMessage" id="errorMessage"></label>
                             </div>
-
-                            <div class="form-group">
-                                <label name="errorMessage" id="errorMessage"></label>
-                            </div>
-
-
                         </div>
 
                         <!-- PAGE CONTENT ENDS -->
@@ -143,10 +136,11 @@
         </div>
     </div><!-- /.main-content -->
 
-
     <#include "../../layout/bottom.ftl">
 
 </div><!-- /.main-container -->
+
+
 
 <script>
     var flinkSqlVal;
@@ -178,16 +172,15 @@
                     'source.predicate-pushdown-enabled',
                     'join-reorder-enabled'],
             }
+
         }
     });
-
-    editor.setSize('auto', '750px');
+    editor.setSize('auto','750px');
 
     //代码自动提示功能，记住使用cursorActivity事件不要使用change事件，这是一个坑，那样页面直接会卡死
     editor.on('keypress', function () {
         editor.showHint()
     });
-
 
 
     function getSelectedRange() {
@@ -206,9 +199,8 @@
     }
 
 
-    $(function () {
-        $("[data-toggle='tooltip']").tooltip();
-    });
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
 
 
     function checkSql(){
@@ -231,28 +223,30 @@
         );
     }
 
+    function editConfig() {
+        flinkSqlVal=editor.getValue();
 
-    function addConfig() {
-        flinkSqlVal = editor.getValue();
         var chk_value =[];//定义一个数组
         $('input[name="alarmType"]:checked').each(function(){
             chk_value.push($(this).val());
         });
-        $.post("../api/addConfig", {
+
+        $.post("../api/editConfig", {
+                id: $('#id').val(),
                 jobName: $('#jobName').val(),
                 deployMode: $('#deployMode').val(),
-                flinkRunConfig: $('#flinkRunConfig').val(),
-                flinkCheckpointConfig: $('#flinkCheckpointConfig').val(),
-                flinkSql: flinkSqlVal,
+                flinkRunConfig:  $('#flinkRunConfig').val(),
+                flinkSql:   flinkSqlVal,
                 jobType: $('#jobType').val(),
                 alarmTypes:   chk_value.toString(),
-                extJarPath: $('#extJarPath').val()
+                extJarPath:  $('#extJarPath').val()
             },
             function (data, status) {
                 $("#errorMessage").removeClass();
-                if (data != null && data.success) {
-                    skipUrl("/admin/listPage")
-                } else {
+                if (data!=null && data.success){
+                    $("#errorMessage").addClass("form-group alert alert-success")
+                    $("#errorMessage").html("修改成功");
+                }else{
                     $("#errorMessage").addClass("form-group alert alert-danger")
                     $("#errorMessage").html(data.message);
 
@@ -262,14 +256,24 @@
         );
     }
 
-    $('#deployMode').change(function () {
-        if ("LOCAL" == $(this).val()) {
+
+    $(document).ready(function(){
+        initDeployMode()
+        $('#deployMode').change(function() {
+            initDeployMode()
+        })
+    });
+    function  initDeployMode(){
+        if ("LOCAL" == $('#deployMode').val()){
             $("#configDiv").hide();
         } else {
             $("#configDiv").show();
         }
-    })
+    }
 
+    $(window).bind('beforeunload',function(){
+        return '确定要离开当前页面吗';
+    });
 </script>
 </body>
 </html>

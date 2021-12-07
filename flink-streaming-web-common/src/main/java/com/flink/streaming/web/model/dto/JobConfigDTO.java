@@ -3,7 +3,7 @@ package com.flink.streaming.web.model.dto;
 import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.JobConfigStatus;
-import com.flink.streaming.web.enums.JobTypeEnum;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.model.entity.JobConfig;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;

@@ -2,7 +2,7 @@ package com.flink.streaming.web.controller.web;
 
 import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
-import com.flink.streaming.web.enums.JobTypeEnum;
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.PageModel;
@@ -52,14 +52,14 @@ public class JobConfigController {
         if (jobConfigParam==null){
             jobConfigParam=new JobConfigParam();
         }
-        jobConfigParam.setJobType(JobTypeEnum.SQL.getCode());
+        jobConfigParam.setJobType(JobTypeEnum.SQL_STREAMING.getCode());
         this.list(modelMap, jobConfigParam);
         modelMap.put("active", "list");
         return "screen/job_config/listPage";
     }
 
     @RequestMapping(value = "/jarListPage")
-    public String jarlistPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
+    public String jarListPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
         if (jobConfigParam==null){
             jobConfigParam=new JobConfigParam();
         }
@@ -68,6 +68,20 @@ public class JobConfigController {
         modelMap.put("active", "jarlist");
         return "screen/job_config/jarListPage";
     }
+
+    @RequestMapping(value = "/batchListPage")
+    public String batchListPage(ModelMap modelMap, JobConfigParam jobConfigParam) {
+        if (jobConfigParam==null){
+            jobConfigParam=new JobConfigParam();
+        }
+        jobConfigParam.setJobType(JobTypeEnum.SQL_BATCH.getCode());
+        this.list(modelMap, jobConfigParam);
+        modelMap.put("active", "batchlist");
+        return "screen/job_config/batchListPage";
+    }
+
+
+
 
     @RequestMapping("/addPage")
     public String addPage(ModelMap modelMap) {
@@ -84,6 +98,13 @@ public class JobConfigController {
         return "screen/job_config/addJarPage";
     }
 
+    @RequestMapping("/addSqlBatchPage")
+    public String addSqlBatchPage(ModelMap modelMap) {
+        modelMap.put("active", "addPage");
+        modelMap.put("open", "config");
+        return "screen/job_config/addBatchPage";
+    }
+
 
     @RequestMapping("/editPage")
     public String editPage(ModelMap modelMap, Long id) {
@@ -97,6 +118,13 @@ public class JobConfigController {
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
         modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
         return "screen/job_config/editJarPage";
+    }
+
+    @RequestMapping("/editBatchPage")
+    public String editBatchPage(ModelMap modelMap, Long id) {
+        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        modelMap.put("jobConfig", DetailJobConfigVO.toVO(jobConfigDTO));
+        return "screen/job_config/editBatchPage";
     }
 
 
