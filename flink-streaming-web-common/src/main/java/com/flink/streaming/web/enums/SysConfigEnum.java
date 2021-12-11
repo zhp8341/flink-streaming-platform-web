@@ -20,6 +20,10 @@ public enum SysConfigEnum {
             "flink客户端目录（必选）",
             SysConfigEnumType.SYS.name()),
 
+    AUTO_SAVEPOINT ("auto_savepoint",
+        "自动开启savepoint（全局配置 默认开启 变量值 true 或 false）",
+        SysConfigEnumType.SYS.name()),
+
     FLINK_STREAMING_PLATFORM_WEB_HOME("flink_streaming_platform_web_home",
             "flink-streaming-platform-web应用安装的目录（必选）",
             SysConfigEnumType.SYS.name()),

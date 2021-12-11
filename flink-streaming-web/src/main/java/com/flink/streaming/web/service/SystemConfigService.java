@@ -85,4 +85,10 @@ public interface SystemConfigService {
     boolean isExist(String key);
 
 
+    /**
+     * 是否自动开启savepoint （默认是true）
+     * @return
+     */
+    boolean autoSavepoint();
+
 }

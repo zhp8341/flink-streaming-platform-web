@@ -148,7 +148,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     public void autoSavePoint() {
         List<JobConfigDTO> jobConfigDTOList = jobConfigService.findJobConfigByStatus(JobConfigStatus.RUN.getCode());
         if (CollectionUtils.isEmpty(jobConfigDTOList)) {
-            log.warn("autoSavePoint is error  没有找到运行中的任务 ");
+            log.warn("autoSavePoint is null  没有找到运行中的任务 ");
             return;
         }
         for (JobConfigDTO jobConfigDTO : jobConfigDTOList) {

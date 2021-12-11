@@ -33,7 +33,9 @@ public class SystemConfigVO {
         }
         SystemConfigVO systemConfigVO = new SystemConfigVO();
         systemConfigVO.setId(systemConfigDTO.getId());
-        systemConfigVO.setDesc(SysConfigEnum.getSysConfigEnum(systemConfigDTO.getKey()).getDesc());
+        if (SysConfigEnum.getSysConfigEnum(systemConfigDTO.getKey())!=null){
+            systemConfigVO.setDesc(SysConfigEnum.getSysConfigEnum(systemConfigDTO.getKey()).getDesc());
+        }
         systemConfigVO.setKey(systemConfigDTO.getKey());
         systemConfigVO.setVal(systemConfigDTO.getVal());
         return systemConfigVO;
