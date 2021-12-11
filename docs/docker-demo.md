@@ -70,7 +70,7 @@ http://127.0.0.1:9084/admin/index   账号/密码 ： admin / 123456
 
 登录后直接 提交任务 **test_datagen_simple**   就可以查看效果
 
-另外任务可以在这里看 http://127.0.0.1:8081/#/overview
+另外任务可以在这里看 http://127.0.0.1:8081/#/overview 
 
 
 **注意：通过这个demo  让新人对flink-streaming-platform-web应用有个直观的认识  目前docker只是本地模式 没办法上线使用，线上使用还需要自己安装**
