@@ -34,7 +34,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
    * **[9] 支持自动、手动savepoint备份，并且从savepoint恢复任务。**
    * **[10] 支持批任务如：hive。**
 
-  **目前flink版本已经升级到1.12**
+  **目前flink版本已经升级到1.13.2**
 
 
   **如果您觉得还不错请在右上角点一下star 谢谢 🙏 大家的支持是开源最大动力**
@@ -122,7 +122,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 **官方相关连接器下载** 
 
-请移步 https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/ 
+请移步 https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/table/overview/
 
 
 
@@ -169,14 +169,14 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 微信二维码 http://img.ccblog.cn/flink/wx2.png
 
 
- 完全按照flink1.12的连接器相关的配置详见
+ 完全按照flink1.13.2的连接器相关的配置详见
 
-https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/ 
+https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/table/kafka/
 
 
 
 如果需要使用到连接器请去官方下载
-如：kafka 连接器 https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/kafka.html
+如：kafka 连接器 https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/table/kafka/
 
 **第一种下载连接器后直接放到 flink/lib/目录下就可以使用了**
 
