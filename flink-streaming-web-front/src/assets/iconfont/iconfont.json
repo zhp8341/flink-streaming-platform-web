@@ -1,0 +1,72 @@
+{
+  "id": "2983373",
+  "name": "myproject",
+  "font_family": "iconfont",
+  "css_prefix_text": "my-icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "431554",
+      "name": "节点-SQL",
+      "font_class": "jiediansql",
+      "unicode": "e6f5",
+      "unicode_decimal": 59125
+    },
+    {
+      "icon_id": "1057415",
+      "name": "sql",
+      "font_class": "sql",
+      "unicode": "e6d1",
+      "unicode_decimal": 59089
+    },
+    {
+      "icon_id": "5583349",
+      "name": "batchcompute  批量计算",
+      "font_class": "batchcomputepiliangjisuan",
+      "unicode": "e8a4",
+      "unicode_decimal": 59556
+    },
+    {
+      "icon_id": "5916409",
+      "name": "JAR",
+      "font_class": "JAR",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "6151251",
+      "name": "file-SQL",
+      "font_class": "file-SQL",
+      "unicode": "e807",
+      "unicode_decimal": 59399
+    },
+    {
+      "icon_id": "7036718",
+      "name": "SQL新建",
+      "font_class": "SQLxinjian",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "11488118",
+      "name": "save",
+      "font_class": "save",
+      "unicode": "e762",
+      "unicode_decimal": 59234
+    },
+    {
+      "icon_id": "22272856",
+      "name": "suffix-jar",
+      "font_class": "suffix-jar",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "23563224",
+      "name": "BATCH_PROCESSING",
+      "font_class": "BATCH_PROCESSING",
+      "unicode": "ea43",
+      "unicode_decimal": 59971
+    }
+  ]
+}

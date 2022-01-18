@@ -5,6 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="job_config_id" jdbcType="BIGINT" property="jobConfigId"/>
         <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="job_desc" jdbcType="VARCHAR" property="jobDesc"/>
         <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
         <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
         <result column="remote_log_url" jdbcType="VARCHAR" property="remoteLogUrl"/>
@@ -27,6 +28,7 @@
         id,
         job_config_id,
         job_name,
+        job_desc,
         deploy_mode,
         job_id,
         remote_log_url,
@@ -49,12 +51,12 @@
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into job_run_log (job_config_id, job_name, deploy_mode,
+        insert into job_run_log (job_config_id, job_name, job_desc, deploy_mode,
         job_id, remote_log_url, start_time,
         end_time, job_status, is_deleted,
         create_time, edit_time, creator,
         editor, local_log, run_ip)
-        values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
+        values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
         #{jobId,jdbcType=VARCHAR}, #{remoteLogUrl,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP},
         #{endTime,jdbcType=TIMESTAMP}, #{jobStatus,jdbcType=VARCHAR}, 0,
         now(), now(), #{creator,jdbcType=VARCHAR},

@@ -45,6 +45,11 @@ public class ExecuteSql {
                 case SHOW_TABLES:
                     LogPrint.queryRestPrint(tEnv, sqlCommandCall);
                     break;
+                // 兼容sql-client.sh的用法，只显示但不执行
+                case BEGIN_STATEMENT_SET:
+                case END:
+                    LogPrint.logPrint(sqlCommandCall);
+                    break;
                 default:
                     LogPrint.logPrint(sqlCommandCall);
                     tEnv.executeSql(sqlCommandCall.operands[0]);

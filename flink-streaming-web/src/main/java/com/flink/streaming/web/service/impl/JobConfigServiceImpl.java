@@ -1,6 +1,5 @@
 package com.flink.streaming.web.service.impl;
 
-import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.enums.*;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.JobConfigMapper;
@@ -56,7 +55,11 @@ public class JobConfigServiceImpl implements JobConfigService {
         this.checkJobName(jobConfigDTO.getJobName(), jobConfigDTO.getId());
         this.checkSystemConfig(jobConfigDTO.getDeployModeEnum());
         JobConfig jobConfig = JobConfigDTO.toEntity(jobConfigDTO);
-        jobConfigMapper.insert(jobConfig);
+        if (jobConfigDTO.getId() == null) {
+            jobConfigMapper.insert(jobConfig);
+        } else {
+            jobConfigMapper.insertWithId(jobConfig);
+        }
         this.insertJobConfigHistory(jobConfig.getId());
         return jobConfig.getId();
     }
@@ -84,6 +87,28 @@ public class JobConfigServiceImpl implements JobConfigService {
 
         jobConfigMapper.updateByPrimaryKeySelective(JobConfigUpdate);
 
+        // this.insertJobConfigHistory(jobConfigDTO.getId());
+    }
+    
+    @Override
+    public void updateJobConfigByIdWithWriteHistory(JobConfigDTO jobConfigDTO) {
+        if (jobConfigDTO == null || jobConfigDTO.getId() == null) {
+            throw new BizException(SysErrorEnum.JOB_CONFIG_PARAM_IS_NULL);
+        }
+        JobConfig jobConfig = jobConfigMapper.selectByPrimaryKey(jobConfigDTO.getId());
+        if (jobConfig == null) {
+            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
+        }
+        if (jobConfigDTO.getDeployModeEnum() == null) {
+            this.checkSystemConfig(DeployModeEnum.valueOf(jobConfig.getDeployMode()));
+        } else {
+            this.checkSystemConfig(jobConfigDTO.getDeployModeEnum());
+        }
+        if (StringUtils.isNotEmpty(jobConfigDTO.getJobName())) {
+            this.checkJobName(jobConfigDTO.getJobName(), jobConfigDTO.getId());
+        }
+        JobConfig JobConfigUpdate = JobConfigDTO.toEntity(jobConfigDTO);
+        jobConfigMapper.updateByPrimaryKeySelective(JobConfigUpdate);
         this.insertJobConfigHistory(jobConfigDTO.getId());
     }
 
@@ -91,7 +116,7 @@ public class JobConfigServiceImpl implements JobConfigService {
     public void updateJobConfigStatusById(Long id, JobConfigStatus jobConfigStatus) {
         JobConfig jobConfig = new JobConfig();
         jobConfig.setId(id);
-        jobConfig.setStauts(jobConfigStatus.getCode());
+        jobConfig.setStatus(jobConfigStatus.getCode());
         jobConfigMapper.updateByPrimaryKeySelective(jobConfig);
 
     }
@@ -106,7 +131,6 @@ public class JobConfigServiceImpl implements JobConfigService {
         }
     }
 
-
     @Override
     public JobConfigDTO getJobConfigById(Long id) {
         if (id == null) {
@@ -119,6 +143,27 @@ public class JobConfigServiceImpl implements JobConfigService {
             jobConfigDTO.setAlarmTypeEnumList(jobAlarmConfigService.findByJobId(id));
         }
 
+        return jobConfigDTO;
+    }
+    
+    /**
+     * 
+     * @param id
+     * @return
+     * @author wxj
+     * @date 2021年12月28日 下午1:48:51 
+     * @version V1.0
+     * @see com.flink.streaming.web.service.JobConfigService#getJobConfigByIdContainDelete(java.lang.Long)
+     */
+    @Override
+    public JobConfigDTO getJobConfigByIdContainDelete(Long id) {
+        if (id == null) {
+           return null;
+        }
+        JobConfigDTO jobConfigDTO = JobConfigDTO.toDTO(jobConfigMapper.selectByPrimaryKeyContainDelete(id));
+        if (jobConfigDTO != null) {
+            jobConfigDTO.setAlarmTypeEnumList(jobAlarmConfigService.findByJobId(id));
+        }
         return jobConfigDTO;
     }
 
@@ -152,6 +197,11 @@ public class JobConfigServiceImpl implements JobConfigService {
         }
         jobConfigMapper.deleteById(id, userName);
         jobRunLogService.deleteLogByJobConfigId(id);
+    }
+    
+    @Override
+    public int recoveryDeleteJobConfigById(Long id, String userName) {
+        return jobConfigMapper.recoveryDeleteJobConfigById(id, userName);
     }
 
     @Override
@@ -257,11 +307,10 @@ public class JobConfigServiceImpl implements JobConfigService {
             log.warn("[insertJobConfigHistory] jobConfig is null id:{} ", id);
             return;
         }
-        if (JobTypeEnum.SQL_STREAMING.getCode() == jobConfig.getJobType().intValue() ||
-                JobTypeEnum.SQL_BATCH.getCode() == jobConfig.getJobType().intValue()) {
-            jobConfigHistoryService.insertJobConfigHistory(JobConfigHistoryDTO.to(jobConfig));
-        }
-
-
+//        if (JobTypeEnum.SQL_STREAMING.getCode() == jobConfig.getJobType().intValue() ||
+//                JobTypeEnum.SQL_BATCH.getCode() == jobConfig.getJobType().intValue()) {
+//            jobConfigHistoryService.insertJobConfigHistory(JobConfigHistoryDTO.to(jobConfig));
+//        }
+        jobConfigHistoryService.insertJobConfigHistory(JobConfigHistoryDTO.to(jobConfig));
     }
 }

@@ -1,5 +1,6 @@
 package com.flink.streaming.web.ao.impl;
 
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
@@ -53,6 +54,14 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
     public void start(Long id, Long savepointId, String userName) {
 
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+        
+        if (StringUtils.isNotBlank(jobConfigDTO.getJobId())) {
+            JobStandaloneInfo jobstatus = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
+            if (!("CANCELED".equals(jobstatus.getState()) || "FAILED".equals(jobstatus.getState())) 
+                    && StringUtils.isNotBlank(jobstatus.getState())) {
+                throw new BizException("请检查Flink任务列表，任务ID=[" + jobConfigDTO.getJobId() + "]处于[ "+jobstatus.getState()+"]状态，不能重复启动任务！") ; 
+            }
+        }
 
         //1、检查jobConfigDTO 状态等参数
         jobBaseServiceAO.checkStart(jobConfigDTO);
@@ -78,17 +87,25 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 
     @Override
     public void stop(Long id, String userName) {
+        log.info("[{}]开始停止任务[{}]", userName, id);
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId()
-                , jobConfigDTO.getDeployModeEnum());
+        JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
+        log.info("任务[{}]当前状态为：{}", id, jobStandaloneInfo);
         if (jobStandaloneInfo == null || StringUtils.isNotEmpty(jobStandaloneInfo.getErrors())) {
-            log.warn("getJobInfoForStandaloneByAppId is error jobStandaloneInfo={}", jobStandaloneInfo);
+            log.warn("开始停止任务[{}]，getJobInfoForStandaloneByAppId is error jobStandaloneInfo={}", id, jobStandaloneInfo);
         } else {
+            // 停止前先savepoint
+            if (StringUtils.isNotBlank(jobConfigDTO.getFlinkCheckpointConfig())
+                    && jobConfigDTO.getJobTypeEnum() != JobTypeEnum.SQL_BATCH
+                    && SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+                log.info("开始保存任务[{}]的状态-savepoint", id);
+                this.savepoint(id);
+            }
             //停止任务
-            if (SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+            if (SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState()) || SystemConstants.STATUS_RESTARTING.equals(jobStandaloneInfo.getState())) {
                 flinkRestRpcAdapter.cancelJobForFlinkByAppId(jobConfigDTO.getJobId(), jobConfigDTO.getDeployModeEnum());
             }
         }
@@ -99,7 +116,6 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
         jobConfig.setJobId("");
         //变更状态
         jobConfigService.updateJobConfigById(jobConfig);
-
     }
 
     @Override

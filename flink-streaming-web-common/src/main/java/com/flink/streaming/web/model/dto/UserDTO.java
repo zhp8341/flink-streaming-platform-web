@@ -16,13 +16,20 @@ import java.util.List;
  */
 @Data
 public class UserDTO {
-
+    /**
+     * 用户编号
+     */
     private Integer id;
 
     /**
-     * 用户名
+     * 用户帐号
      */
     private String username;
+    
+    /**
+     * 用户名称
+     */
+    private String name;
 
     /**
      * 密码
@@ -33,7 +40,7 @@ public class UserDTO {
      * @see com.flink.streaming.web.enums.UserStatusEnum
      * 1:启用 0: 停用
      */
-    private Integer stauts;
+    private Integer status;
 
     /**
      * 创建时间
@@ -57,8 +64,9 @@ public class UserDTO {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
+        userDTO.setName(user.getName());
         userDTO.setPassword(user.getPassword());
-        userDTO.setStauts(user.getStauts());
+        userDTO.setStatus(user.getStatus());
         userDTO.setCreateTime(user.getCreateTime());
         userDTO.setEditTime(user.getEditTime());
         userDTO.setCreator(user.getCreator());

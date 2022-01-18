@@ -44,10 +44,10 @@ public class DetailJobConfigVO {
     private String openStr;
 
 
-    private Integer stauts;
+    private Integer status;
 
 
-    private String stautsStr;
+    private String statusStr;
 
 
     private String lastStartTime;
@@ -122,8 +122,8 @@ public class DetailJobConfigVO {
         detailJobConfigVO.setJobId(jobConfigDTO.getJobId());
         detailJobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
         detailJobConfigVO.setOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
-        detailJobConfigVO.setStautsStr(jobConfigDTO.getStatus().getDesc());
-        detailJobConfigVO.setStauts(jobConfigDTO.getStatus().getCode());
+        detailJobConfigVO.setStatusStr(jobConfigDTO.getStatus().getDesc());
+        detailJobConfigVO.setStatus(jobConfigDTO.getStatus().getCode());
         detailJobConfigVO.setLastStartTime(DateFormatUtils.toFormatString(jobConfigDTO.getLastStartTime()));
         detailJobConfigVO.setCreateTime(DateFormatUtils.toFormatString(jobConfigDTO.getCreateTime()));
         detailJobConfigVO.setEditTime(DateFormatUtils.toFormatString(jobConfigDTO.getEditTime()));

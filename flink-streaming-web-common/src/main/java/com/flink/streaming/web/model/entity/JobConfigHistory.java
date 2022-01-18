@@ -29,6 +29,11 @@ public class JobConfigHistory implements Serializable {
     private String jobName;
 
     /**
+     * 任务描述
+     */
+    private String jobDesc;
+
+    /**
      * 提交模式: standalone 、yarn 、yarn-session 
      */
     private String deployMode;
@@ -52,6 +57,11 @@ public class JobConfigHistory implements Serializable {
      * 更新版本号
      */
     private Integer version;
+    
+    /**
+     * 任务类型 0:sql 1:自定义jar'
+     */
+    private Integer jobType;
 
     private Boolean isDeleted;
 

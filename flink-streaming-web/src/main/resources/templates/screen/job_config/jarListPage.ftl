@@ -87,15 +87,15 @@
                                        name="jobId"  <#if (jobConfigParam??) >  value="${jobConfigParam.jobId!""}" </#if> />
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control" name="stauts">
+                                <select class="form-control" name="status">
                                     <option value=""> 运行状态</option>
-                                    <option value="1" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==1> selected</#if> >
+                                    <option value="1" <#if (jobConfigParam??) &&(jobConfigParam.status??) && jobConfigParam.status==1> selected</#if> >
                                         运行中
                                     </option>
-                                    <option value="0" <#if (jobConfigParam??) &&(jobConfigParam.stauts??) && jobConfigParam.stauts==0> selected</#if> >
+                                    <option value="0" <#if (jobConfigParam??) &&(jobConfigParam.status??) && jobConfigParam.status==0> selected</#if> >
                                         停止中
                                     </option>
-                                    <option value="-1" <#if (jobConfigParam??)&&(jobConfigParam.stauts??) && jobConfigParam.stauts==-1> selected</#if> >
+                                    <option value="-1" <#if (jobConfigParam??)&&(jobConfigParam.status??) && jobConfigParam.status==-1> selected</#if> >
                                         运行失败
                                     </option>
                                 </select>
@@ -165,17 +165,17 @@
                                             </td>
                                             <td>${jobConfigVO.deployMode!""}</td>
                                             <td>
-                                                <#if jobConfigVO.stauts==1>
+                                                <#if jobConfigVO.status==1>
                                                     <span class="ant-tag-green">
-                                                     ${jobConfigVO.stautsStr!""}
+                                                     ${jobConfigVO.statusStr!""}
                                                  </span>
                                                 <#else>
-                                                    <#if jobConfigVO.stauts==-1>
+                                                    <#if jobConfigVO.status==-1>
                                                         <span  class="ant-tag-magenta">
-                                                     ${jobConfigVO.stautsStr!""}
+                                                     ${jobConfigVO.statusStr!""}
                                                     </span>
                                                     <#else>
-                                                        ${jobConfigVO.stautsStr!""}
+                                                        ${jobConfigVO.statusStr!""}
                                                     </#if>
                                                 </#if>
                                             </td>
@@ -194,7 +194,7 @@
                                             <td>
                                                 <#if jobConfigVO.isOpen==1>
 
-                                                    <#if jobConfigVO.stauts==1>
+                                                    <#if jobConfigVO.status==1>
                                                         <a href="#" onclick="stop(${jobConfigVO.id})">停止任务</a>
                                                     <#else>
                                                         <a href="#" onclick="start(${jobConfigVO.id})">提交任务</a>

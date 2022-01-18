@@ -67,7 +67,7 @@
 
                             <div class="form-group ">
                                 <label for="inputfile">任务状态：</label>
-                                <pre>${jobConfig.stautsStr!""}</pre>
+                                <pre>${jobConfig.statusStr!""}</pre>
                             </div>
                             <div class="form-group">
                                 <label for="inputfile">配置是否开启：</label>

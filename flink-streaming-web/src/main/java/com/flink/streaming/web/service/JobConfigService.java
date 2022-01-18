@@ -35,6 +35,16 @@ public interface JobConfigService {
      * @time 19:26
      */
     void updateJobConfigById(JobConfigDTO jobConfigDTO);
+    
+    /**
+     * 修改配置(记录历史信息)
+     * 
+     * @param jobConfigDTO
+     * @author wxj
+     * @date 2021年12月30日 下午2:33:31 
+     * @version V1.0
+     */
+    void updateJobConfigByIdWithWriteHistory(JobConfigDTO jobConfigDTO);
 
 
     /**
@@ -53,9 +63,6 @@ public interface JobConfigService {
      */
     void updateStatusByStart(Long id, String userName, Long jobRunLogId, Integer version);
 
-
-
-
     /**
      * 单个查询任务详情
      *
@@ -64,6 +71,17 @@ public interface JobConfigService {
      * @time 23:05
      */
     JobConfigDTO getJobConfigById(Long id);
+    
+    /**
+     * 单个查询任务详情(包括删除)
+     * 
+     * @param id
+     * @return
+     * @author wxj
+     * @date 2021年12月28日 下午1:48:07 
+     * @version V1.0
+     */
+    JobConfigDTO getJobConfigByIdContainDelete(Long id);
 
     /**
      * 开启或者配置
@@ -83,7 +101,17 @@ public interface JobConfigService {
      * @time 23:03
      */
     void deleteJobConfigById(Long id, String userName);
-
+    
+    /**
+     * 恢复删除任务
+     * 
+     * @param id
+     * @param userName
+     * @author wxj
+     * @date 2021年12月28日 下午2:07:31 
+     * @version V1.0
+     */
+    int recoveryDeleteJobConfigById(Long id, String userName);
 
     /**
      * 分页查询

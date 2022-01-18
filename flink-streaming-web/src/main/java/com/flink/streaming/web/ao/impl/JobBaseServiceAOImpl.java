@@ -1,6 +1,10 @@
 package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
+
+import com.alibaba.nacos.api.annotation.NacosInjected;
+import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
@@ -28,9 +32,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.StringReader;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author zhuhuipei
@@ -42,6 +50,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class JobBaseServiceAOImpl implements JobBaseServiceAO {
 
+    public static final ThreadLocal<String> threadAppId = new ThreadLocal<String>();
 
     @Autowired
     private JobRunLogService jobRunLogService;
@@ -62,6 +71,15 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
 
     @Autowired
     private FlinkRestRpcAdapter flinkRestRpcAdapter;
+    
+    @NacosInjected
+    private ConfigService configService;
+    
+    @NacosValue(value = "${nacos.config.data-id:}", autoRefreshed = true)
+    private String nacosConfigDataId;
+    
+    @NacosValue(value = "${nacos.config.group:}", autoRefreshed = true)
+    private String nacosConfigGroup;
 
     @Override
     public void checkStart(JobConfigDTO jobConfigDTO) {
@@ -149,7 +167,10 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
 
     @Override
     public JobRunParamDTO writeSqlToFile(JobConfigDTO jobConfigDTO) {
-
+        if (configService != null && StringUtils.isNotEmpty(nacosConfigDataId)
+            && StringUtils.isNotEmpty(nacosConfigGroup)) {
+            replaceNacosParameters(jobConfigDTO);
+        }
         Map<String, String> systemConfigMap = SystemConfigDTO.toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
 
         String sqlPath = FileUtils.getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
@@ -162,12 +183,17 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
     @Override
     public void aSyncExecJob(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfigDTO,
                              Long jobRunLogId, String savepointPath) {
+        if (configService != null && StringUtils.isNotEmpty(nacosConfigDataId)
+            && StringUtils.isNotEmpty(nacosConfigGroup)) {
+            replaceNacosParameters(jobConfigDTO);
+        }
         ThreadPoolExecutor threadPoolExecutor = JobThreadPool.getInstance().getThreadPoolExecutor();
         threadPoolExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 String jobStatus = JobStatusEnum.SUCCESS.name();
                 String appId = "";
+                threadAppId.set(appId);
                 boolean success = true;
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
@@ -177,16 +203,14 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         .append(SystemConstant.LINE_FEED)
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP())
                         .append(SystemConstant.LINE_FEED);
-
                 try {
                     String command = "";
 
                     //如果是自定义提交jar模式下载文件到本地
                     this.downJar(jobRunParamDTO, jobConfigDTO);
-
-
                     switch (jobConfigDTO.getDeployModeEnum()) {
                         case YARN_PER:
+                            //localLog.append("HADOOP_CLASSPATH=").append(System.getProperty("HADOOP_CLASSPATH")).append(SystemConstant.LINE_FEED);
                             //1、构建执行命令
                             command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO,
                                     jobConfigDTO, savepointPath);
@@ -199,13 +223,10 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                             command = CommandUtil.buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO, savepointPath);
                             //2、提交任务
                             appId = this.submitJobForStandalone(command, jobConfigDTO, localLog);
-
                             break;
                     }
-
-
                 } catch (Exception e) {
-                    log.error("exe is error", e);
+                    log.error("任务[" + jobConfigDTO.getId() + "]执行有异常！", e);
                     localLog.append(e).append(errorInfoDir());
                     success = false;
                     jobStatus = JobStatusEnum.FAIL.name();
@@ -216,9 +237,12 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                     } else {
                         localLog.append("######启动结果是 失败############################## ");
                     }
+                    if (StringUtils.isBlank(appId)) { // 解决任务异常，但已经生成了appID，但没有传递给上层调用方法的问题
+                        appId = threadAppId.get();
+                        log.info("任务[{}]执行有异常情况，appid = {}", jobConfigDTO.getId(), appId);
+                    }
                     this.updateStatusAndLog(jobConfigDTO, jobRunLogId, jobStatus, localLog.toString(), appId);
                 }
-
             }
 
 
@@ -278,8 +302,10 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                 try {
                     JobConfigDTO jobConfigDTO = new JobConfigDTO();
                     jobConfigDTO.setId(jobConfig.getId());
+                    jobConfigDTO.setJobId(appId);
                     JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
                     jobRunLogDTO.setId(jobRunLogId);
+                    jobRunLogDTO.setJobId(appId);
                     if (JobStatusEnum.SUCCESS.name().equals(jobStatus) && !StringUtils.isEmpty(appId)) {
 
                         //批任务提交完成后算成功
@@ -290,8 +316,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         }
 
                         jobConfigDTO.setLastStartTime(new Date());
-                        jobConfigDTO.setJobId(appId);
-                        jobRunLogDTO.setJobId(appId);
                         if (DeployModeEnum.LOCAL.equals(jobConfig.getDeployModeEnum()) ||
                                 DeployModeEnum.STANDALONE.equals(jobConfig.getDeployModeEnum())) {
                             jobRunLogDTO.setRemoteLogUrl(systemConfigService.getFlinkHttpAddress(jobConfig.getDeployModeEnum())
@@ -320,7 +344,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
 
             private String submitJobForStandalone(String command, JobConfigDTO jobConfig, StringBuilder localLog)
                     throws Exception {
-
                 String appId = commandRpcClinetAdapter.submitJob(command, localLog, jobRunLogId, jobConfig.getDeployModeEnum());
                 JobStandaloneInfo jobStandaloneInfo = flinkRestRpcAdapter.getJobInfoForStandaloneByAppId(appId,
                         jobConfig.getDeployModeEnum());
@@ -348,7 +371,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         });
     }
 
-
     private void checYarnQueue(JobConfigDTO jobConfigDTO) {
         try {
             String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
@@ -371,7 +393,6 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         }
     }
 
-
     private void checkSysConfig(Map<String, String> systemConfigMap, DeployModeEnum deployModeEnum) {
         if (systemConfigMap == null) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL);
@@ -388,5 +409,51 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         if (!systemConfigMap.containsKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey())) {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME);
         }
+    }
+    
+    /**
+     * 正则表达式，区配参数：${xxxx}
+     */
+    private static Pattern param_pattern = Pattern.compile("\\$\\{[\\w.-]+\\}");
+    
+    /**
+     * 使用Nacos配置替换脚本中的参数
+     * 
+     * @param jobRunParamDTO
+     * @author wxj
+     * @date 2021年12月29日 下午3:02:46 
+     * @version V1.0
+     */
+    private void replaceNacosParameters(JobConfigDTO jobConfigDTO) {
+        try {
+            String configInfo = configService.getConfig(nacosConfigDataId, nacosConfigGroup, 3000);
+            Properties properties = new Properties();
+            properties.load(new StringReader(configInfo));
+            jobConfigDTO.setFlinkRunConfig(replaceParamter(properties, jobConfigDTO.getFlinkRunConfig()));
+            jobConfigDTO.setFlinkCheckpointConfig(replaceParamter(properties, jobConfigDTO.getFlinkCheckpointConfig()));
+            jobConfigDTO.setExtJarPath(replaceParamter(properties, jobConfigDTO.getExtJarPath()));
+            jobConfigDTO.setFlinkSql(replaceParamter(properties, jobConfigDTO.getFlinkSql()));
+            jobConfigDTO.setCustomArgs(replaceParamter(properties, jobConfigDTO.getCustomArgs()));
+            jobConfigDTO.setCustomMainClass(replaceParamter(properties, jobConfigDTO.getCustomMainClass()));
+            jobConfigDTO.setCustomJarUrl(replaceParamter(properties, jobConfigDTO.getCustomJarUrl()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private String replaceParamter(Properties properties, String text) {
+        if (text == null) {
+            return null;
+        }
+        Matcher m = param_pattern.matcher(text);
+        while (m.find()) {
+            String param = m.group();
+            String key = param.substring(2, param.length() - 1);
+            String value = (String)properties.get(key);
+            if (value != null) {
+                text = text.replace(param, value);
+            }
+        }
+        return text;
     }
 }

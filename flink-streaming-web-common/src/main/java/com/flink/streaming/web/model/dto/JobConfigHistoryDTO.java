@@ -1,6 +1,8 @@
 package com.flink.streaming.web.model.dto;
 
 import cn.hutool.core.collection.CollectionUtil;
+
+import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.model.entity.JobConfig;
 import com.flink.streaming.web.model.entity.JobConfigHistory;
 import lombok.Data;
@@ -32,6 +34,11 @@ public class JobConfigHistoryDTO implements Serializable {
      * 任务名称
      */
     private String jobName;
+    
+    /**
+     * 任务描述
+     */
+    private String jobDesc;
 
     /**
      * 提交模式: standalone 、yarn 、yarn-session
@@ -76,6 +83,11 @@ public class JobConfigHistoryDTO implements Serializable {
      * sql语句
      */
     private String flinkSql;
+    
+    /**
+     * 任务类型
+     */
+    private JobTypeEnum jobTypeEnum;
 
 
     public static JobConfigHistory toEntity(JobConfigHistoryDTO jobConfigHistoryDTO) {
@@ -86,6 +98,7 @@ public class JobConfigHistoryDTO implements Serializable {
         jobConfigHistory.setId(jobConfigHistoryDTO.getId());
         jobConfigHistory.setJobConfigId(jobConfigHistoryDTO.getJobConfigId());
         jobConfigHistory.setJobName(jobConfigHistoryDTO.getJobName());
+        jobConfigHistory.setJobDesc(jobConfigHistoryDTO.getJobDesc());
         jobConfigHistory.setDeployMode(jobConfigHistoryDTO.getDeployMode());
         jobConfigHistory.setFlinkRunConfig(jobConfigHistoryDTO.getFlinkRunConfig());
         jobConfigHistory.setFlinkCheckpointConfig(jobConfigHistoryDTO.getFlinkCheckpointConfig());
@@ -96,6 +109,9 @@ public class JobConfigHistoryDTO implements Serializable {
         jobConfigHistory.setCreator(jobConfigHistoryDTO.getCreator());
         jobConfigHistory.setEditor(jobConfigHistoryDTO.getEditor());
         jobConfigHistory.setFlinkSql(jobConfigHistoryDTO.getFlinkSql());
+        if (jobConfigHistoryDTO.getJobTypeEnum() != null) {
+            jobConfigHistory.setJobType(jobConfigHistoryDTO.getJobTypeEnum().getCode());
+        }
         return jobConfigHistory;
     }
 
@@ -108,6 +124,7 @@ public class JobConfigHistoryDTO implements Serializable {
         jobConfigHistoryDTO.setId(jobConfigHistory.getId());
         jobConfigHistoryDTO.setJobConfigId(jobConfigHistory.getJobConfigId());
         jobConfigHistoryDTO.setJobName(jobConfigHistory.getJobName());
+        jobConfigHistoryDTO.setJobDesc(jobConfigHistory.getJobDesc());
         jobConfigHistoryDTO.setDeployMode(jobConfigHistory.getDeployMode());
         jobConfigHistoryDTO.setFlinkRunConfig(jobConfigHistory.getFlinkRunConfig());
         jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfigHistory.getFlinkCheckpointConfig());
@@ -118,6 +135,7 @@ public class JobConfigHistoryDTO implements Serializable {
         jobConfigHistoryDTO.setCreator(jobConfigHistory.getCreator());
         jobConfigHistoryDTO.setEditor(jobConfigHistory.getEditor());
         jobConfigHistoryDTO.setFlinkSql(jobConfigHistory.getFlinkSql());
+        jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfigHistory.getJobType()));
         return jobConfigHistoryDTO;
     }
 
@@ -147,6 +165,7 @@ public class JobConfigHistoryDTO implements Serializable {
         JobConfigHistoryDTO jobConfigHistoryDTO = new JobConfigHistoryDTO();
         jobConfigHistoryDTO.setJobConfigId (jobConfig.getId());
         jobConfigHistoryDTO.setJobName(jobConfig.getJobName());
+        jobConfigHistoryDTO.setJobDesc(jobConfig.getJobDesc());
         jobConfigHistoryDTO.setDeployMode(jobConfig.getDeployMode());
         jobConfigHistoryDTO.setFlinkRunConfig(jobConfig.getFlinkRunConfig());
         jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfig.getFlinkCheckpointConfig());
@@ -157,6 +176,7 @@ public class JobConfigHistoryDTO implements Serializable {
         jobConfigHistoryDTO.setCreator(jobConfig.getCreator());
         jobConfigHistoryDTO.setEditor(jobConfig.getEditor());
         jobConfigHistoryDTO.setFlinkSql(jobConfig.getFlinkSql());
+        jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfig.getJobType()));
         return jobConfigHistoryDTO;
     }
 }

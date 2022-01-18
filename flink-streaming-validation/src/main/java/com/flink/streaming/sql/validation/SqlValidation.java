@@ -83,6 +83,9 @@ public class SqlValidation {
                         }
 
                         break;
+                    case BEGIN_STATEMENT_SET:
+                    case END:
+                        break;
                     //其他
                     default:
                         if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.sqlCommand)

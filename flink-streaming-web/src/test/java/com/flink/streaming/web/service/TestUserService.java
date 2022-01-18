@@ -28,7 +28,7 @@ public class TestUserService extends TestRun {
 
     @Test
     public void add() {
-        userService.addUser("root", "123456", "test");
+       // userService.addUser("root", "123456", "test");
     }
 
 

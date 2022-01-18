@@ -13,17 +13,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class SystemConstants {
 
-
     public static final String COOKIE_NAME_SESSION_ID = "flink-streaming-platform-web-sessionid";
 
-
     public static final String STATUS_RUNNING = "RUNNING";
-
+    
+    public static final String STATUS_RESTARTING = "RESTARTING";
 
     public static final String USER_NAME_TASK_AUTO = "task-auto";
 
     public static final String CODE_UTF_8 = "UTF-8";
-
 
     public static final String DEFAULT_SAVEPOINT_ROOT_PATH = "hdfs:///flink/savepoint/flink-streaming-platform-web/";
 
@@ -37,14 +35,11 @@ public class SystemConstants {
 
     public static final String HTTP_YARN_APPS = "ws/v1/cluster/apps/";
 
-
     public static final String HTTP_YARN_CLUSTER_APPS = "cluster/app/";
 
     public static final String HTTP_STANDALONE_APPS = "#/job/";
 
-
     public static final String YQU = "yqu";
-
 
     public static String buildHttpQuery(String queueName) {
         if (StringUtils.isEmpty(queueName)) {
@@ -76,7 +71,7 @@ public class SystemConstants {
      * @time 00:54
      */
     public static String buildDingdingMessage(String content) {
-        return "flink任务告警:" + content;
+        return "Flink任务告警：" + content;
     }
 
 }

@@ -5,11 +5,18 @@ import com.flink.streaming.web.common.util.Base64Coded;
 import com.flink.streaming.web.common.util.Md5Utils;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.UserStatusEnum;
+import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.mapper.UserMapper;
+import com.flink.streaming.web.model.dto.JobConfigDTO;
+import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.dto.UserDTO;
 import com.flink.streaming.web.model.dto.UserSession;
 import com.flink.streaming.web.model.entity.User;
+import com.flink.streaming.web.model.page.PageParam;
 import com.flink.streaming.web.service.UserService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +43,17 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new BizException(SysErrorEnum.USER_IS_NOT_NULL);
         }
-        if (UserStatusEnum.CLOSE.getCode().equals(user.getStauts())) {
+        if (UserStatusEnum.CLOSE.getCode().equals(user.getStatus())) {
             throw new BizException(SysErrorEnum.USER_IS_STOP);
         }
         if (!Md5Utils.getMD5String(password).equalsIgnoreCase(user.getPassword())) {
+            if (password.equals(user.getPassword())) { //数据库保存的非md5码
+                String userSession = UserSession.toJsonString(user.getId(), user.getUsername(), Md5Utils.getMD5String(user.getPassword()));
+                return Base64Coded.encode(userSession.getBytes());
+            }
             throw new BizException(SysErrorEnum.USER_PASSWORD_ERROR);
         }
-        String userSession = UserSession.toJsonString(user.getUsername(), user.getPassword());
-
+        String userSession = UserSession.toJsonString(user.getId(), user.getUsername(), user.getPassword());
         return Base64Coded.encode(userSession.getBytes());
     }
 
@@ -54,6 +64,9 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         if (!userSession.getPassword().equalsIgnoreCase(Md5Utils.getMD5String(user.getPassword()))) {
+            if (userSession.getPassword().equalsIgnoreCase(Md5Utils.getMD5String(Md5Utils.getMD5String(user.getPassword())))) { //数据库保存的非md5码
+                return true;
+            }
             return false;
         }
 
@@ -61,7 +74,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(String userName, String password, String operator) {
+    public PageModel<UserDTO> queryAllByPage(PageParam pageparam) {
+        PageHelper.startPage(pageparam.getPageNum(), pageparam.getPageSize(), YN.Y.getCode());
+        Page<User> users = userMapper.queryAllByPage(pageparam);
+        PageModel<UserDTO> pageModel = new PageModel<UserDTO>();
+        pageModel.setPageNum(users.getPageNum());
+        pageModel.setPages(users.getPages());
+        pageModel.setPageSize(users.getPageSize());
+        pageModel.setTotal(users.getTotal());
+        pageModel.addAll(UserDTO.toListDTO(users.getResult()));
+        return pageModel;
+    }
+
+    @Override
+    public void addUser(String userName, String fullname, String password, String operator) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
         }
@@ -73,8 +99,9 @@ public class UserServiceImpl implements UserService {
         user.setEditor(operator);
         user.setCreator(operator);
         user.setUsername(userName);
+        user.setName(fullname);
         //默认开启
-        user.setStauts(UserStatusEnum.OPEN.getCode());
+        user.setStatus(UserStatusEnum.OPEN.getCode());
         user.setPassword(Md5Utils.getMD5String(password));
         userMapper.insert(user);
     }
@@ -100,6 +127,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updatePassword(Integer userId, String password, String operator) {
+        User userMp = userMapper.selectByUserId(userId);
+        if (userMp == null) {
+            throw new BizException(SysErrorEnum.USER_IS_NOT_NULL);
+        }
+        User user = new User();
+        user.setId(userId);
+        user.setEditor(operator);
+        user.setPassword(Md5Utils.getMD5String(password));
+        userMapper.updateByUserIdSelective(user);
+    }
+
+    @Override
+    public void updateFullName(Integer userid, String fullname, String operator) {
+        User userMp = userMapper.selectByUserId(userid);
+        if (userMp == null) {
+            throw new BizException(SysErrorEnum.USER_IS_NOT_NULL);
+        }
+        User user = new User();
+        user.setId(userid);
+        user.setEditor(operator);
+        user.setName(fullname);
+        userMapper.updateByUserIdSelective(user);
+    }
+
+    @Override
     public void stopOrOpen(String userName, UserStatusEnum userStatusEnum, String operator) {
         if (StringUtils.isEmpty(userName) || userStatusEnum == null) {
             throw new BizException(SysErrorEnum.PARAM_IS_NULL);
@@ -110,7 +163,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEditor(operator);
         user.setUsername(userName);
-        user.setStauts(userStatusEnum.getCode());
+        user.setStatus(userStatusEnum.getCode());
         userMapper.updateByPrimaryKeySelective(user);
     }
 
@@ -119,5 +172,16 @@ public class UserServiceImpl implements UserService {
         return UserDTO.toListDTO(userMapper.findAll());
     }
 
+    @Override
+    public UserDTO qyeryByUserName(String userName) {
+        User user = userMapper.selectByUsername(userName);
+        return UserDTO.toDTO(user);
+    }
+
+    @Override
+    public UserDTO qyeryByUserId(Integer userid) {
+        User user = userMapper.selectByUserId(userid);
+        return UserDTO.toDTO(user);
+    }
 
 }

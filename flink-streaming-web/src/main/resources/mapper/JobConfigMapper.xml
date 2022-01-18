@@ -4,12 +4,13 @@
     <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfig">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+        <result column="job_desc" jdbcType="VARCHAR" property="jobDesc"/>
         <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
         <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig"/>
         <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
         <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
         <result column="is_open" jdbcType="BIT" property="isOpen"/>
-        <result column="status" jdbcType="BIT" property="stauts"/>
+        <result column="status" jdbcType="BIT" property="status"/>
         <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
         <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
         <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
@@ -34,6 +35,7 @@
     <sql id="Base_Column_List">
         id,
         job_name,
+        job_desc,
         deploy_mode,
         flink_run_config,
         flink_checkpoint_config,
@@ -62,16 +64,34 @@
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into job_config (job_name, deploy_mode, flink_run_config,
+        insert into job_config (job_name, job_desc, deploy_mode, flink_run_config,
         flink_checkpoint_config, job_id, is_open,
         status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
         is_deleted, create_time, edit_time,
         creator, editor, flink_sql,ext_jar_path
         )
-        values (#{jobName,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
-        #{flinkRunConfig,jdbcType=VARCHAR},
+        values (#{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
+        #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
         #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
-        #{stauts,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
+        #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
+        #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
+        0, now(), now(),
+        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
+        #{extJarPath,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="insertWithId" parameterType="com.flink.streaming.web.model.entity.JobConfig">
+        insert into job_config (id, job_name, job_desc, deploy_mode, flink_run_config,
+        flink_checkpoint_config, job_id, is_open,
+        status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
+        is_deleted, create_time, edit_time,
+        creator, editor, flink_sql,ext_jar_path
+        )
+        values (#{id,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
+        #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
+        #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
+        #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
         #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
         0, now(), now(),
         #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
@@ -88,6 +108,13 @@
         where id = #{id,jdbcType=BIGINT} and is_deleted=0
     </select>
 
+    <select id="selectByPrimaryKeyContainDelete" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+		<include refid="Base_Column_List"/>,
+        <include refid="Blob_Column_List"/>
+        from job_config
+        where id = #{id,jdbcType=BIGINT}
+    </select>
 
     <select id="findJobConfig" parameterType="com.flink.streaming.web.model.param.JobConfigParam"
             resultMap="ResultMapWithBLOBs">
@@ -107,9 +134,9 @@
         </if>
 
 
-        <if test="stauts != null ">
+        <if test="status != null ">
             <![CDATA[
-	               and status = #{stauts,jdbcType=BIT}
+	               and status = #{status,jdbcType=BIT}
 			 ]]>
         </if>
 
@@ -189,6 +216,9 @@
             <if test="jobName != null">
                 job_name = #{jobName,jdbcType=VARCHAR},
             </if>
+            <if test="jobDesc != null">
+                job_desc = #{jobDesc,jdbcType=VARCHAR},
+            </if>
             <if test="deployMode != null">
                 deploy_mode = #{deployMode,jdbcType=VARCHAR},
             </if>
@@ -204,8 +234,8 @@
             <if test="isOpen != null">
                 is_open = #{isOpen,jdbcType=BIT},
             </if>
-            <if test="stauts != null">
-                status = #{stauts,jdbcType=BIT},
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
             </if>
 
             <if test="extJarPath != null">
@@ -252,5 +282,10 @@
           and is_deleted = 0
     </update>
 
+    <update id="recoveryDeleteJobConfigById">
+        update job_config 
+        set is_deleted=0, editor=#{userName,jdbcType=VARCHAR}
+        where id=#{id,jdbcType=BIGINT} and is_deleted=1
+    </update>
 
 </mapper>

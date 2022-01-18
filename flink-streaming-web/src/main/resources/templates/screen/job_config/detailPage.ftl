@@ -57,7 +57,7 @@
                             </div>
                             <div class="form-group">
                                 <h4>任务状态：</h4>
-                                <pre>${jobConfig.stautsStr!""}</pre>
+                                <pre>${jobConfig.statusStr!""}</pre>
                             </div>
                             <div class="form-group">
                                 <h4>flink运行配置：</h4>

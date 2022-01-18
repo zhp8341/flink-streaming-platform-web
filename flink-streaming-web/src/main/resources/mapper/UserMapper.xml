@@ -4,8 +4,9 @@
   <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.User">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="stauts" jdbcType="BIT" property="stauts" />
+    <result column="status" jdbcType="BIT" property="status" />
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
@@ -15,7 +16,7 @@
 
 
   <sql id="Base_Column_List">
-    id, username, password, stauts, is_deleted, create_time, edit_time, creator, editor
+    id, username, name, password, status, is_deleted, create_time, edit_time, creator, editor
   </sql>
 
   <select id="selectByUsername" resultMap="BaseResultMap">
@@ -25,28 +26,34 @@
     where username = #{username} and  is_deleted=0
   </select>
 
+  <select id="selectByUserId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{userid} and is_deleted=0
+  </select>
 
     <insert id="insert" parameterType="com.flink.streaming.web.model.entity.User">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
-        insert into user (username, password, stauts,
-        is_deleted, create_time, edit_time,
-        creator, editor)
-        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{stauts,jdbcType=BIT},
-        0, now(), now(),
-        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR})
+        insert into user (username, name, password, status, is_deleted, create_time, edit_time, creator, editor)
+        values (#{username,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=BIT},
+        0, now(), now(), #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR})
     </insert>
 
 
     <update id="updateByPrimaryKeySelective" parameterType="com.flink.streaming.web.model.entity.User">
         update user
         <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
             <if test="password != null">
                 password = #{password,jdbcType=VARCHAR},
             </if>
-            <if test="stauts != null">
-                stauts = #{stauts,jdbcType=BIT},
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
             </if>
             <if test="editTime != null">
                 edit_time = #{editTime,jdbcType=TIMESTAMP},
@@ -58,12 +65,42 @@
         where username = #{username,jdbcType=VARCHAR} and is_deleted=0
     </update>
 
+    <update id="updateByUserIdSelective" parameterType="com.flink.streaming.web.model.entity.User">
+        update user
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="editTime != null">
+                edit_time = #{editTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="editor != null">
+                editor = #{editor,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER} and is_deleted=0
+    </update>
+
 
     <select id="findAll"  resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from user
         where is_deleted=0
+    </select>
+    
+    <select id="queryAllByPage" parameterType="com.flink.streaming.web.model.page.PageParam" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from user
+        where is_deleted=0
+        order by id
     </select>
 
 </mapper>

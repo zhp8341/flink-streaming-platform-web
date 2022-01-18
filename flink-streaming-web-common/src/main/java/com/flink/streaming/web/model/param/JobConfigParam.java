@@ -18,7 +18,7 @@ public class JobConfigParam extends PageParam {
      * @time 02:07
      * @see com.flink.streaming.web.enums.JobConfigStatus
      */
-    private Integer stauts;
+    private Integer status;
 
 
     /**

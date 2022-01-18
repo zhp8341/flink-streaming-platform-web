@@ -11,13 +11,20 @@ import java.util.Date;
  */
 @Data
 public class User {
-
+    /**
+     * 用户编号
+     */
     private Integer id;
 
     /**
-     * 用户名
+     * 用户帐号
      */
     private String username;
+    
+    /**
+     * 用户名称
+     */
+    private String name;
 
     /**
      * 密码
@@ -28,7 +35,7 @@ public class User {
      * @see com.flink.streaming.web.enums.UserStatusEnum
      * 1:启用 0: 停用
      */
-    private Integer stauts;
+    private Integer status;
 
     /**
      * 1:删除 0: 未删除

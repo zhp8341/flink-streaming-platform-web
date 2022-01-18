@@ -101,6 +101,7 @@ CREATE TABLE `job_config` (
                               PRIMARY KEY (`id`),
                               KEY `uk_index` (`job_name`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置表';
+ALTER TABLE job_config ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 
 -- ----------------------------
 -- Records of job_config
@@ -131,6 +132,8 @@ CREATE TABLE `job_config_history` (
                                       PRIMARY KEY (`id`),
                                       KEY `index_job_config_id` (`job_config_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置历史变更表';
+ALTER TABLE job_config_history ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
+ALTER TABLE job_config_history add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '任务类型 0:sql 1:自定义jar' AFTER version ;
 
 -- ----------------------------
 -- Records of job_config_history
@@ -162,6 +165,7 @@ CREATE TABLE `job_run_log` (
                                `editor` varchar(32) DEFAULT 'sys',
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运行任务日志';
+ALTER TABLE job_run_log ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 
 -- ----------------------------
 -- Table structure for savepoint_backup
@@ -213,7 +217,7 @@ COMMIT;
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `username` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用户名',
+                        `username` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '用户帐号',
                         `password` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
                         `stauts` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
                         `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:删除 0: 未删除',
@@ -224,12 +228,15 @@ CREATE TABLE `user` (
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+ALTER TABLE user ADD COLUMN `name` VARCHAR(100) NOT NULL COMMENT '用户姓名' AFTER `username`;
+ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用', -- 修正status字段命名，兼容处理，只增加字段
+ALTER TABLE `user` modify COLUMN `stauts` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:启用 0: 停用'; 
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-11-11 22:53:26', 'sys', 'admin');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-11-11 22:53:26', 'sys', 'admin');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
