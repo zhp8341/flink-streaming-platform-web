@@ -21,6 +21,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   
    由于前端UI是本人自己写的，不够专业，样式有点丑 请多多包含！！！
 
+   该项目获得 [Flink Forward Asia Hackathon (2021) 季军 ](https://mp.weixin.qq.com/s/J2OkX_D34ktfwSfhwdmXYQ)
+
+
 ### 1、主要功能
 
    * **[1] 任务支持单流 、双流、 单流与维表等。**
@@ -244,20 +247,18 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
 http://img.ccblog.cn/flink/dd2.png 
 
 
-微信二维码 http://img.ccblog.cn/flink/wx2.png
-
-
- [微信二维码](http://img.ccblog.cn/flink/wx2.png)
-
- 
- 
  
  ##  十、使用情况 
 
  
 [2021-03-18 和 2021-03-19 两天 做的调研 ](/docs/img2.md)
 
-## 十一、 捐赠
+
+## 十一、 鸣谢
+感谢文香炯（湖南草花互动科技股份公司）贡献前端代码 ：https://gitee.com/wenxiangjiong/flink-streaming-platform-web.git
+
+
+## 十二、 捐赠
 
 [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
 
