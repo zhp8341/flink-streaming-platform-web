@@ -2,7 +2,7 @@
 .project
 .classpath
 target/
-
+node_modules/
 # Created by .ignore support plugin (hsz.mobi)
 ### Java template
 # Compiled class file
