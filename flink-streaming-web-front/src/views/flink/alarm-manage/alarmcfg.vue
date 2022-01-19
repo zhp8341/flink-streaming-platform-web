@@ -13,6 +13,7 @@
         <el-input v-model="form.dingding_alart_url" placeholder="钉钉告警所需的url" class="fl-form-item" />
         <el-button type="primary" @click="updateConfig('dingding_alart_url', form.dingding_alart_url)">提交</el-button>
         <el-button type="danger" @click="deleteConfig('dingding_alart_url')">删除</el-button>
+        <el-button type="success" @click="testalarm('/testDingdingAlert')">测试一下</el-button>
       </el-form-item>
       <el-form-item inline="true">
         <span slot="label">自定义回调
@@ -26,13 +27,14 @@
         <el-input v-model="form.callback_alart_url" placeholder="自定义http回调告警" class="fl-form-item" />
         <el-button type="primary" @click="updateConfig('callback_alart_url', form.callback_alart_url)">提交</el-button>
         <el-button type="danger" @click="deleteConfig('callback_alart_url')">删除</el-button>
+        <el-button type="success" @click="testalarm('/testHttpAlert')">测试一下</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { alartConfig, upsertSynConfig, deleteConfig } from '@/api/config'
+import { alartConfig, upsertSynConfig, deleteConfig,test_alarm } from '@/api/config'
 
 export default {
   name: 'AlarmCfg',
@@ -90,6 +92,23 @@ export default {
         console.log(error)
       })
     },
+
+    testalarm(url) { // 测试一下
+      console.log(url)
+      test_alarm(url).then(response => {
+        const { code, success, message, data } = response
+        if (code !== '200' || !success) {
+          this.$message({ type: 'error', message: (message || '测试数据异常！') })
+          return
+        }
+        this.$message({ type: 'success', message: `测试成功！` })
+        this.queryConfig()
+      }).catch(error => {
+        this.$message({ type: 'error', message: '测试异常！' })
+        console.log(error)
+      })
+    },
+
     deleteConfig(key) { // 删除配置
       var keyname = ''
       if (key === 'dingding_alart_url') {

@@ -49,6 +49,19 @@ export function upsertSynConfig(key, value) {
 }
 
 /**
+ * test
+ * @param {*} key
+ * @returns
+ */
+export function test_alarm(url) {
+  return request({
+    url: url,
+    method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  })
+}
+
+/**
  * 删除配置
  * @param {*} key
  * @returns
