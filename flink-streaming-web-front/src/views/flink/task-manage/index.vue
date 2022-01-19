@@ -103,7 +103,7 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="其他" :show-overflow-tooltip="true" align="center">
+        <el-table-column label="报警模式" :show-overflow-tooltip="true" align="center">
           <template slot-scope="scope">
             <el-link v-if="scope.row.alarmStrs">{{ scope.row.alarmStrs }}</el-link><!-- 辅助 -->
           </template>
@@ -116,7 +116,7 @@
         </el-table-column>
         <el-table-column prop="operate" label="操作" width="210" fixed="right">
           <template slot-scope="scope">
-            <el-link v-if="scope.row.isOpen===1&&scope.row.status!=='RUN'" type="success" icon="el-icon-video-play" @click.native="startTask(scope.row)">运行</el-link>
+            <el-link v-if="scope.row.isOpen===1&&scope.row.status!=='RUN'" type="success" icon="el-icon-video-play" @click.native="startTask(scope.row)">启动</el-link>
             <el-link v-if="scope.row.isOpen===1&&scope.row.status==='RUN'" type="warning" icon="el-icon-switch-button" @click.native="stopTask(scope.row)">停止</el-link>
             <router-link :to="{name:getRouteTaskName('view',scope.row.jobTypeEnum), params:{flag:'view', context:queryContent(), data:scope.row}}">
               <el-link type="info" icon="el-icon-view">查看</el-link>

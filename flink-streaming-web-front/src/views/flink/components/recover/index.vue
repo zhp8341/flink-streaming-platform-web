@@ -43,7 +43,7 @@
     </el-table>
     <span slot="footer" class="dialog-footer">
       <el-button @click="doCancel()">取 消</el-button>
-      <el-button type="primary" @click="doConfirm()">确 定</el-button>
+      <el-button type="primary" @click="doConfirm()">恢复任务</el-button>
     </span>
   </el-dialog>
 </template>

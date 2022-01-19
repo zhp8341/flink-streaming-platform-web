@@ -71,13 +71,13 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
 
     @Autowired
     private FlinkRestRpcAdapter flinkRestRpcAdapter;
-    
+
     @NacosInjected
     private ConfigService configService;
-    
+
     @NacosValue(value = "${nacos.config.data-id:}", autoRefreshed = true)
     private String nacosConfigDataId;
-    
+
     @NacosValue(value = "${nacos.config.group:}", autoRefreshed = true)
     private String nacosConfigGroup;
 
@@ -198,9 +198,12 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                 StringBuilder localLog = new StringBuilder()
                         .append("开始提交任务：")
                         .append(DateUtil.now()).append(SystemConstant.LINE_FEED)
-                        .append("三方jar: ").append(SystemConstant.LINE_FEED)
-                        .append(jobConfigDTO.getExtJarPath())
-                        .append(SystemConstant.LINE_FEED)
+                        .append("三方jar: ").append(SystemConstant.LINE_FEED);
+                         if(jobConfigDTO.getExtJarPath()!=null){
+                             localLog.append(jobConfigDTO.getExtJarPath());
+                         }
+
+                localLog.append(SystemConstant.LINE_FEED)
                         .append("客户端IP：").append(IpUtil.getInstance().getLocalIP())
                         .append(SystemConstant.LINE_FEED);
                 try {
@@ -410,18 +413,18 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_STREAMING_PLATFORM_WEB_HOME);
         }
     }
-    
+
     /**
      * 正则表达式，区配参数：${xxxx}
      */
     private static Pattern param_pattern = Pattern.compile("\\$\\{[\\w.-]+\\}");
-    
+
     /**
      * 使用Nacos配置替换脚本中的参数
-     * 
-     * @param jobRunParamDTO
+     *
+     * @param jobConfigDTO
      * @author wxj
-     * @date 2021年12月29日 下午3:02:46 
+     * @date 2021年12月29日 下午3:02:46
      * @version V1.0
      */
     private void replaceNacosParameters(JobConfigDTO jobConfigDTO) {
@@ -440,7 +443,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             throw new RuntimeException(e);
         }
     }
-    
+
     private String replaceParamter(Properties properties, String text) {
         if (text == null) {
             return null;
