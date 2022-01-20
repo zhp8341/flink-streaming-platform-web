@@ -2,6 +2,8 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+CREATE DATABASE `flink_web` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE flink_web;
 -- ----------------------------
 -- Table structure for alart_log
 -- ----------------------------
@@ -72,7 +74,7 @@ ALTER TABLE job_config add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '�
 ALTER TABLE job_config add `custom_args` varchar(128)  DEFAULT NULL COMMENT '启动jar可能需要使用的自定义参数' AFTER job_type;
 ALTER TABLE job_config add `custom_main_class` varchar(128)  DEFAULT NULL COMMENT '程序入口类' AFTER custom_args;
 ALTER TABLE job_config add `custom_jar_url` varchar(128)  DEFAULT NULL   COMMENT'自定义jar的http地址 如:http://ccblog.cn/xx.jar' AFTER custom_main_class;
-
+ALTER TABLE job_config ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 
 -- ----------------------------
 -- Table structure for job_config_history
@@ -95,8 +97,8 @@ CREATE TABLE `job_config_history` (
                                       PRIMARY KEY (`id`),
                                       KEY `index_job_config_id` (`job_config_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置历史变更表';
-
-
+ALTER TABLE job_config_history ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
+ALTER TABLE job_config_history add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '任务类型 0:sql 1:自定义jar' AFTER version ;
 
 -- ----------------------------
 -- Table structure for job_run_log
@@ -122,7 +124,7 @@ CREATE TABLE `job_run_log` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COMMENT='运行任务日志';
 
 ALTER TABLE job_run_log add `run_ip`  varchar(64) DEFAULT NULL COMMENT '任务运行所在的机器' AFTER local_log ;
-
+ALTER TABLE job_run_log ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 
 -- ----------------------------
 -- Table structure for savepoint_backup
@@ -169,7 +171,7 @@ CREATE TABLE `system_config` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用户名',
+  `username` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '用户帐号',
   `password` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
   `stauts` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:删除 0: 未删除',
@@ -180,7 +182,9 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
+ALTER TABLE user ADD COLUMN `name` VARCHAR(100) NOT NULL COMMENT '用户姓名' AFTER `username`;
+ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用' AFTER stauts; -- 修正status字段命名，兼容处理，只增加字段
+ALTER TABLE `user` modify COLUMN `stauts` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:启用 0: 停用';
 
 
 CREATE TABLE `job_alarm_config`
@@ -203,7 +207,14 @@ CREATE TABLE `job_alarm_config`
 -- Records of user 默认密码是 123456
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
 COMMIT;
+
+
+--------------
+
+
+
+
 
 SET FOREIGN_KEY_CHECKS = 1;

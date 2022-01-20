@@ -110,7 +110,12 @@ public enum SqlCommand {
                     return Optional.empty();
                 }
                 return Optional.of(new String[]{operands[1], operands[2]});
-            });
+            }),
+    
+    BEGIN_STATEMENT_SET("BEGIN\\s+STATEMENT\\s+SET", (operands) -> Optional.of(new String[]{"BEGIN STATEMENT SET"})),
+    
+    END("END", (operands) -> Optional.of(new String[]{"END"}))
+    ;
 
     public final Pattern pattern;
 

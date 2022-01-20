@@ -30,6 +30,11 @@ public class JobConfigDTO implements Serializable {
      * 任务名称
      */
     private String jobName;
+    
+    /**
+     * 任务描述
+     */
+    private String jobDesc;
 
     /**
      * flink的模式
@@ -103,10 +108,10 @@ public class JobConfigDTO implements Serializable {
      * 自定义jar的http地址 如:http://ccblog.cn/xx.jar
      */
     private String customJarUrl;
-
+    
+    private List<Integer> alarmTypes;
 
     private List<AlarmTypeEnum> alarmTypeEnumList;
-
 
     private Long lastRunLogId;
 
@@ -125,6 +130,12 @@ public class JobConfigDTO implements Serializable {
 
     private String editor;
 
+    private String flinkRunUrl;
+    
+    private String alarmStrs;
+    
+    private Integer isDeleted;
+
     public static JobConfig toEntity(JobConfigDTO jobConfigDTO) {
         if (jobConfigDTO == null) {
             return null;
@@ -132,6 +143,7 @@ public class JobConfigDTO implements Serializable {
         JobConfig jobConfig = new JobConfig();
         jobConfig.setId(jobConfigDTO.getId());
         jobConfig.setJobName(jobConfigDTO.getJobName());
+        jobConfig.setJobDesc(jobConfigDTO.getJobDesc());
         if (jobConfigDTO.getDeployModeEnum() != null) {
             jobConfig.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }
@@ -139,7 +151,7 @@ public class JobConfigDTO implements Serializable {
         jobConfig.setFlinkCheckpointConfig(jobConfigDTO.getFlinkCheckpointConfig());
         jobConfig.setJobId(jobConfigDTO.getJobId());
         jobConfig.setIsOpen(jobConfigDTO.getIsOpen());
-        jobConfig.setStauts(jobConfigDTO.getStatus().getCode());
+        jobConfig.setStatus(jobConfigDTO.getStatus().getCode());
         jobConfig.setLastStartTime(jobConfigDTO.getLastStartTime());
         jobConfig.setVersion(jobConfigDTO.getVersion());
         jobConfig.setFlinkSql(jobConfigDTO.getFlinkSql());
@@ -156,10 +168,9 @@ public class JobConfigDTO implements Serializable {
         jobConfig.setCustomArgs(jobConfigDTO.getCustomArgs());
         jobConfig.setCustomMainClass(jobConfigDTO.getCustomMainClass());
         jobConfig.setCustomJarUrl(jobConfigDTO.getCustomJarUrl());
-
+        jobConfig.setIsDeleted(jobConfigDTO.getIsDeleted());
         return jobConfig;
     }
-
 
     public static JobConfigDTO toDTO(JobConfig jobConfig) {
         if (jobConfig == null) {
@@ -168,12 +179,13 @@ public class JobConfigDTO implements Serializable {
         JobConfigDTO jobConfigDTO = new JobConfigDTO();
         jobConfigDTO.setId(jobConfig.getId());
         jobConfigDTO.setJobName(jobConfig.getJobName());
+        jobConfigDTO.setJobDesc(jobConfig.getJobDesc());
         jobConfigDTO.setDeployModeEnum(DeployModeEnum.getModel(jobConfig.getDeployMode()));
         jobConfigDTO.setFlinkRunConfig(jobConfig.getFlinkRunConfig());
         jobConfigDTO.setFlinkCheckpointConfig(jobConfig.getFlinkCheckpointConfig());
         jobConfigDTO.setJobId(jobConfig.getJobId());
         jobConfigDTO.setIsOpen(jobConfig.getIsOpen());
-        jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(jobConfig.getStauts()));
+        jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(jobConfig.getStatus()));
         jobConfigDTO.setLastStartTime(jobConfig.getLastStartTime());
         jobConfigDTO.setVersion(jobConfig.getVersion());
         jobConfigDTO.setCreateTime(jobConfig.getCreateTime());
@@ -188,10 +200,9 @@ public class JobConfigDTO implements Serializable {
         jobConfigDTO.setCustomArgs(jobConfig.getCustomArgs());
         jobConfigDTO.setCustomMainClass(jobConfig.getCustomMainClass());
         jobConfigDTO.setCustomJarUrl(jobConfig.getCustomJarUrl());
-
+        jobConfigDTO.setIsDeleted(jobConfig.getIsDeleted());
         return jobConfigDTO;
     }
-
 
     public static List<JobConfigDTO> toListDTO(List<JobConfig> jobConfigList) {
         if (CollectionUtils.isEmpty(jobConfigList)) {
@@ -207,19 +218,17 @@ public class JobConfigDTO implements Serializable {
         return jobConfigDTOList;
     }
 
-
     public static String buildRunName(String jobName) {
 
         return "flink@" + jobName;
     }
-
 
     public static JobConfigDTO bulidStop(Long id) {
         JobConfigDTO jobConfig = new JobConfigDTO();
         jobConfig.setStatus(JobConfigStatus.STOP);
         jobConfig.setEditor("sys_auto");
         jobConfig.setId(id);
-        jobConfig.setJobId("");
+        // jobConfig.setJobId("");
         return jobConfig;
     }
 

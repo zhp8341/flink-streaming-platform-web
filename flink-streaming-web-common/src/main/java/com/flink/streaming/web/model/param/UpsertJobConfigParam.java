@@ -27,6 +27,10 @@ public class UpsertJobConfigParam {
      */
     private String jobName;
 
+    /**
+     * 任务描述
+     */
+    private String jobDesc;
 
     /**
      *
@@ -92,7 +96,7 @@ public class UpsertJobConfigParam {
      * @see JobConfigStatus
      * 1:运行中 0: 停止中 -1:运行失败
      */
-    private Integer stauts = JobConfigStatus.STOP.getCode();
+    private Integer status = JobConfigStatus.STOP.getCode();
 
 
     public static JobConfigDTO toDTO(UpsertJobConfigParam upsertJobConfigParam) {
@@ -103,6 +107,7 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setId(upsertJobConfigParam.getId());
         jobConfigDTO.setDeployModeEnum(DeployModeEnum.getModel(upsertJobConfigParam.getDeployMode()));
         jobConfigDTO.setJobName(upsertJobConfigParam.getJobName());
+        jobConfigDTO.setJobDesc(upsertJobConfigParam.getJobDesc());
         jobConfigDTO.setFlinkRunConfig(upsertJobConfigParam.getFlinkRunConfig());
         jobConfigDTO.setFlinkCheckpointConfig(upsertJobConfigParam.getFlinkCheckpointConfig());
 
@@ -120,7 +125,7 @@ public class UpsertJobConfigParam {
         jobConfigDTO.setCustomJarUrl(upsertJobConfigParam.getCustomJarUrl());
 
         jobConfigDTO.setIsOpen(upsertJobConfigParam.getIsOpen());
-        jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStauts()));
+        jobConfigDTO.setStatus(JobConfigStatus.getJobConfigStatus(upsertJobConfigParam.getStatus()));
         if (StringUtils.isNotEmpty(upsertJobConfigParam.getExtJarPath())) {
             jobConfigDTO.setExtJarPath(upsertJobConfigParam.getExtJarPath().trim());
         }else{

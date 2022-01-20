@@ -5,13 +5,22 @@ import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.controller.web.BaseController;
 import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.model.dto.AlartLogDTO;
+import com.flink.streaming.web.model.dto.PageModel;
+import com.flink.streaming.web.model.param.AlartLogParam;
 import com.flink.streaming.web.model.vo.CallbackDTO;
+import com.flink.streaming.web.model.vo.PageVO;
+import com.flink.streaming.web.model.vo.SystemConfigVO;
 import com.flink.streaming.web.service.AlartLogService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +44,46 @@ public class AlartApiController extends BaseController {
 
     @Autowired
     private AlartLogService alartLogService;
-
+    
+    /**
+     * 查询告警日志列表
+     * 
+     * @param modelMap
+     * @param alartLogParam
+     * @return
+     * @author wxj
+     * @date 2021年12月16日 下午4:11:09 
+     * @version V1.0
+     */
+    @RequestMapping(value = "/alartLogList")
+    public RestResult<?> queryAlartLogList(ModelMap modelMap, AlartLogParam alartLogParam) {
+        if (alartLogParam == null){
+            alartLogParam = new AlartLogParam();
+        }
+        PageModel<AlartLogDTO> pageModel = alartLogService.queryAlartLog(alartLogParam);
+        PageVO<PageModel<AlartLogDTO>> pageVO = new PageVO<PageModel<AlartLogDTO>>();
+        pageVO.setPageNum(pageModel.getPageNum());
+        pageVO.setPages(pageModel.getPages());
+        pageVO.setPageSize(pageModel.getPageSize());
+        pageVO.setTotal(pageModel.getTotal());
+        pageVO.setData(pageModel);
+        return RestResult.success(pageVO);
+    }
+    
+    /**
+     * 查询告警配置
+     * 
+     * @param modelMap
+     * @return
+     * @author wxj
+     * @date 2021年12月16日 下午4:11:48 
+     * @version V1.0
+     */
+    @RequestMapping(value = "/alartConfig")
+    public RestResult<?> alartConfig(ModelMap modelMap) {
+        List<SystemConfigVO> list = SystemConfigVO.toListVO(systemConfigService.getSystemConfig(SysConfigEnumType.ALART));
+        return RestResult.success(list);
+    }
 
     /**
      * 测试钉钉功能是否正常

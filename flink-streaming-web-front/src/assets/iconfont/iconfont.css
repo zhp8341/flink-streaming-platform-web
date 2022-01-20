@@ -1,0 +1,51 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2983373 */
+  src: url('iconfont.woff2?t=1638436976155') format('woff2'),
+       url('iconfont.woff?t=1638436976155') format('woff'),
+       url('iconfont.ttf?t=1638436976155') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.my-icon-jiediansql:before {
+  content: "\e6f5";
+}
+
+.my-icon-sql:before {
+  content: "\e6d1";
+}
+
+.my-icon-batchcomputepiliangjisuan:before {
+  content: "\e8a4";
+}
+
+.my-icon-JAR:before {
+  content: "\e618";
+}
+
+.my-icon-file-SQL:before {
+  content: "\e807";
+}
+
+.my-icon-SQLxinjian:before {
+  content: "\e638";
+}
+
+.my-icon-save:before {
+  content: "\e762";
+}
+
+.my-icon-suffix-jar:before {
+  content: "\e653";
+}
+
+.my-icon-BATCH_PROCESSING:before {
+  content: "\ea43";
+}
+

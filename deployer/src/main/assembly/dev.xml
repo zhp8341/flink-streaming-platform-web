@@ -50,6 +50,7 @@
             <outputDirectory>lib</outputDirectory>
             <scope>runtime</scope>
             <excludes>
+                <exclude>io.*:*</exclude>
                 <exclude>org.*:*</exclude>
                 <exclude>net.*:*</exclude>
                 <exclude>ch.*:*</exclude>

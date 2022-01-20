@@ -1,6 +1,8 @@
 package com.flink.streaming.web.service;
 
 import com.flink.streaming.web.model.dto.JobConfigHistoryDTO;
+import com.flink.streaming.web.model.dto.PageModel;
+import com.flink.streaming.web.model.param.JobConfigHisotryParam;
 
 import java.util.List;
 
@@ -40,5 +42,16 @@ public interface JobConfigHistoryService {
      * @time 20:14
      */
     JobConfigHistoryDTO getJobConfigHistoryById(Long id);
+    
+    /**
+     * 分页查询
+     * 
+     * @param jobConfigParam
+     * @return
+     * @author wxj
+     * @date 2021年12月20日 上午11:11:56 
+     * @version V1.0
+     */
+    PageModel<JobConfigHistoryDTO> queryJobConfigHistory(JobConfigHisotryParam jobConfigParam);
 
 }

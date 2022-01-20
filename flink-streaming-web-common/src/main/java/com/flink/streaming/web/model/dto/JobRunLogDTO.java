@@ -28,7 +28,12 @@ public class JobRunLogDTO implements Serializable {
      * 任务名称
      */
     private String jobName;
-
+    
+    /**
+     * 任务描述
+     */
+    private String jobDesc;
+    
     /**
      * 提交模式: standalone 、yarn 、yarn-session
      */
@@ -91,6 +96,7 @@ public class JobRunLogDTO implements Serializable {
         jobRunLog.setId(jobRunLogDTO.getId());
         jobRunLog.setJobConfigId(jobRunLogDTO.getJobConfigId());
         jobRunLog.setJobName(jobRunLogDTO.getJobName());
+        jobRunLog.setJobDesc(jobRunLogDTO.getJobDesc());
         jobRunLog.setDeployMode(jobRunLogDTO.getDeployMode());
         jobRunLog.setJobId(jobRunLogDTO.getJobId());
         jobRunLog.setRemoteLogUrl(jobRunLogDTO.getRemoteLogUrl());
@@ -115,6 +121,7 @@ public class JobRunLogDTO implements Serializable {
         jobRunLogDTO.setId(jobRunLog.getId());
         jobRunLogDTO.setJobConfigId(jobRunLog.getJobConfigId());
         jobRunLogDTO.setJobName(jobRunLog.getJobName());
+        jobRunLogDTO.setJobDesc(jobRunLog.getJobDesc());
         jobRunLogDTO.setDeployMode(jobRunLog.getDeployMode());
         jobRunLogDTO.setJobId(jobRunLog.getJobId());
         jobRunLogDTO.setRemoteLogUrl(jobRunLog.getRemoteLogUrl());

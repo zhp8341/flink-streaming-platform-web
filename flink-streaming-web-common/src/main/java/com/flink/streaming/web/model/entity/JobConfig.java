@@ -21,6 +21,11 @@ public class JobConfig {
     private String jobName;
 
     /**
+     * 任务描述
+     */
+    private String jobDesc;
+
+    /**
      * flink的本地目录
      */
     private String deployMode;
@@ -49,7 +54,7 @@ public class JobConfig {
      * @see com.flink.streaming.web.enums.JobConfigStatus
      * 1:运行中 0: 停止中 -1:运行失败
      */
-    private Integer stauts;
+    private Integer status;
 
 
     /**

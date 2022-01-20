@@ -24,7 +24,7 @@
 5. flink-streaming-valication: sql校验模块
 
 6. flink-streaming-web: web平台模块
-   1. 任务管理
+   1. 
    2. 用户管理
    3. 日志管理
    4. 系统配置等.

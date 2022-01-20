@@ -35,7 +35,7 @@ public class Base64Coded {
 
 
     public static void main(String[] args) {
-        String string = UserSession.toJsonString("zhuhuipei", "123456");
+        String string = UserSession.toJsonString(1, "zhuhuipei", "123456");
         //编码
         String encode = encode(string.getBytes());
         System.out.println(string + "\t编码后的字符串为：" + encode);

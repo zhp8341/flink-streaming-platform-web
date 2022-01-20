@@ -10,7 +10,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.streaming.platform.web</groupId>
     <artifactId>deployer</artifactId>
     <version>${flink_streaming_version}</version>
 

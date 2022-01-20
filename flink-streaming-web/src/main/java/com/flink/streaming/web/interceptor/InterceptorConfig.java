@@ -28,9 +28,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.addPathPatterns("/**");
         //添加不拦截路径
         registration.excludePathPatterns("/static/**", "/static/*", "/admin/index",
-                "/admin/qrcode", "/api/login",
+                "/admin/qrcode", "/api/login", "/api/logout",
                 "/ok","/alarmCallback","/log/*","/favicon.ico");
-
-
     }
 }

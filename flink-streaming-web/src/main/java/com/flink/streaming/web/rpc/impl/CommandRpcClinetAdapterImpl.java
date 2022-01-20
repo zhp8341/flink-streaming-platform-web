@@ -2,6 +2,7 @@ package com.flink.streaming.web.rpc.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.web.ao.impl.JobBaseServiceAOImpl;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
 import com.flink.streaming.web.common.util.CommandUtil;
@@ -102,7 +103,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     }
 
     /**
-     * 清理pcs.waitFor()日志放置死锁
+     * 清理pcs.waitFor()日志防止死锁
      *
      * @author zhuhuipei
      * @date 2021/3/28
@@ -169,6 +170,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
                 log.error("解析appID异常 appId:{}", appId);
                 throw new BizException("解析appId异常");
             }
+            JobBaseServiceAOImpl.threadAppId.set(appId);
             log.info("获取到的appId是 {}", appId);
             return appId;
         } catch (BizException e) {

@@ -25,10 +25,16 @@ public class LogPrint {
         if (sqlCommandCall == null) {
             throw new NullPointerException("sqlCommandCall is null");
         }
-        System.out.println("\n #############" + sqlCommandCall.sqlCommand.name() + "############# \n"
-                + sqlCommandCall.operands[0]);
-        log.info("\n #############{}############# \n {}", sqlCommandCall.sqlCommand.name(),
-                sqlCommandCall.operands[0]);
+        switch(sqlCommandCall.sqlCommand) {
+        case SET:
+            System.out.println("\n############# " + sqlCommandCall.sqlCommand.name() + " ############# \nSET " 
+                    + sqlCommandCall.operands[0] + "=" + sqlCommandCall.operands[1]);
+            log.info("\n############# {} ############# \nSET{}={}", sqlCommandCall.sqlCommand.name(), sqlCommandCall.operands[0], sqlCommandCall.operands[1]);
+            break;
+        default:
+            System.out.println("\n############# " + sqlCommandCall.sqlCommand.name() + " ############# \n" + sqlCommandCall.operands[0]);
+            log.info("\n############# {} ############# \n {}", sqlCommandCall.sqlCommand.name(), sqlCommandCall.operands[0]);
+        }
     }
 
     /**

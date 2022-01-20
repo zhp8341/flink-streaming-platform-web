@@ -52,10 +52,10 @@ public class JobConfigVO {
     private String isOpenStr;
 
 
-    private Integer stauts;
+    private Integer status;
 
 
-    private String stautsStr;
+    private String statusStr;
 
 
     private String lastStartTime;
@@ -88,8 +88,8 @@ public class JobConfigVO {
         jobConfigVO.setJobId(jobConfigDTO.getJobId());
         jobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
         jobConfigVO.setIsOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
-        jobConfigVO.setStauts(jobConfigDTO.getStatus().getCode());
-        jobConfigVO.setStautsStr(jobConfigDTO.getStatus().getDesc());
+        jobConfigVO.setStatus(jobConfigDTO.getStatus().getCode());
+        jobConfigVO.setStatusStr(jobConfigDTO.getStatus().getDesc());
         if (jobConfigDTO.getDeployModeEnum() != null) {
             jobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
         }

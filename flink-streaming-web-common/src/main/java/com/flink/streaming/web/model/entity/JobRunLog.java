@@ -25,6 +25,11 @@ public class JobRunLog implements Serializable {
     private String jobName;
 
     /**
+     * 任务描述
+     */
+    private String jobDesc;
+
+    /**
      * 提交模式: standalone 、yarn 、yarn-session
      */
     private String deployMode;

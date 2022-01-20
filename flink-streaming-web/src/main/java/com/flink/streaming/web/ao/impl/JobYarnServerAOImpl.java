@@ -85,22 +85,19 @@ public class JobYarnServerAOImpl implements JobServerAO {
 
     @Override
     public void stop(Long id, String userName) {
+        log.info("[{}]开始停止任务[{}]", userName, id);
         JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
         if (jobConfigDTO == null) {
             throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
         }
-
         //1、停止前做一次savepoint操作
         try {
             this.savepoint(id);
         } catch (Exception e) {
             log.error(MessageConstants.MESSAGE_008, e);
         }
-
-
         //2、停止任务
         this.stop(jobConfigDTO);
-
         JobConfigDTO jobConfig = new JobConfigDTO();
         jobConfig.setStatus(JobConfigStatus.STOP);
         jobConfig.setEditor(userName);
@@ -108,7 +105,6 @@ public class JobYarnServerAOImpl implements JobServerAO {
         jobConfig.setJobId("");
         //3、变更状态
         jobConfigService.updateJobConfigById(jobConfig);
-
     }
 
     @Override
@@ -158,6 +154,7 @@ public class JobYarnServerAOImpl implements JobServerAO {
         Integer retryNum = 1;
         while (retryNum <= TRY_TIMES) {
             JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+            log.info("任务[{}]当前状态为：{}", jobConfigDTO.getId(), jobInfo);
             if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
                 log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobInfo, retryNum, jobConfigDTO.getJobId());
                 yarnRestRpcAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobInfo.getId());

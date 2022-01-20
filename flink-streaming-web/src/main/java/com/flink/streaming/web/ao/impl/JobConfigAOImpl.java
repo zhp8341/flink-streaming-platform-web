@@ -35,7 +35,7 @@ public class JobConfigAOImpl implements JobConfigAO {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateJobConfigById(JobConfigDTO jobConfigDTO) {
-        jobConfigService.updateJobConfigById(jobConfigDTO);
+        jobConfigService.updateJobConfigByIdWithWriteHistory(jobConfigDTO);
         jobAlarmConfigService.upSertBatchJobAlarmConfig(jobConfigDTO.getAlarmTypeEnumList(), jobConfigDTO.getId());
     }
 }

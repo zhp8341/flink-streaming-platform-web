@@ -19,21 +19,31 @@ import java.util.List;
 public class UserVO {
 
     /**
-     * 用户名
+     * 用户编号
+     */
+    private Integer id;
+
+    /**
+     * 用户帐号
      */
     private String username;
+    
+    /**
+     * 用户名称
+     */
+    private String name;
 
     /**
      * @see UserStatusEnum
      * 1:启用 0: 停用
      */
-    private Integer stauts;
+    private Integer status;
 
 
     /**
      * 状态描述
      */
-    private String stautsDesc;
+    private String statusDesc;
 
 
     /**
@@ -52,9 +62,11 @@ public class UserVO {
             return null;
         }
         UserVO userVO = new UserVO();
+        userVO.setId(userDTO.getId());
         userVO.setUsername(userDTO.getUsername());
-        userVO.setStauts(userDTO.getStauts());
-        userVO.setStautsDesc(UserStatusEnum.getStatus(userDTO.getStauts()).getDesc());
+        userVO.setName(userDTO.getName());
+        userVO.setStatus(userDTO.getStatus());
+        userVO.setStatusDesc(UserStatusEnum.getStatus(userDTO.getStatus()).getDesc());
         userVO.setCreateTimeStr(DateFormatUtils.toFormatString(userDTO.getCreateTime()));
         userVO.setEditTimeStr(DateFormatUtils.toFormatString(userDTO.getEditTime()));
         return userVO;
