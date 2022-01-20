@@ -96,7 +96,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="editor" :show-overflow-tooltip="true" label="提交人员" min-width="70" width="100" align="center" />
-        <el-table-column :show-overflow-tooltip="true" label="版本信息" min-width="80" align="center">
+        <el-table-column :show-overflow-tooltip="true" label="版本信息" min-width="70" align="center">
           <template slot-scope="scope">
             <router-link :to="{name:'HistoryTask', params:{flag:'tasklist', context:queryContent(), jobConfigId:scope.row.id}}">
               <el-link type="info" class="fl-version-text"><span class="fl-version-span">[{{ scope.row.version }}]</span>{{ scope.row.jobDesc }}</el-link>
@@ -108,7 +108,7 @@
             <el-link v-if="scope.row.alarmStrs">{{ scope.row.alarmStrs }}</el-link><!-- 辅助 -->
           </template>
         </el-table-column>
-        <el-table-column prop="savepoint" label="保存状态" width="115" fixed="right">
+        <el-table-column prop="savepoint" label="保存状态(savepoint)" width="135px" fixed="right">
           <template slot-scope="scope">
             <el-link v-if="scope.row.jobTypeEnum==='SQL_STREAMING'" type="primary" icon="el-icon-sell" @click.native="doRecoverSavePoint(scope.row)">恢复</el-link>
             <el-link v-if="scope.row.jobTypeEnum==='SQL_STREAMING'" type="success" icon="el-icon-sold-out" @click.native="savePoint(scope.row)">备份</el-link>

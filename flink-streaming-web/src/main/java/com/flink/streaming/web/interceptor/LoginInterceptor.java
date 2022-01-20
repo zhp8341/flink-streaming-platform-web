@@ -40,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
         UserSession userSession = UserSessionUtil.userSession(request);
-        
+
         // ajax请求
         if (WebUtil.isAjaxRequest(request)) {
             boolean nologin = (userSession == null) || (!userService.checkLogin(userSession));
@@ -51,16 +51,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
             return true;
         }
-        
-        if (userSession == null) {
-            response.sendRedirect("/admin/index?message=nologin");
-            return false;
-        }
-        boolean isCheckSession = userService.checkLogin(userSession);
-        if (!isCheckSession) {
-            response.sendRedirect("/admin/index?message=nologin");
-            return false;
-        }
+        log.debug("未知请求={}", request.getRequestURI());
         return true;
     }
 

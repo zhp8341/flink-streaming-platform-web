@@ -18,8 +18,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
   **主要功能**:包含任务配置、启/停任务、告警、日志等功能，支持sql语法提示，格式化、sql语句校验。 
    
   **目的**:减少开发、降低成本 完全实现sql化 流计算任务。 😂
-  
-   由于前端UI是本人自己写的，不够专业，样式有点丑 请多多包含！！！
+
 
    该项目获得 [Flink Forward Asia Hackathon (2021) 季军 ](https://mp.weixin.qq.com/s/J2OkX_D34ktfwSfhwdmXYQ)
 
@@ -216,19 +215,12 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
 ##  七、RoadMap
 
 
-1、 支持除官方以外的连接器  如：阿里云的sls
+1、支持多版本flink
 
-2、 任务告警自动拉起 (完成)
+2、 完善文档 （持续过程）
 
-3、 支持Application模式
+3、UI
 
-4、 完善文档 （持续过程）
-
-5、 支持sql预校验，编写sql的时候语法提示等友好的用户体验(完成)
-
-6、 checkpoint支持rocksDB (完成)
-
-7、 支持jar模式提交任务 (完成)
 
 
 

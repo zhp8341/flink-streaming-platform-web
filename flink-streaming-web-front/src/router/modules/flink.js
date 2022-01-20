@@ -197,5 +197,17 @@ export const flinkRouter = [
         meta: { title: '系统设置', icon: 'el-icon-setting' }
       }
     ]
+  },
+  {
+    path: '/flink/system-contact',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Contact',
+        component: () => import('@/views/flink/system-contact'),
+        meta: { title: '联系方式', icon: 'el-icon-tickets' }
+      }
+    ]
   }
 ]

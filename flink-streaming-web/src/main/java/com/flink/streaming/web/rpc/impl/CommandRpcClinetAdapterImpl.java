@@ -103,7 +103,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     }
 
     /**
-     * 清理pcs.waitFor()日志放置死锁
+     * 清理pcs.waitFor()日志防止死锁
      *
      * @author zhuhuipei
      * @date 2021/3/28
