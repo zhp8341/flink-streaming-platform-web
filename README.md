@@ -22,6 +22,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
    该项目获得 [Flink Forward Asia Hackathon (2021) 季军 ](https://mp.weixin.qq.com/s/J2OkX_D34ktfwSfhwdmXYQ)
 
+   [点击查看WEB页面功能显示效果](/docs/img.md)
+
 
 ### 1、主要功能
 
