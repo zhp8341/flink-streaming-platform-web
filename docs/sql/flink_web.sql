@@ -207,7 +207,7 @@ CREATE TABLE `job_alarm_config`
 -- Records of user 默认密码是 123456
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
 COMMIT;
 
 
