@@ -173,7 +173,7 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '用户帐号',
   `password` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
-  `stauts` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
+  `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:删除 0: 未删除',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `edit_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -183,8 +183,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ALTER TABLE user ADD COLUMN `name` VARCHAR(100) NOT NULL COMMENT '用户姓名' AFTER `username`;
-ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用' AFTER stauts; -- 修正status字段命名，兼容处理，只增加字段
-ALTER TABLE `user` modify COLUMN `stauts` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:启用 0: 停用';
+
 
 
 CREATE TABLE `job_alarm_config`
@@ -211,10 +210,5 @@ INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e
 COMMIT;
 
 
---------------
 
 
-
-
-
-SET FOREIGN_KEY_CHECKS = 1;
