@@ -229,14 +229,14 @@ CREATE TABLE `user` (
                         UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ALTER TABLE user ADD COLUMN `name` VARCHAR(100) NOT NULL COMMENT '用户姓名' AFTER `username`;
-ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用', -- 修正status字段命名，兼容处理，只增加字段
+ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用'; -- 修正status字段命名，兼容处理，只增加字段
 ALTER TABLE `user` modify COLUMN `stauts` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:启用 0: 停用'; 
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-11-11 22:53:26', 'sys', 'admin');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-11-11 22:53:26', 'sys', 'admin', 1);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
