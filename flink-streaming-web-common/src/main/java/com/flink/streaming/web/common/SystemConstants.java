@@ -16,7 +16,9 @@ public class SystemConstants {
     public static final String COOKIE_NAME_SESSION_ID = "flink-streaming-platform-web-sessionid";
 
     public static final String STATUS_RUNNING = "RUNNING";
-    
+
+    public static final String STATUS_FINISHED = "FINISHED";
+
     public static final String STATUS_RESTARTING = "RESTARTING";
 
     public static final String USER_NAME_TASK_AUTO = "task-auto";

@@ -356,7 +356,8 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                     localLog.append("\n 任务失败 appId=" + appId);
                     throw new BizException("任务失败");
                 } else {
-                    if (!SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())) {
+                    if (!SystemConstants.STATUS_RUNNING.equals(jobStandaloneInfo.getState())
+                        && !SystemConstants.STATUS_FINISHED.equals(jobStandaloneInfo.getState())) {
                         localLog.append("\n 任务失败 appId=" + appId).append("状态是：" + jobStandaloneInfo.getState());
                         throw new BizException("[submitJobForStandalone]任务失败");
                     }
