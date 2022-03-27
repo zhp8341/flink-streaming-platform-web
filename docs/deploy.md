@@ -16,11 +16,6 @@ kafka版本 1.0+
 mysql版本 5.6+
 
 
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
-
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
-
-**一定 一定 一定 要到使用 flink 1.12.0 版本 其他版本都不一定行**
 
 **如果有flink版本需要可以自己编译 详见下面源码编译**
 
@@ -72,10 +67,13 @@ b: /flink-1.12.0/lib  hadoop集成
 ~~~~
 
 
-**完毕后执行  export HADOOP_CLASSPATH=`hadoop classpath`**
+**完毕后执行  export HADOOP_CLASSPATH
 
-export HADOOP_CLASSPATH=`hadoop classpath`
 
+~~~~
+ export HADOOP_CLASSPATH=`hadoop classpath`
+
+~~~~
 
 #### 2、flink-streaming-platform-web安装
 

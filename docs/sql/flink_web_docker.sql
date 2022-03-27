@@ -107,7 +107,7 @@ ALTER TABLE job_config ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描�
 -- Records of job_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `job_config` VALUES (1, 'test_datagen_simple', 'LOCAL', '', 'CREATE TABLE source_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'datagen\',\n    \'rows-per-second\'=\'5\'\n);\nCREATE TABLE print_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'print\'\n);\ninsert into print_table select f0,f1,f2 from source_table;\n', '', '', 1, 0, NULL, '2021-09-24 23:15:21', 227, 77, 0, NULL, NULL, NULL, 0, '2021-04-06 10:24:30', '2021-09-24 23:45:30', NULL, 'admin');
+INSERT INTO `job_config` VALUES (1, 'test_datagen_simple', '任务表述-test_datagen_simple', 'LOCAL', '', 'CREATE TABLE source_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'datagen\',\n    \'rows-per-second\'=\'5\'\n);\nCREATE TABLE print_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'print\'\n);\ninsert into print_table select f0,f1,f2 from source_table;\n', '', '', 1, 0, NULL, '2021-09-24 23:15:21', 227, 77, 0, NULL, NULL, NULL, 0, '2021-04-06 10:24:30', '2021-09-24 23:45:30', NULL, 'admin');
 COMMIT;
 
 -- ----------------------------
@@ -135,12 +135,6 @@ CREATE TABLE `job_config_history` (
 ALTER TABLE job_config_history ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 ALTER TABLE job_config_history add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '任务类型 0:sql 1:自定义jar' AFTER version ;
 
--- ----------------------------
--- Records of job_config_history
--- ----------------------------
-BEGIN;
-INSERT INTO `job_config_history` VALUES (1, 1, 'test_datagen_simple', 'LOCAL', '', 'CREATE TABLE source_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'datagen\',\n    \'rows-per-second\'=\'5\'\n);\nCREATE TABLE print_table (\n    f0 INT,\n    f1 INT,\n    f2 STRING\n) WITH (\n    \'connector\' = \'print\'\n);\ninsert into print_table select f0,f1,f2 from source_table;\n', '', NULL, 77, 0, '2021-09-24 23:45:30', '2021-09-24 23:45:30', NULL, 'admin');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for job_run_log
@@ -219,7 +213,7 @@ CREATE TABLE `user` (
                         `id` int(11) NOT NULL AUTO_INCREMENT,
                         `username` varchar(100) COLLATE utf8mb4_bin NOT NULL COMMENT '用户帐号',
                         `password` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '密码',
-                        `stauts` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
+                        `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用',
                         `is_deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1:删除 0: 未删除',
                         `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                         `edit_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -229,14 +223,13 @@ CREATE TABLE `user` (
                         UNIQUE KEY `index_uk` (`username`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ALTER TABLE user ADD COLUMN `name` VARCHAR(100) NOT NULL COMMENT '用户姓名' AFTER `username`;
-ALTER TABLE `user` ADD COLUMN `status` tinyint(1) NOT NULL COMMENT '1:启用 0: 停用', -- 修正status字段命名，兼容处理，只增加字段
-ALTER TABLE `user` modify COLUMN `stauts` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1:启用 0: 停用'; 
+
+
 
 -- ----------------------------
--- Records of user
+-- Records of user 默认密码是 123456
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-11-11 22:53:26', 'sys', 'admin');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
 COMMIT;
 
-SET FOREIGN_KEY_CHECKS = 1;
