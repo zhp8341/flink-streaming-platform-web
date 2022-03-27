@@ -34,7 +34,7 @@ services:
 
 
 
-执行下面命令
+按顺序执行下面命令
 
 
 ~~~~
@@ -44,12 +44,18 @@ docker-compose up -d mysql
 docker-compose up -d flink-streaming-platform-web
 
 
+docker-compose restart flink-streaming-platform-web
+
 ~~~~
+
+注意需要现执行 mysql 再执行 flink-streaming-platform-web
+
+**日志查看 docker-compose  logs -f flink-streaming-platform-web**
 
 #### 二、查看
 
 
-http://127.0.0.1:9084/admin/index   账号/密码 ： admin / 123456
+http://127.0.0.1:9084  账号/密码 ： admin / 123456
 
 登录后直接 提交任务 **test_datagen_simple**   就可以查看效果
 
@@ -60,4 +66,6 @@ http://127.0.0.1:9084/admin/index   账号/密码 ： admin / 123456
 
 
 
+#### 三、原始镜像制作文件
 
+[Dockerfile](../docker/Dockerfile)
