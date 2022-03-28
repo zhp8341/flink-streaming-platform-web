@@ -236,7 +236,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                 } finally {
                     localLog.append("\n启动结束时间: ").append(DateUtil.now()).append(SystemConstant.LINE_FEED);
                     if (success) {
-                        localLog.append("######启动结果是 成功############################## ");
+                        localLog.append("######客户端提交任务 成功 （客户端提交成功不代表任务在集群运行成功，具体请查看集群任务）############################## ");
                     } else {
                         localLog.append("######启动结果是 失败############################## ");
                     }
@@ -386,7 +386,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                         jobConfigDTO.getJobName() + " 队列名称是:" + queueName + TipsConstants.TIPS_1);
             }
         } catch (BizException e) {
-            if (e != null && SysErrorEnum.YARN_CODE.getCode().equals(e.getCode())) {
+            if (SysErrorEnum.YARN_CODE.getCode().equals(e.getCode())) {
                 log.info(e.getErrorMsg());
             } else {
                 throw e;

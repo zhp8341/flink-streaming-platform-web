@@ -2,7 +2,8 @@ package com.flink.streaming.sql.validation.test;
 
 
 import com.flink.streaming.sql.validation.SqlValidation;
-import org.apache.flink.shaded.guava18.com.google.common.collect.Lists;
+
+import java.util.ArrayList;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class TestSqlValidation {
     @Test
     public void checkSql(){
 
-        List<String> list= Lists.newArrayList();
+        List<String> list= new ArrayList<>();
         list.add("CREATE view print_table AS\n" +
                 " select count(f0) AS c from source_table;");
         list.add("CREATE TABLE print_table2 (\n" +

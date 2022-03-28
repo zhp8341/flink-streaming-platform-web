@@ -197,17 +197,19 @@ public class JobConfigApiController extends BaseController {
                 return restResult;
             }
             JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(upsertJobConfigParam.getId());
-            completeJObConfigDTO(jobConfigDTO);
             if (jobConfigDTO == null) {
                 return RestResult.error("数据不存在");
             }
+
+            completeJObConfigDTO(jobConfigDTO);
+
             if (YN.getYNByValue(jobConfigDTO.getIsOpen()).getCode()) {
                 return RestResult.error(SysErrorEnum.JOB_CONFIG_JOB_IS_OPEN.getErrorMsg());
             }
             JobConfigDTO jobConfigNew = UpsertJobConfigParam.toDTO(upsertJobConfigParam);
-            if (!checkJobConfigChanged(jobConfigDTO, jobConfigNew)) {
-               throw new BizException("没有产生任何修改，不需要保存！");
-            }
+//            if (!checkJobConfigChanged(jobConfigDTO, jobConfigNew)) {
+//               throw new BizException("没有产生任何修改，不需要保存！");
+//            }
             jobConfigAO.updateJobConfigById(jobConfigNew);
         } catch (BizException biz) {
             log.warn("updateJobConfigById is error ", biz);
@@ -553,93 +555,10 @@ public class JobConfigApiController extends BaseController {
         return RestResult.success();
     }
     
-    /**
-     * 判断任务内容是否修改
-     * 
-     * @param oldJob
-     * @param newJob
-     * @return
-     * @author wxj
-     * @date 2021年12月27日 下午2:34:44 
-     * @version V1.0
-     */
-    private boolean checkJobConfigChanged(JobConfigDTO oldJob, JobConfigDTO newJob) {
-        if (oldJob.equals(newJob)) {
-            return true;
-        }
-        Object o1 = oldJob.getId(), o2 = newJob.getId();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getJobName();
-        o2 = newJob.getJobName();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getJobDesc();
-        o2 = newJob.getJobDesc();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getDeployModeEnum();
-        o2 = newJob.getDeployModeEnum();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getFlinkRunConfig();
-        o2 = newJob.getFlinkRunConfig();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getFlinkCheckpointConfig();
-        o2 = newJob.getFlinkCheckpointConfig();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getExtJarPath();
-        o2 = newJob.getExtJarPath();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getFlinkSql();
-        o2 = newJob.getFlinkSql();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getJobTypeEnum();
-        o2 = newJob.getJobTypeEnum();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getCustomArgs();
-        o2 = newJob.getCustomArgs();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getCustomMainClass();
-        o2 = newJob.getCustomMainClass();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getCustomJarUrl();
-        o2 = newJob.getCustomJarUrl();
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        o1 = oldJob.getAlarmTypeEnumList();
-        o2 = newJob.getAlarmTypeEnumList();
-        o1 = (o1 != null && ((List<?>)o1).size() == 0) ? null : o1;
-        o2 = (o2 != null && ((List<?>)o2).size() == 0) ? null : o2;
-        if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-            return true;
-        }
-        return false;
-    }
-    
+
     /**
      * 补充字段信息
-     * 
-     * @param pageModel
+     *
      * @author wxj
      * @date 2021年12月21日 下午5:01:47 
      * @version V1.0
