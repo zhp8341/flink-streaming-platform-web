@@ -1,8 +1,7 @@
 package com.flink.streaming.web;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * @author zhuhuipei
@@ -36,12 +35,19 @@ public class Test {
 //
 //        System.out.println(sdf.parse(a));
 
-        String dtime1 = "08/Sep/2020";
-        SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MMM/yyyy", Locale.US);
-        Date date = sdf1.parse(dtime1);
-        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sDt = sdf2.format(date);
-        System.out.println(sDt);
+        String createData = null;
+
+
+        Timestamp t1 = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd").parse(createData)));
+
+
+        System.out.println(t1);
+//        String dtime1 = "08/Sep/2020";
+//        SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MMM/yyyy", Locale.US);
+//        Date date = sdf1.parse(dtime1);
+//        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String sDt = sdf2.format(date);
+//        System.out.println(sDt);
 
     }
 }

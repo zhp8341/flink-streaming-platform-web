@@ -1,12 +1,13 @@
 package com.flink.streaming.sql.validation.test;
 
 
+import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.sql.validation.SqlValidation;
-
-import java.util.ArrayList;
-import org.junit.Test;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import org.junit.Test;
 
 /**
  * @author zhuhuipei
@@ -15,25 +16,12 @@ import java.util.List;
  * @time 22:30
  */
 public class TestSqlValidation {
+    private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/test.sql";
 
     @Test
-    public void checkSql(){
-
-        List<String> list= new ArrayList<>();
-        list.add("CREATE view print_table AS\n" +
-                " select count(f0) AS c from source_table;");
-        list.add("CREATE TABLE print_table2 (\n" +
-                " c BIGINT\n" +
-                ") WITH (\n" +
-                " 'connector' = 'print'\n" +
-                ");");
-        list.add(" CREATE TABLE source_table (\n" +
-                " f0 INT\n" +
-                ") WITH (\n" +
-                " 'connector' = 'datagen',\n" +
-                " 'rows-per-second'='5'\n" +
-                ");");
-        list.add("INSERT INTO print_table2 select f0 FROM print_table;");
-        SqlValidation.preCheckSql(list);
+    public void checkSql() throws IOException {
+        List<String> list = Files.readAllLines(Paths.get(test_sql_file));
+        List<String> sqlList = SqlFileParser.parserSql(list);
+        SqlValidation.explainStmt(sqlList);
     }
 }

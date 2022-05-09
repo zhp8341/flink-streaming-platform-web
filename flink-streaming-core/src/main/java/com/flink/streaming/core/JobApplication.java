@@ -3,29 +3,25 @@ package com.flink.streaming.core;
 
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.JobTypeEnum;
-import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.core.checkpoint.CheckPointParams;
 import com.flink.streaming.core.checkpoint.FsCheckPoint;
 import com.flink.streaming.core.execute.ExecuteSql;
 import com.flink.streaming.core.model.JobRunParam;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.StatementSet;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author zhuhuipei
@@ -44,15 +40,17 @@ public class JobApplication {
 
             JobRunParam jobRunParam = buildParam(args);
 
-            List<String> sql = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
+            List<String> fileList = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
 
-            List<SqlCommandCall> sqlCommandCallList = SqlFileParser.fileToSql(sql);
+
+            List<String> sqlList = SqlFileParser.parserSql(fileList);
 
             EnvironmentSettings settings = null;
 
             TableEnvironment tEnv = null;
 
-            if (jobRunParam.getJobTypeEnum() != null && JobTypeEnum.SQL_BATCH.equals(jobRunParam.getJobTypeEnum())) {
+            if (jobRunParam.getJobTypeEnum() != null &&
+                JobTypeEnum.SQL_BATCH.equals(jobRunParam.getJobTypeEnum())) {
                 log.info("[SQL_BATCH]本次任务是批任务");
                 //批处理
                 settings = EnvironmentSettings.newInstance()
@@ -75,21 +73,11 @@ public class JobApplication {
 
             }
 
-            StatementSet statementSet = tEnv.createStatementSet();
+          JobID jobID = ExecuteSql.exeSql(sqlList, tEnv);
 
-            ExecuteSql.exeSql(sqlCommandCallList, tEnv, statementSet);
+          System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD + jobID);
 
-            TableResult tableResult = statementSet.execute();
-
-            if (tableResult == null || tableResult.getJobClient().get() == null
-                    || tableResult.getJobClient().get().getJobID() == null) {
-                throw new RuntimeException("任务运行失败 没有获取到JobID");
-            }
-            JobID jobID = tableResult.getJobClient().get().getJobID();
-
-            System.out.println(SystemConstant.QUERY_JOBID_KEY_WORD + jobID);
-
-            log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}", jobID);
+          log.info(SystemConstant.QUERY_JOBID_KEY_WORD + "{}", jobID);
 
         } catch (Exception e) {
             System.err.println("任务执行失败:" + e.getMessage());
