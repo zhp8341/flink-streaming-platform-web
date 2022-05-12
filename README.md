@@ -24,6 +24,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
    [点击查看WEB页面功能显示效果](/docs/img.md)
 
+   **如需技术支持[详见](/docs/service.md)**
+
 
 ### 1、主要功能
 
@@ -50,7 +52,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 2、 [源码讲解文档](/docs/source.md)
 
-
+**如需技术支持[详见](/docs/service.md)**
 
 ## 二、环境搭建及安装
 
@@ -61,6 +63,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 3、 [docker容器化制作镜像(参考)](/docs/tristan-deploy-use)
 
 4、[flink-streaming-platform-web 体验（基于docker）适合体验者](/docs/docker-demo.md)
+
+**如需技术支持[详见](/docs/service.md)**
 
 ## 三、功能介绍
 
@@ -252,7 +256,10 @@ http://img.ccblog.cn/flink/dd2.png
 感谢文香炯（湖南草花互动科技股份公司）贡献前端代码 ：https://gitee.com/wenxiangjiong/flink-streaming-platform-web.git
 
 
-## 十二、 捐赠
+## 十二、 技术支持
+[付费服务详情](/docs/service.md)
+     
+## 十三、 捐赠
 
 [点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
 
