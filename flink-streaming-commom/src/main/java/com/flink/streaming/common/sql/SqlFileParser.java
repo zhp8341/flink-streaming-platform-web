@@ -22,6 +22,31 @@ import java.util.regex.Matcher;
 public class SqlFileParser {
 
 
+
+    public static List<String>  parserSql(List<String> lineList){
+        if (CollectionUtils.isEmpty(lineList)) {
+            throw new RuntimeException("lineList is null");
+        }
+        List<String> sqlList = new ArrayList<>();
+        StringBuilder stmt = new StringBuilder();
+        for (String line : lineList) {
+            //开头是 -- 的表示注释
+            if (line.trim().isEmpty() || line.startsWith(SystemConstant.COMMENT_SYMBOL) ||
+                trimStart(line).startsWith(SystemConstant.COMMENT_SYMBOL)) {
+                continue;
+            }
+            stmt.append(SystemConstant.LINE_FEED).append(line);
+            if (line.trim().endsWith(SystemConstant.SEMICOLON)) {
+                sqlList.add(stmt.substring(0, stmt.length() - 1));
+                //初始化
+                stmt.setLength(0);
+            }
+        }
+        return sqlList;
+    }
+
+
+
     public static List<SqlCommandCall> fileToSql(List<String> lineList) {
 
         if (CollectionUtils.isEmpty(lineList)) {
