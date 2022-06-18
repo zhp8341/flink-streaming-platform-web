@@ -11,6 +11,9 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 **国内gitee 地址** https://gitee.com/zhuhuipei/flink-streaming-platform-web
 
 
+### 如需[技术付费服务点击查看](/docs/service.md)
+
+
 ## 一、简介 
   flink-streaming-platform-web系统是基于[Apache Flink](https://flink.apache.org) 封装的一个可视化的、轻量级的flink web客户端系统，用户只需在web
   界面进行sql配置就能完成流计算任务。
@@ -221,11 +224,7 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
 ##  七、RoadMap
 
 
-1、支持多版本flink
 
-2、 完善文档 （持续过程）
-
-3、UI
 
 
 
@@ -257,7 +256,7 @@ http://img.ccblog.cn/flink/dd2.png
 
 
 ## 十二、 技术支持
-[付费服务详情](/docs/service.md)
+### 如需[技术付费服务点击查看](/docs/service.md)
      
 ## 十三、 捐赠
 
