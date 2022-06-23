@@ -25,15 +25,15 @@ public class LogPrint {
         if (sqlCommandCall == null) {
             throw new NullPointerException("sqlCommandCall is null");
         }
-        switch(sqlCommandCall.sqlCommand) {
+        switch(sqlCommandCall.getSqlCommand()) {
         case SET:
-            System.out.println("\n############# " + sqlCommandCall.sqlCommand.name() + " ############# \nSET " 
-                    + sqlCommandCall.operands[0] + "=" + sqlCommandCall.operands[1]);
-            log.info("\n############# {} ############# \nSET{}={}", sqlCommandCall.sqlCommand.name(), sqlCommandCall.operands[0], sqlCommandCall.operands[1]);
+            System.out.println("\n############# " + sqlCommandCall.getSqlCommand().name() + " ############# \nSET "
+                    + sqlCommandCall.getOperands()[0] + "=" + sqlCommandCall.getOperands()[1]);
+            log.info("\n############# {} ############# \nSET{}={}", sqlCommandCall.getSqlCommand().name(), sqlCommandCall.getOperands()[0], sqlCommandCall.getOperands()[1]);
             break;
         default:
-            System.out.println("\n############# " + sqlCommandCall.sqlCommand.name() + " ############# \n" + sqlCommandCall.operands[0]);
-            log.info("\n############# {} ############# \n {}", sqlCommandCall.sqlCommand.name(), sqlCommandCall.operands[0]);
+            System.out.println("\n############# " + sqlCommandCall.getSqlCommand().name() + " ############# \n" + sqlCommandCall.getOperands()[0]);
+            log.info("\n############# {} ############# \n {}", sqlCommandCall.getSqlCommand().name(), sqlCommandCall.getOperands()[0]);
         }
     }
 
@@ -54,7 +54,7 @@ public class LogPrint {
         if (sqlCommandCall.getSqlCommand().name().equalsIgnoreCase(SqlCommand.SELECT.name())) {
             throw new RuntimeException("目前不支持select 语法使用");
         } else {
-            tEnv.executeSql(sqlCommandCall.operands[0]).print();
+            tEnv.executeSql(sqlCommandCall.getOperands()[0]).print();
         }
 
 //        if (sqlCommandCall.getSqlCommand().name().equalsIgnoreCase(SqlCommand.SELECT.name())) {

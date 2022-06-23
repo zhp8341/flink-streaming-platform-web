@@ -58,6 +58,11 @@ public class SqlValidation {
             for (String stmt : stmtList) {
                 explainStmt=stmt;
                 operation= parser.parse(stmt).get(0);
+                //TODO hive 暂时不校验
+                if (operation.getClass().getSimpleName().
+                    equalsIgnoreCase("CreateCatalogOperation")){
+                    throw new RuntimeException("暂不支持SQL批任务校验");
+                }
                 log.info("operation={}", operation.getClass().getSimpleName());
                 switch (operation.getClass().getSimpleName()) {
                     //显示
@@ -99,7 +104,6 @@ public class SqlValidation {
                     case "CreateTableOperation":
                     case "CreateViewOperation":
                     case "CreateDatabaseOperation":
-                    case "CreateCatalogOperation":
                     case "CreateTableASOperation":
                     case "CreateCatalogFunctionOperation":
                     case "CreateTempSystemFunctionOperation":
@@ -166,13 +170,13 @@ public class SqlValidation {
         try {
             for (SqlCommandCall sqlCommandCall : sqlCommandCallList) {
 
-                value = sqlCommandCall.operands[0];
+                value = sqlCommandCall.getOperands()[0];
 
-                switch (sqlCommandCall.sqlCommand) {
+                switch (sqlCommandCall.getSqlCommand()) {
                     //配置
                     case SET:
-                        String key = sqlCommandCall.operands[0];
-                        String val = sqlCommandCall.operands[1];
+                        String key = sqlCommandCall.getOperands()[0];
+                        String val = sqlCommandCall.getOperands()[1];
                         if (val.contains(SystemConstant.LINE_FEED)) {
                             throw new RuntimeException("set 语法值异常：" + val);
                         }
@@ -189,15 +193,15 @@ public class SqlValidation {
                         break;
                     //其他
                     default:
-                        if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.sqlCommand)
-                                || SqlCommand.INSERT_OVERWRITE.equals(sqlCommandCall.sqlCommand)) {
+                        if (SqlCommand.INSERT_INTO.equals(sqlCommandCall.getSqlCommand())
+                                || SqlCommand.INSERT_OVERWRITE.equals(sqlCommandCall.getSqlCommand())) {
                             isInsertSql = true;
                         }
-                        if (SqlCommand.SELECT.equals(sqlCommandCall.sqlCommand)) {
+                        if (SqlCommand.SELECT.equals(sqlCommandCall.getSqlCommand())) {
                             isSelectSql = true;
                         }
                         CalciteParser parser = new CalciteParser(getSqlParserConfig(config));
-                        parser.parse(sqlCommandCall.operands[0]);
+                        parser.parse(sqlCommandCall.getOperands()[0]);
                         break;
                 }
             }

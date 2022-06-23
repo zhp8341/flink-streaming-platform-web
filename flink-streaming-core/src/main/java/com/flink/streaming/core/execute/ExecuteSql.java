@@ -30,7 +30,7 @@ public class ExecuteSql {
   public static JobID exeSql(List<String> sqlList, TableEnvironment tEnv) {
     Parser parser = ((TableEnvironmentInternal) tEnv).getParser();
 
-    List<ModifyOperation> modifyOperationList=new ArrayList<>();
+    List<ModifyOperation> modifyOperationList = new ArrayList<>();
 
     for (String stmt : sqlList) {
       Operation operation = parser.parse(stmt).get(0);
@@ -61,8 +61,8 @@ public class ExecuteSql {
           break;
 
         case "BeginStatementSetOperation":
-          System.out.println("####stmt= "+stmt);
-          log.info("####stmt={}",stmt);
+          System.out.println("####stmt= " + stmt);
+          log.info("####stmt={}", stmt);
           break;
 
         case "DropTableOperation":
@@ -87,17 +87,18 @@ public class ExecuteSql {
         case "LoadModuleOperation":
         case "UnloadModuleOperation":
         case "NopOperation":
-         ((TableEnvironmentInternal) tEnv).executeInternal(parser.parse(stmt).get(0));
+          ((TableEnvironmentInternal) tEnv).executeInternal(parser.parse(stmt).get(0));
           break;
         case "CatalogSinkModifyOperation":
-          modifyOperationList.add((CatalogSinkModifyOperation)operation);
+          modifyOperationList.add((CatalogSinkModifyOperation) operation);
           break;
         default:
           throw new RuntimeException("不支持该语法 sql=" + stmt);
       }
     }
-    TableResult tableResult=((TableEnvironmentInternal) tEnv).executeInternal(modifyOperationList);
-    if (tableResult.getJobClient().orElse(null)!=null){
+    TableResult tableResult = ((TableEnvironmentInternal) tEnv)
+        .executeInternal(modifyOperationList);
+    if (tableResult.getJobClient().orElse(null) != null) {
       return tableResult.getJobClient().get().getJobID();
     }
     throw new RuntimeException("任务运行失败 没有获取到JobID");
@@ -106,26 +107,27 @@ public class ExecuteSql {
 
 
   /**
-   * 执行sql
+   * 执行sql 被com.flink.streaming.core.execute.ExecuteSql 替换
    *
    * @author zhuhuipei
    * @date 2021/3/21
    * @time 17:33
    */
+  @Deprecated
   public static void exeSql(List<SqlCommandCall> sqlCommandCallList, TableEnvironment tEnv,
       StatementSet statementSet) {
     for (SqlCommandCall sqlCommandCall : sqlCommandCallList) {
-      switch (sqlCommandCall.sqlCommand) {
+      switch (sqlCommandCall.getSqlCommand()) {
         //配置
         case SET:
-          Configurations.setSingleConfiguration(tEnv, sqlCommandCall.operands[0],
-              sqlCommandCall.operands[1]);
+          Configurations.setSingleConfiguration(tEnv, sqlCommandCall.getOperands()[0],
+              sqlCommandCall.getOperands()[1]);
           break;
         //insert 语句
         case INSERT_INTO:
         case INSERT_OVERWRITE:
           LogPrint.logPrint(sqlCommandCall);
-          statementSet.addInsertSql(sqlCommandCall.operands[0]);
+          statementSet.addInsertSql(sqlCommandCall.getOperands()[0]);
           break;
         //显示语句
         case SELECT:
@@ -142,7 +144,7 @@ public class ExecuteSql {
           break;
         default:
           LogPrint.logPrint(sqlCommandCall);
-          tEnv.executeSql(sqlCommandCall.operands[0]);
+          tEnv.executeSql(sqlCommandCall.getOperands()[0]);
           break;
       }
     }

@@ -114,12 +114,11 @@ public enum SqlCommand {
     
     BEGIN_STATEMENT_SET("BEGIN\\s+STATEMENT\\s+SET", (operands) -> Optional.of(new String[]{"BEGIN STATEMENT SET"})),
     
-    END("END", (operands) -> Optional.of(new String[]{"END"}))
-    ;
+    END("END", (operands) -> Optional.of(new String[]{"END"}));
 
-    public final Pattern pattern;
+    private final Pattern pattern;
 
-    public final Function<String[], Optional<String[]>> operandConverter;
+    private final Function<String[], Optional<String[]>> operandConverter;
 
 
     SqlCommand(String matchingRegex, Function<String[], Optional<String[]>> operandConverter) {

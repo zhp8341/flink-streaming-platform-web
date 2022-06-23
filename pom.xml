@@ -143,36 +143,35 @@
                     <encoding>${file_encoding}</encoding>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
-<!--                <version>3.0.0</version>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; XXXX &ndash;&gt;-->
-<!--                    &lt;!&ndash; 可以自定义的规则文件 &ndash;&gt;-->
-<!--                    <configLocation>${basedir}/checkstyle.xml</configLocation>-->
-<!--                    &lt;!&ndash; 是否有输出文件 &ndash;&gt;-->
-<!--                    <consoleOutput>true</consoleOutput>-->
-<!--                    &lt;!&ndash; 编码方式 &ndash;&gt;-->
-<!--                    <encoding>GBK</encoding>-->
-<!--                    &lt;!&ndash; 是否因为不符合的规范中断mvn进程 &ndash;&gt;-->
-<!--                    <failsOnError>false</failsOnError>-->
-<!--                    <failOnViolation>false</failOnViolation>-->
-<!--                    <linkXRef>false</linkXRef>-->
-<!--                    <skip>false</skip>-->
-<!--                    <violationSeverity>warning</violationSeverity>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>validate</id>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <!-- XXXX -->
+                    <!-- 可以自定义的规则文件 -->
+                    <configLocation>checkstyle.xml</configLocation>
+                    <!-- 是否有输出文件 -->
+                    <consoleOutput>true</consoleOutput>
+                    <!-- 编码方式 -->
+                    <encoding>utf-8</encoding>
+                    <!-- 是否因为不符合的规范中断mvn进程 -->
+                    <failsOnError>false</failsOnError>
+                    <failOnViolation>false</failOnViolation>
+                    <linkXRef>false</linkXRef>
+                    <skip>true</skip>
+                    <violationSeverity>warning</violationSeverity>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
     </build>
