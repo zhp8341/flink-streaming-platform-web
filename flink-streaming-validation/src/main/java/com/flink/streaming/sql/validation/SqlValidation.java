@@ -5,12 +5,13 @@ import com.flink.streaming.common.enums.SqlCommand;
 import com.flink.streaming.common.model.SqlCommandCall;
 import com.flink.streaming.common.sql.SqlFileParser;
 import com.flink.streaming.sql.util.ValidationConstants;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.config.Lex;
+import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.validate.SqlConformance;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,10 +26,6 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.TableException;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.api.config.TableConfigOptions;
-import org.apache.flink.table.api.internal.TableEnvironmentInternal;
-import org.apache.flink.table.delegation.Parser;
-import org.apache.flink.table.operations.Operation;
-import org.apache.flink.table.operations.command.SetOperation;
 import org.apache.flink.table.planner.calcite.CalciteConfig;
 import org.apache.flink.table.planner.delegation.FlinkSqlParserFactories;
 import org.apache.flink.table.planner.parse.CalciteParser;
@@ -49,93 +46,45 @@ public class SqlValidation {
             .build();
 
         TableEnvironment tEnv = StreamTableEnvironment.create(env, settings);
+        TableConfig config = tEnv.getConfig();
+        String  sql=null;
 
-        List<Operation> modifyOperationList=new ArrayList<>();
-        Parser parser = ((TableEnvironmentInternal) tEnv).getParser();
-        Operation operation=null;
-        String  explainStmt=null;
+        boolean isInsertSql = false;
+
+        boolean isSelectSql = false;
+
         try {
-            for (String stmt : stmtList) {
-                explainStmt=stmt;
-                operation= parser.parse(stmt).get(0);
-                //TODO hive 暂时不校验
-                if (operation.getClass().getSimpleName().
-                    equalsIgnoreCase("CreateCatalogOperation")){
-                    throw new RuntimeException("暂不支持SQL批任务校验");
-                }
-                log.info("operation={}", operation.getClass().getSimpleName());
-                switch (operation.getClass().getSimpleName()) {
-                    //显示
-                    case "ShowTablesOperation":
-                    case "ShowCatalogsOperation":
-                    case "ShowCreateTableOperation":
-                    case "ShowCurrentCatalogOperation":
-                    case "ShowCurrentDatabaseOperation":
-                    case "ShowDatabasesOperation":
-                    case "ShowFunctionsOperation":
-                    case "ShowModulesOperation":
-                    case "ShowPartitionsOperation":
-                    case "ShowViewsOperation":
-                    case "ExplainOperation":
-                    case "DescribeTableOperation":
-                        tEnv.executeSql(stmt).print();
-                        break;
-                    //set
-                    case "SetOperation":
-                        SetOperation setOperation = (SetOperation) operation;
-                        String key = setOperation.getKey().get();
-                        String value = setOperation.getValue().get();
-                        Configuration configuration = tEnv.getConfig().getConfiguration();
-                        log.info("#############setConfiguration#############\n  key={} value={}",
-                            key, value);
-                        configuration.setString(key, value);
-                        break;
-
-                    case "BeginStatementSetOperation":
-                        System.out.println("####stmt= " + stmt);
-                        log.info("####stmt={}", stmt);
-                        break;
-                    case "DropTableOperation":
-                    case "DropCatalogFunctionOperation":
-                    case "DropTempSystemFunctionOperation":
-                    case "DropCatalogOperation":
-                    case "DropDatabaseOperation":
-                    case "DropViewOperation":
-                    case "CreateTableOperation":
-                    case "CreateViewOperation":
-                    case "CreateDatabaseOperation":
-                    case "CreateTableASOperation":
-                    case "CreateCatalogFunctionOperation":
-                    case "CreateTempSystemFunctionOperation":
-                    case "AlterTableOperation":
-                    case "AlterViewOperation":
-                    case "AlterDatabaseOperation":
-                    case "AlterCatalogFunctionOperation":
-                    case "UseCatalogOperation":
-                    case "UseDatabaseOperation":
-                    case "LoadModuleOperation":
-                    case "UnloadModuleOperation":
-                    case "NopOperation":
-                            ((TableEnvironmentInternal) tEnv)
-                            .executeInternal(parser.parse(stmt).get(0));
-                        break;
-                    case "CatalogSinkModifyOperation":
-                        modifyOperationList.add(operation);
-                        break;
-                    default:
-                        throw new RuntimeException("不支持该语法 sql=" + stmt);
-                }
+          for (String stmt : stmtList) {
+            sql = stmt.trim();
+            Boolean setSuccess = setSqlDialect(sql, config);
+            CalciteParser parser = new CalciteParser(getSqlParserConfig(config));
+            if (setSuccess) {
+                log.info("set 成功 sql={}",sql);
+              continue;
             }
-            if (modifyOperationList.size() > 0) {
-                ((TableEnvironmentInternal) tEnv).explainInternal(modifyOperationList);
-            }
+              SqlNode sqlNode=parser.parse(sql);
+              if (ValidationConstants.INSERT.equalsIgnoreCase(sqlNode.getKind().name())) {
+                  isInsertSql = true;
+              }
+              if (ValidationConstants.SELECT.equalsIgnoreCase(sqlNode.getKind().name())) {
+                  isSelectSql = true;
+              }
+              log.info("sql:{} 校验通过",sql);
+          }
         }catch (Exception e) {
-            log.error("语法异常：  sql={}  原因是: ", explainStmt, e);
-            throw new RuntimeException("语法异常   sql=" + explainStmt + "  原因:   " + e.getMessage());
+            log.error("语法错误: {}  原因是: ", sql, e);
+            throw new RuntimeException("语法错误:" + sql + "  原因:  " + e.getMessage());
         }
-
+        if (!isInsertSql) {
+            throw new RuntimeException(ValidationConstants.MESSAGE_010);
+        }
+        if (isSelectSql) {
+            throw new RuntimeException(ValidationConstants.MESSAGE_011);
+        }
+        log.info("全部语法校验成功");
 
     }
+
 
 
     /**
@@ -256,6 +205,39 @@ public class SqlValidation {
             return Collections.emptyList();
         }
         return Arrays.asList(sql.split(SystemConstant.LINE_FEED));
+    }
+
+
+    /**
+     *设置方言
+     * @Param:[sql, tableConfig]
+     * @return: java.lang.Boolean
+     * @Author: zhuhuipei
+     * @date 2022/6/24
+     */
+    private static Boolean   setSqlDialect(String sql,TableConfig tableConfig){
+        final Matcher matcher =  SqlCommand.SET.getPattern().matcher(sql);
+        if (matcher.matches()) {
+            final String[] groups = new String[matcher.groupCount()];
+            for (int i = 0; i < groups.length; i++) {
+                groups[i] = matcher.group(i + 1);
+            }
+            String key=groups[1].replace(ValidationConstants.SPLIT_1,ValidationConstants.SPACE).trim();
+            String val=groups[2];
+            if (ValidationConstants.TABLE_SQL_DIALECT_1.equalsIgnoreCase(key)){
+                if ( SqlDialect.HIVE.name().equalsIgnoreCase(
+                    val.replace(ValidationConstants.SPLIT_1,ValidationConstants.SPACE).trim())) {
+                    tableConfig.setSqlDialect(SqlDialect.HIVE);
+                } else {
+                    tableConfig.setSqlDialect(SqlDialect.DEFAULT);
+                }
+            }else {
+                Configuration configuration = tableConfig.getConfiguration();
+                configuration.setString(key, val);
+            }
+            return  true;
+        }
+        return false;
     }
 
 
