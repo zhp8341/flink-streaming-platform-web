@@ -12,25 +12,25 @@ import lombok.Data;
  */
 @Data
 public class UserSession {
-    
-    private Integer userid;
 
-    private String name;
+  private Integer userid;
 
-    private String password;
+  private String name;
+
+  private String password;
 
 
-    public UserSession(Integer userid, String name, String password) {
-        this.userid = userid;
-        this.name = name;
-        this.password = password;
-    }
+  public UserSession(Integer userid, String name, String password) {
+    this.userid = userid;
+    this.name = name;
+    this.password = password;
+  }
 
-    public static String toJsonString(Integer userid, String name, String password) {
-        return JSON.toJSONString(new UserSession(userid, name, Md5Utils.getMD5String(password)));
-    }
+  public static String toJsonString(Integer userid, String name, String password) {
+    return JSON.toJSONString(new UserSession(userid, name, Md5Utils.getMD5String(password)));
+  }
 
-    public static UserSession toUserSession(String json) {
-        return JSON.parseObject(json, UserSession.class);
-    }
+  public static UserSession toUserSession(String json) {
+    return JSON.parseObject(json, UserSession.class);
+  }
 }

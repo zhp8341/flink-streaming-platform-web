@@ -159,7 +159,7 @@
                     <failsOnError>false</failsOnError>
                     <failOnViolation>false</failOnViolation>
                     <linkXRef>false</linkXRef>
-                    <skip>true</skip>
+                    <skip>false</skip>
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
                 <executions>

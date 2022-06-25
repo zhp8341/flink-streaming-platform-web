@@ -14,29 +14,29 @@ import java.util.List;
 @Data
 public class PageModel<E> extends ArrayList<E> {
 
-    /**
-     * 当前页码
-     */
-    private int pageNum;
+  /**
+   * 当前页码
+   */
+  private int pageNum;
 
-    /**
-     * 每页数量
-     */
-    private int pageSize;
+  /**
+   * 每页数量
+   */
+  private int pageSize;
 
-    /**
-     * 页码
-     */
-    private int pages;
+  /**
+   * 页码
+   */
+  private int pages;
 
-    /**
-     * 总条数
-     */
-    private long total;
+  /**
+   * 总条数
+   */
+  private long total;
 
-    public List<E> getResult() {
-        return this;
-    }
+  public List<E> getResult() {
+    return this;
+  }
 
 
 }

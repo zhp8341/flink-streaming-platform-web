@@ -11,26 +11,26 @@ import lombok.Data;
 @Data
 public class PageVO<T> {
 
-    /**
-     * 当前页码
-     */
-    private int pageNum;
+  /**
+   * 当前页码
+   */
+  private int pageNum;
 
-    /**
-     * 每页数量
-     */
-    private int pageSize;
+  /**
+   * 每页数量
+   */
+  private int pageSize;
 
-    /**
-     * 页码
-     */
-    private int pages;
+  /**
+   * 页码
+   */
+  private int pages;
 
-    /**
-     * 总条数
-     */
-    private long total;
+  /**
+   * 总条数
+   */
+  private long total;
 
 
-    private T data;
+  private T data;
 }

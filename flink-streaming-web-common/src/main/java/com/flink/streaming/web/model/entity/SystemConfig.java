@@ -14,41 +14,41 @@ import java.util.Date;
 @Data
 public class SystemConfig implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    private String key;
+  private String key;
 
-    private String val;
+  private String val;
 
-    private String type;
+  private String type;
 
-    private Integer isDeleted;
+  private Integer isDeleted;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String creator;
+  private String creator;
 
-    private String editor;
+  private String editor;
 
-    public SystemConfig() {
+  public SystemConfig() {
 
-    }
+  }
 
-    public SystemConfig(String key, String val) {
-        this.key = key;
-        this.val = val;
-        this.type = SysConfigEnum.getType(key);
-    }
+  public SystemConfig(String key, String val) {
+    this.key = key;
+    this.val = val;
+    this.type = SysConfigEnum.getType(key);
+  }
 
 
 }

@@ -20,136 +20,136 @@ import java.util.List;
 @Data
 public class DetailJobConfigVO {
 
-    private Long id;
+  private Long id;
 
-    /**
-     * 任务名称
-     */
-    private String jobName;
-
-
-    /**
-     * flink运行配置
-     */
-    private String jobId;
+  /**
+   * 任务名称
+   */
+  private String jobName;
 
 
-    private String deployMode;
-    /**
-     * 1:开启 0: 关闭
-     */
-    private Integer isOpen;
+  /**
+   * flink运行配置
+   */
+  private String jobId;
 
 
-    private String openStr;
+  private String deployMode;
+  /**
+   * 1:开启 0: 关闭
+   */
+  private Integer isOpen;
 
 
-    private Integer status;
+  private String openStr;
 
 
-    private String statusStr;
+  private Integer status;
 
 
-    private String lastStartTime;
-
-    /**
-     * 创建时间
-     */
-    private String createTime;
-
-    /**
-     * 修改时间
-     */
-    private String editTime;
-
-    /**
-     * flink运行配置
-     */
-    private String flinkRunConfig;
-
-    /**
-     * flink运行配置
-     */
-    private String flinkCheckpointConfig;
+  private String statusStr;
 
 
-    /**
-     * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
-     */
-    private String extJarPath;
+  private String lastStartTime;
 
-    /**
-     * sql语句
-     */
-    private String flinkSql;
+  /**
+   * 创建时间
+   */
+  private String createTime;
 
+  /**
+   * 修改时间
+   */
+  private String editTime;
 
+  /**
+   * flink运行配置
+   */
+  private String flinkRunConfig;
 
-    /**
-     * 任务类型
-     */
-    private Integer jobType;
-
-    /**
-     * 启动jar可能需要使用的自定义参数
-     */
-    private String customArgs;
-
-    /**
-     * 程序入口类
-     */
-    private String customMainClass;
-
-    /**
-     * 自定义jar的http地址 如:http://ccblog.cn/xx.jar
-     */
-    private String customJarUrl;
-
-    private List<Integer> types;
+  /**
+   * flink运行配置
+   */
+  private String flinkCheckpointConfig;
 
 
-    public static DetailJobConfigVO toVO(JobConfigDTO jobConfigDTO) {
-        if (jobConfigDTO == null) {
-            return null;
-        }
-        DetailJobConfigVO detailJobConfigVO = new DetailJobConfigVO();
-        detailJobConfigVO.setId(jobConfigDTO.getId());
-        detailJobConfigVO.setJobName(jobConfigDTO.getJobName());
-        detailJobConfigVO.setFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
-        if (StringUtils.isNotEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
-            detailJobConfigVO.setFlinkCheckpointConfig(jobConfigDTO.getFlinkCheckpointConfig().replaceAll("\"", "&quot;"));
-        }
-        detailJobConfigVO.setJobId(jobConfigDTO.getJobId());
-        detailJobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
-        detailJobConfigVO.setOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
-        detailJobConfigVO.setStatusStr(jobConfigDTO.getStatus().getDesc());
-        detailJobConfigVO.setStatus(jobConfigDTO.getStatus().getCode());
-        detailJobConfigVO.setLastStartTime(DateFormatUtils.toFormatString(jobConfigDTO.getLastStartTime()));
-        detailJobConfigVO.setCreateTime(DateFormatUtils.toFormatString(jobConfigDTO.getCreateTime()));
-        detailJobConfigVO.setEditTime(DateFormatUtils.toFormatString(jobConfigDTO.getEditTime()));
-        detailJobConfigVO.setFlinkSql(jobConfigDTO.getFlinkSql());
-        detailJobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
-        detailJobConfigVO.setExtJarPath(jobConfigDTO.getExtJarPath());
-        if (CollectionUtils.isNotEmpty(jobConfigDTO.getAlarmTypeEnumList())) {
+  /**
+   * 三方jar udf、 连接器 等jar如http://xxx.xxx.com/flink-streaming-udf.jar
+   */
+  private String extJarPath;
 
-            List<AlarmTypeEnum> alarmTypeEnumList = jobConfigDTO.getAlarmTypeEnumList();
-            List<Integer> types = Lists.newArrayList();
-            for (AlarmTypeEnum alarmTypeEnum : alarmTypeEnumList) {
-                types.add(alarmTypeEnum.getCode());
-            }
-            detailJobConfigVO.setTypes(types);
-        }
-
-        detailJobConfigVO.setCustomArgs(jobConfigDTO.getCustomArgs());
-        detailJobConfigVO.setCustomJarUrl(jobConfigDTO.getCustomJarUrl());
-        detailJobConfigVO.setCustomMainClass(jobConfigDTO.getCustomMainClass());
-        if (jobConfigDTO.getJobTypeEnum()!=null){
-            detailJobConfigVO.setJobType(jobConfigDTO.getJobTypeEnum().getCode());
-        }
+  /**
+   * sql语句
+   */
+  private String flinkSql;
 
 
-        return detailJobConfigVO;
+  /**
+   * 任务类型
+   */
+  private Integer jobType;
+
+  /**
+   * 启动jar可能需要使用的自定义参数
+   */
+  private String customArgs;
+
+  /**
+   * 程序入口类
+   */
+  private String customMainClass;
+
+  /**
+   * 自定义jar的http地址 如:http://ccblog.cn/xx.jar
+   */
+  private String customJarUrl;
+
+  private List<Integer> types;
+
+
+  public static DetailJobConfigVO toVO(JobConfigDTO jobConfigDTO) {
+    if (jobConfigDTO == null) {
+      return null;
     }
+    DetailJobConfigVO detailJobConfigVO = new DetailJobConfigVO();
+    detailJobConfigVO.setId(jobConfigDTO.getId());
+    detailJobConfigVO.setJobName(jobConfigDTO.getJobName());
+    detailJobConfigVO.setFlinkRunConfig(jobConfigDTO.getFlinkRunConfig());
+    if (StringUtils.isNotEmpty(jobConfigDTO.getFlinkCheckpointConfig())) {
+      detailJobConfigVO.setFlinkCheckpointConfig(
+          jobConfigDTO.getFlinkCheckpointConfig().replaceAll("\"", "&quot;"));
+    }
+    detailJobConfigVO.setJobId(jobConfigDTO.getJobId());
+    detailJobConfigVO.setIsOpen(jobConfigDTO.getIsOpen());
+    detailJobConfigVO.setOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
+    detailJobConfigVO.setStatusStr(jobConfigDTO.getStatus().getDesc());
+    detailJobConfigVO.setStatus(jobConfigDTO.getStatus().getCode());
+    detailJobConfigVO
+        .setLastStartTime(DateFormatUtils.toFormatString(jobConfigDTO.getLastStartTime()));
+    detailJobConfigVO.setCreateTime(DateFormatUtils.toFormatString(jobConfigDTO.getCreateTime()));
+    detailJobConfigVO.setEditTime(DateFormatUtils.toFormatString(jobConfigDTO.getEditTime()));
+    detailJobConfigVO.setFlinkSql(jobConfigDTO.getFlinkSql());
+    detailJobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
+    detailJobConfigVO.setExtJarPath(jobConfigDTO.getExtJarPath());
+    if (CollectionUtils.isNotEmpty(jobConfigDTO.getAlarmTypeEnumList())) {
+
+      List<AlarmTypeEnum> alarmTypeEnumList = jobConfigDTO.getAlarmTypeEnumList();
+      List<Integer> types = Lists.newArrayList();
+      for (AlarmTypeEnum alarmTypeEnum : alarmTypeEnumList) {
+        types.add(alarmTypeEnum.getCode());
+      }
+      detailJobConfigVO.setTypes(types);
+    }
+
+    detailJobConfigVO.setCustomArgs(jobConfigDTO.getCustomArgs());
+    detailJobConfigVO.setCustomJarUrl(jobConfigDTO.getCustomJarUrl());
+    detailJobConfigVO.setCustomMainClass(jobConfigDTO.getCustomMainClass());
+    if (jobConfigDTO.getJobTypeEnum() != null) {
+      detailJobConfigVO.setJobType(jobConfigDTO.getJobTypeEnum().getCode());
+    }
+
+    return detailJobConfigVO;
+  }
 
 
 }

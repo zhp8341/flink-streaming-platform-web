@@ -9,13 +9,13 @@ import java.util.List;
 @Repository
 public interface JobAlarmConfigMapper {
 
-    int insertBatch(@Param("list") List<JobAlarmConfig> list);
+  int insertBatch(@Param("list") List<JobAlarmConfig> list);
 
-    List<JobAlarmConfig> selectByJobId(@Param("jobId")Long jobId);
+  List<JobAlarmConfig> selectByJobId(@Param("jobId") Long jobId);
 
-    List<JobAlarmConfig> selectByJobIdList(@Param("jobIdList")List<Long> jobIdList);
+  List<JobAlarmConfig> selectByJobIdList(@Param("jobIdList") List<Long> jobIdList);
 
-    int deleteByJobId(@Param("jobId")Long jobId);
+  int deleteByJobId(@Param("jobId") Long jobId);
 
 
 }

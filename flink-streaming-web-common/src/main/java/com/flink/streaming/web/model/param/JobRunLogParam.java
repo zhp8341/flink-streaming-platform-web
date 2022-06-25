@@ -12,12 +12,12 @@ import lombok.Data;
 @Data
 public class JobRunLogParam extends PageParam {
 
-    private Long jobConfigId;
+  private Long jobConfigId;
 
-    /**
-     * 运行后的任务id
-     */
-    private String jobId;
+  /**
+   * 运行后的任务id
+   */
+  private String jobId;
 
-    private String jobName;
+  private String jobName;
 }

@@ -28,51 +28,52 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigApiController extends BaseController {
 
 
-    @Autowired
-    private SystemConfigService systemConfigService;
+  @Autowired
+  private SystemConfigService systemConfigService;
 
-    @RequestMapping(value = "/upsertSynConfig", method = RequestMethod.POST)
-    public RestResult<?> upsertSynConfig(String key, String val) {
-        try {
-            systemConfigService.addOrUpdateConfigByKey(key, val.trim());
-        } catch (BizException biz) {
-            log.warn("upsertSynConfig is error ", biz);
-            return RestResult.error(biz.getMessage());
-        } catch (Exception e) {
-            log.error("upsertSynConfig is error", e);
-            return RestResult.error(e.getMessage());
-        }
-        return RestResult.success();
+  @RequestMapping(value = "/upsertSynConfig", method = RequestMethod.POST)
+  public RestResult<?> upsertSynConfig(String key, String val) {
+    try {
+      systemConfigService.addOrUpdateConfigByKey(key, val.trim());
+    } catch (BizException biz) {
+      log.warn("upsertSynConfig is error ", biz);
+      return RestResult.error(biz.getMessage());
+    } catch (Exception e) {
+      log.error("upsertSynConfig is error", e);
+      return RestResult.error(e.getMessage());
     }
+    return RestResult.success();
+  }
 
 
-    @RequestMapping(value = "/deleteConfig", method = RequestMethod.POST)
-    public RestResult<?> deleteConfig(String key) {
-        try {
-            systemConfigService.deleteConfigByKey(key);
-        } catch (BizException biz) {
-            log.warn("upsertSynConfig is error ", biz);
-            return RestResult.error(biz.getMessage());
-        } catch (Exception e) {
-            log.error("upsertSynConfig is error", e);
-            return RestResult.error(e.getMessage());
-        }
-        return RestResult.success();
+  @RequestMapping(value = "/deleteConfig", method = RequestMethod.POST)
+  public RestResult<?> deleteConfig(String key) {
+    try {
+      systemConfigService.deleteConfigByKey(key);
+    } catch (BizException biz) {
+      log.warn("upsertSynConfig is error ", biz);
+      return RestResult.error(biz.getMessage());
+    } catch (Exception e) {
+      log.error("upsertSynConfig is error", e);
+      return RestResult.error(e.getMessage());
     }
-    
-    /**
-     * 查询系统配置列表
-     * 
-     * @param modelMap
-     * @return
-     * @author wxj
-     * @date 2021年12月16日 下午5:19:53 
-     * @version V1.0
-     */
-    @RequestMapping(value = "/sysConfig")
-    public RestResult<?> sysConfig(ModelMap modelMap) {
-        List<SystemConfigVO> list = SystemConfigVO.toListVO(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
-        return RestResult.success(list);
-    }
+    return RestResult.success();
+  }
+
+  /**
+   * 查询系统配置列表
+   *
+   * @param modelMap
+   * @return
+   * @author wxj
+   * @date 2021年12月16日 下午5:19:53
+   * @version V1.0
+   */
+  @RequestMapping(value = "/sysConfig")
+  public RestResult<?> sysConfig(ModelMap modelMap) {
+    List<SystemConfigVO> list = SystemConfigVO
+        .toListVO(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
+    return RestResult.success(list);
+  }
 
 }

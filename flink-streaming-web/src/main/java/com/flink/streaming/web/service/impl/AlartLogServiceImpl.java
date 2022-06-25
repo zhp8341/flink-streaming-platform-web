@@ -24,42 +24,42 @@ import org.springframework.stereotype.Service;
 public class AlartLogServiceImpl implements AlartLogService {
 
 
-    @Autowired
-    private AlarmLogMapper alarmLogMapper;
+  @Autowired
+  private AlarmLogMapper alarmLogMapper;
 
-    @Override
-    public void addAlartLog(AlartLogDTO alartLogDTO) {
-        if (alartLogDTO == null) {
-            return;
-        }
-        alarmLogMapper.insert(AlartLogDTO.toEntity(alartLogDTO));
+  @Override
+  public void addAlartLog(AlartLogDTO alartLogDTO) {
+    if (alartLogDTO == null) {
+      return;
     }
+    alarmLogMapper.insert(AlartLogDTO.toEntity(alartLogDTO));
+  }
 
 
-    @Override
-    public AlartLogDTO findLogById(Long id) {
-        return AlartLogDTO.toDTO(alarmLogMapper.selectByPrimaryKey(id));
+  @Override
+  public AlartLogDTO findLogById(Long id) {
+    return AlartLogDTO.toDTO(alarmLogMapper.selectByPrimaryKey(id));
+  }
+
+  @Override
+  public PageModel<AlartLogDTO> queryAlartLog(AlartLogParam alartLogParam) {
+    if (alartLogParam == null) {
+      alartLogParam = new AlartLogParam();
     }
+    PageHelper.startPage(alartLogParam.getPageNum(), alartLogParam.getPageSize(), YN.Y.getCode());
 
-    @Override
-    public PageModel<AlartLogDTO> queryAlartLog(AlartLogParam alartLogParam) {
-        if (alartLogParam == null) {
-            alartLogParam = new AlartLogParam();
-        }
-        PageHelper.startPage(alartLogParam.getPageNum(), alartLogParam.getPageSize(), YN.Y.getCode());
-
-        //只能查最近30天的
-        Page<AlartLog> page = alarmLogMapper.selectByParam(alartLogParam);
-        if (page == null) {
-            return null;
-        }
-        PageModel<AlartLogDTO> pageModel = new PageModel<>();
-        pageModel.setPageNum(page.getPageNum());
-        pageModel.setPages(page.getPages());
-        pageModel.setPageSize(page.getPageSize());
-        pageModel.setTotal(page.getTotal());
-        pageModel.addAll(AlartLogDTO.toListDTO(page.getResult()));
-        return pageModel;
-
+    //只能查最近30天的
+    Page<AlartLog> page = alarmLogMapper.selectByParam(alartLogParam);
+    if (page == null) {
+      return null;
     }
+    PageModel<AlartLogDTO> pageModel = new PageModel<>();
+    pageModel.setPageNum(page.getPageNum());
+    pageModel.setPages(page.getPages());
+    pageModel.setPageSize(page.getPageSize());
+    pageModel.setTotal(page.getTotal());
+    pageModel.addAll(AlartLogDTO.toListDTO(page.getResult()));
+    return pageModel;
+
+  }
 }

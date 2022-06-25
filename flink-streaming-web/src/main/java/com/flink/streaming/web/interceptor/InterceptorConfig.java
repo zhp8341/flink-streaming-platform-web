@@ -16,19 +16,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
 
 
-    @Autowired
-    private LoginInterceptor loginInterceptor;
+  @Autowired
+  private LoginInterceptor loginInterceptor;
 
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        //注册loginInterceptor拦截器
-        InterceptorRegistration registration = registry.addInterceptor(loginInterceptor);
-        //所有路径都被拦截
-        registration.addPathPatterns("/**");
-        //添加不拦截路径
-        registration.excludePathPatterns("/static/**", "/static/*", "/admin/index",
-                "/admin/qrcode", "/api/login", "/api/logout",
-                "/ok","/alarmCallback","/log/*","/favicon.ico");
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    //注册loginInterceptor拦截器
+    InterceptorRegistration registration = registry.addInterceptor(loginInterceptor);
+    //所有路径都被拦截
+    registration.addPathPatterns("/**");
+    //添加不拦截路径
+    registration.excludePathPatterns("/static/**", "/static/*", "/admin/index",
+        "/admin/qrcode", "/api/login", "/api/logout",
+        "/ok", "/alarmCallback", "/log/*", "/favicon.ico");
+  }
 }

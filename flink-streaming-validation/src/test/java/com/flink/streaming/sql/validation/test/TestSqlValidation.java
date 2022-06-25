@@ -16,13 +16,14 @@ import org.junit.Test;
  * @time 22:30
  */
 public class TestSqlValidation {
-    private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/hive-test.sql";
 
-    @Test
-    public void checkSql() throws IOException {
-        List<String> list = Files.readAllLines(Paths.get(test_sql_file));
-        List<String> sqlList = SqlFileParser.parserSql(list);
-        SqlValidation.explainStmt(sqlList);
-        //SqlValidation.preCheckSql(list);
-    }
+  private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/hive-test.sql";
+
+  @Test
+  public void checkSql() throws IOException {
+    List<String> list = Files.readAllLines(Paths.get(test_sql_file));
+    List<String> sqlList = SqlFileParser.parserSql(list);
+    SqlValidation.explainStmt(sqlList);
+    //SqlValidation.preCheckSql(list);
+  }
 }

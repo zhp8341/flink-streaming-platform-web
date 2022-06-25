@@ -11,13 +11,13 @@ import lombok.Getter;
 @Getter
 public enum IpStatusEnum {
 
-    START(1), STOP(-1);
+  START(1), STOP(-1);
 
-    private int code;
+  private int code;
 
-    IpStatusEnum(int code) {
-        this.code = code;
-    }
+  IpStatusEnum(int code) {
+    this.code = code;
+  }
 
 
 }

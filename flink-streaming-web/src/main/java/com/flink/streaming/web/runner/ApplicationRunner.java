@@ -23,14 +23,14 @@ import org.springframework.stereotype.Component;
 public class ApplicationRunner implements org.springframework.boot.ApplicationRunner {
 
 
-    @Autowired
-    private IpStatusService ipStatusService;
+  @Autowired
+  private IpStatusService ipStatusService;
 
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        ipStatusService.registerIp();
-    }
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    ipStatusService.registerIp();
+  }
 
 
 }

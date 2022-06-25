@@ -13,31 +13,30 @@ import java.util.Map;
  */
 public interface JobAlarmConfigService {
 
-    /**
-     * 批量新增/修改
-     *
-     * @author zhuhuipei
-     * @date 2021/2/27
-     * @time 17:49
-     */
-    void upSertBatchJobAlarmConfig(List<AlarmTypeEnum> alarmTypeEnumList, Long jobId);
+  /**
+   * 批量新增/修改
+   *
+   * @author zhuhuipei
+   * @date 2021/2/27
+   * @time 17:49
+   */
+  void upSertBatchJobAlarmConfig(List<AlarmTypeEnum> alarmTypeEnumList, Long jobId);
 
 
-    /**
-     * 按jobId查询
-     *
-     * @author zhuhuipei
-     * @date 2021/2/27
-     * @time 17:53
-     */
-    List<AlarmTypeEnum>  findByJobId(Long jobId);
+  /**
+   * 按jobId查询
+   *
+   * @author zhuhuipei
+   * @date 2021/2/27
+   * @time 17:53
+   */
+  List<AlarmTypeEnum> findByJobId(Long jobId);
 
 
-    /**
-     *
-     * @author zhuhuipei
-     */
-    Map<Long ,List<AlarmTypeEnum>> findByJobIdList(List<Long> jobIdList);
+  /**
+   * @author zhuhuipei
+   */
+  Map<Long, List<AlarmTypeEnum>> findByJobIdList(List<Long> jobIdList);
 
 
 }

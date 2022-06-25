@@ -27,47 +27,49 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginInterceptor implements HandlerInterceptor {
 
 
-    @Autowired
-    private UserService userService;
+  @Autowired
+  private UserService userService;
 
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
-        log.debug("进入LoginInterceptor拦截器 {}", request.getRequestURI());
-        if ("/".equals(request.getRequestURI())) {
-            response.sendRedirect("/static/ui/index.html");
-            return false;
-        }
-        UserSession userSession = UserSessionUtil.userSession(request);
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+      throws Exception {
+    log.debug("进入LoginInterceptor拦截器 {}", request.getRequestURI());
+    if ("/".equals(request.getRequestURI())) {
+      response.sendRedirect("/static/ui/index.html");
+      return false;
+    }
+    UserSession userSession = UserSessionUtil.userSession(request);
 
-        // ajax请求
-        if (WebUtil.isAjaxRequest(request)) {
-            boolean nologin = (userSession == null) || (!userService.checkLogin(userSession));
-            if (nologin) {
-                RestResult<Object> respdata = RestResult.newInstance(Constant.RESPONE_STATUS_UNAUTH, "未登录认证！", null);
-                WebUtil.restResponseWithFlush(response, respdata);
-                return false;
-            }
-            return true;
-        }
-        log.debug("未知请求={}", request.getRequestURI());
-        return true;
+    // ajax请求
+    if (WebUtil.isAjaxRequest(request)) {
+      boolean nologin = (userSession == null) || (!userService.checkLogin(userSession));
+      if (nologin) {
+        RestResult<Object> respdata = RestResult
+            .newInstance(Constant.RESPONE_STATUS_UNAUTH, "未登录认证！", null);
+        WebUtil.restResponseWithFlush(response, respdata);
+        return false;
+      }
+      return true;
+    }
+    log.debug("未知请求={}", request.getRequestURI());
+    return true;
+  }
+
+  @Override
+  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+      ModelAndView modelAndView) {
+    UserSession userSession = UserSessionUtil.userSession(request);
+    if (modelAndView != null && userSession != null) {
+      modelAndView.addObject("user", userSession.getName());
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        UserSession userSession = UserSessionUtil.userSession(request);
-        if (modelAndView != null && userSession != null) {
-            modelAndView.addObject("user", userSession.getName());
-        }
+  }
 
-    }
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+      Object handler, Exception ex) {
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-
-
-    }
+  }
 
 }

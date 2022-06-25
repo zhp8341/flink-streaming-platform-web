@@ -8,9 +8,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 核心线程10个 最大线程100 队列100 公平策略 告警线程池
  *
- * 核心线程10个 最大线程100 队列100 公平策略
- * 告警线程池
  * @author zhuhuipei
  * @Description:
  * @date 2018/9/6
@@ -18,37 +17,38 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
-public class AlarmPoolConfig {
+public final class AlarmPoolConfig {
 
-    private static int corePoolSize = 10;
+  private static int corePoolSize = 10;
 
-    private static int maximumPoolSize = 30;
+  private static int maximumPoolSize = 30;
 
-    private static long keepAliveTime = 10;
+  private static long keepAliveTime = 10;
 
 
-    private static ThreadPoolExecutor threadPoolExecutor;
+  private static ThreadPoolExecutor threadPoolExecutor;
 
-    private static AlarmPoolConfig alarmPoolConfig;
+  private static AlarmPoolConfig alarmPoolConfig;
 
-    private AlarmPoolConfig() {
-        BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(100, true);
-        threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue);
-    }
+  private AlarmPoolConfig() {
+    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(100, true);
+    threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime,
+        TimeUnit.MINUTES, workQueue);
+  }
 
-    public static synchronized AlarmPoolConfig getInstance() {
+  public static synchronized AlarmPoolConfig getInstance() {
+    if (null == alarmPoolConfig) {
+      synchronized (AlarmPoolConfig.class) {
         if (null == alarmPoolConfig) {
-            synchronized (AlarmPoolConfig.class) {
-                if (null == alarmPoolConfig) {
-                    alarmPoolConfig = new AlarmPoolConfig();
-                }
-            }
+          alarmPoolConfig = new AlarmPoolConfig();
         }
-        log.info("AlarmPoolConfig threadPoolExecutor={}", threadPoolExecutor);
-        return alarmPoolConfig;
+      }
     }
+    log.info("AlarmPoolConfig threadPoolExecutor={}", threadPoolExecutor);
+    return alarmPoolConfig;
+  }
 
-    public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
-    }
+  public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
+    return threadPoolExecutor;
+  }
 }

@@ -17,36 +17,37 @@ import java.util.List;
 public class SavepointBackupVO {
 
 
-    private Long id;
-    /**
-     * backup地址
-     */
-    private String savepointPath;
+  private Long id;
+  /**
+   * backup地址
+   */
+  private String savepointPath;
 
 
-    private String backupTime;
+  private String backupTime;
 
 
-    public static SavepointBackupVO toDTO(SavepointBackupDTO savepointBackupDTO) {
-        if (savepointBackupDTO == null) {
-            return null;
-        }
-        SavepointBackupVO savepointBackupVO = new SavepointBackupVO();
-        savepointBackupVO.setId(savepointBackupDTO.getId());
-        savepointBackupVO.setSavepointPath(savepointBackupDTO.getSavepointPath());
-        savepointBackupVO.setBackupTime(DateFormatUtils.toFormatString(savepointBackupDTO.getBackupTime()));
-        return savepointBackupVO;
+  public static SavepointBackupVO toDTO(SavepointBackupDTO savepointBackupDTO) {
+    if (savepointBackupDTO == null) {
+      return null;
     }
+    SavepointBackupVO savepointBackupVO = new SavepointBackupVO();
+    savepointBackupVO.setId(savepointBackupDTO.getId());
+    savepointBackupVO.setSavepointPath(savepointBackupDTO.getSavepointPath());
+    savepointBackupVO
+        .setBackupTime(DateFormatUtils.toFormatString(savepointBackupDTO.getBackupTime()));
+    return savepointBackupVO;
+  }
 
-    public static List<SavepointBackupVO> toDTOList(List<SavepointBackupDTO> savepointBackupList) {
-        if (CollectionUtil.isEmpty(savepointBackupList)) {
-            return Collections.emptyList();
-        }
-        List<SavepointBackupVO> list = CollectionUtil.newArrayList();
-        for (SavepointBackupDTO savepointBackupDTO : savepointBackupList) {
-            list.add(toDTO(savepointBackupDTO));
-        }
-        return list;
+  public static List<SavepointBackupVO> toDTOList(List<SavepointBackupDTO> savepointBackupList) {
+    if (CollectionUtil.isEmpty(savepointBackupList)) {
+      return Collections.emptyList();
     }
+    List<SavepointBackupVO> list = CollectionUtil.newArrayList();
+    for (SavepointBackupDTO savepointBackupDTO : savepointBackupList) {
+      list.add(toDTO(savepointBackupDTO));
+    }
+    return list;
+  }
 
 }

@@ -33,136 +33,139 @@ import java.util.Date;
 @Slf4j
 public class JobYarnServerAOImpl implements JobServerAO {
 
-    //最大重试次数
-    private static final Integer TRY_TIMES = 2;
+  //最大重试次数
+  private static final Integer TRY_TIMES = 2;
 
-    @Autowired
-    private JobConfigService jobConfigService;
-
-
-    @Autowired
-    private YarnRestRpcAdapter yarnRestRpcAdapter;
-
-    @Autowired
-    private CommandRpcClinetAdapter commandRpcClinetAdapter;
-
-    @Autowired
-    private SavepointBackupService savepointBackupService;
-
-    @Autowired
-    private JobBaseServiceAO jobBaseServiceAO;
+  @Autowired
+  private JobConfigService jobConfigService;
 
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void start(Long id, Long savepointId, String userName) {
+  @Autowired
+  private YarnRestRpcAdapter yarnRestRpcAdapter;
 
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+  @Autowired
+  private CommandRpcClinetAdapter commandRpcClinetAdapter;
 
-        //1、检查jobConfigDTO 状态等参数
-        jobBaseServiceAO.checkStart(jobConfigDTO);
+  @Autowired
+  private SavepointBackupService savepointBackupService;
 
-        if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
-            this.stop(jobConfigDTO);
-        }
+  @Autowired
+  private JobBaseServiceAO jobBaseServiceAO;
 
-        //2、将配置的sql 写入本地文件并且返回运行所需参数
-        JobRunParamDTO jobRunParamDTO = jobBaseServiceAO.writeSqlToFile(jobConfigDTO);
 
-        //3、插一条运行日志数据
-        Long jobRunLogId = jobBaseServiceAO.insertJobRunLog(jobConfigDTO, userName);
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void start(Long id, Long savepointId, String userName) {
 
-        //4、变更任务状态（变更为：启动中） 有乐观锁 防止重复提交
-        jobConfigService.updateStatusByStart(jobConfigDTO.getId(), userName, jobRunLogId, jobConfigDTO.getVersion());
+    JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
 
-        String savepointPath = savepointBackupService.getSavepointPathById(id, savepointId);
+    //1、检查jobConfigDTO 状态等参数
+    jobBaseServiceAO.checkStart(jobConfigDTO);
 
-        //异步提交任务
-        jobBaseServiceAO.aSyncExecJob(jobRunParamDTO, jobConfigDTO, jobRunLogId, savepointPath);
-
+    if (StringUtils.isNotEmpty(jobConfigDTO.getJobId())) {
+      this.stop(jobConfigDTO);
     }
 
+    //2、将配置的sql 写入本地文件并且返回运行所需参数
+    JobRunParamDTO jobRunParamDTO = jobBaseServiceAO.writeSqlToFile(jobConfigDTO);
 
-    @Override
-    public void stop(Long id, String userName) {
-        log.info("[{}]开始停止任务[{}]", userName, id);
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-        if (jobConfigDTO == null) {
-            throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
-        }
-        //1、停止前做一次savepoint操作
-        try {
-            this.savepoint(id);
-        } catch (Exception e) {
-            log.error(MessageConstants.MESSAGE_008, e);
-        }
-        //2、停止任务
-        this.stop(jobConfigDTO);
-        JobConfigDTO jobConfig = new JobConfigDTO();
-        jobConfig.setStatus(JobConfigStatus.STOP);
-        jobConfig.setEditor(userName);
-        jobConfig.setId(id);
-        jobConfig.setJobId("");
-        //3、变更状态
-        jobConfigService.updateJobConfigById(jobConfig);
+    //3、插一条运行日志数据
+    Long jobRunLogId = jobBaseServiceAO.insertJobRunLog(jobConfigDTO, userName);
+
+    //4、变更任务状态（变更为：启动中） 有乐观锁 防止重复提交
+    jobConfigService.updateStatusByStart(jobConfigDTO.getId(), userName, jobRunLogId,
+        jobConfigDTO.getVersion());
+
+    String savepointPath = savepointBackupService.getSavepointPathById(id, savepointId);
+
+    //异步提交任务
+    jobBaseServiceAO.aSyncExecJob(jobRunParamDTO, jobConfigDTO, jobRunLogId, savepointPath);
+
+  }
+
+
+  @Override
+  public void stop(Long id, String userName) {
+    log.info("[{}]开始停止任务[{}]", userName, id);
+    JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+    if (jobConfigDTO == null) {
+      throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
+    }
+    //1、停止前做一次savepoint操作
+    try {
+      this.savepoint(id);
+    } catch (Exception e) {
+      log.error(MessageConstants.MESSAGE_008, e);
+    }
+    //2、停止任务
+    this.stop(jobConfigDTO);
+    JobConfigDTO jobConfig = new JobConfigDTO();
+    jobConfig.setStatus(JobConfigStatus.STOP);
+    jobConfig.setEditor(userName);
+    jobConfig.setId(id);
+    jobConfig.setJobId("");
+    //3、变更状态
+    jobConfigService.updateJobConfigById(jobConfig);
+  }
+
+  @Override
+  public void savepoint(Long id) {
+    JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+
+    jobBaseServiceAO.checkSavepoint(jobConfigDTO);
+
+    JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+    if (jobInfo == null) {
+      log.warn(MessageConstants.MESSAGE_007, jobConfigDTO.getJobName());
+      throw new BizException(MessageConstants.MESSAGE_007);
+    }
+    //1、 执行savepoint
+    try {
+      commandRpcClinetAdapter.savepointForPerYarn(jobInfo.getId(),
+          SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
+    } catch (Exception e) {
+      log.error(MessageConstants.MESSAGE_008, e);
+      throw new BizException(MessageConstants.MESSAGE_008);
     }
 
-    @Override
-    public void savepoint(Long id) {
-        JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
-
-       jobBaseServiceAO.checkSavepoint(jobConfigDTO);
-
-        JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-        if (jobInfo == null) {
-            log.warn(MessageConstants.MESSAGE_007, jobConfigDTO.getJobName());
-            throw new BizException(MessageConstants.MESSAGE_007);
-        }
-        //1、 执行savepoint
-        try {
-            commandRpcClinetAdapter.savepointForPerYarn(jobInfo.getId(),
-                    SystemConstants.DEFAULT_SAVEPOINT_ROOT_PATH + id, jobConfigDTO.getJobId());
-        } catch (Exception e) {
-            log.error(MessageConstants.MESSAGE_008, e);
-            throw new BizException(MessageConstants.MESSAGE_008);
-        }
-
-        String savepointPath = yarnRestRpcAdapter.getSavepointPath(jobConfigDTO.getJobId(), jobInfo.getId());
-        if (StringUtils.isEmpty(savepointPath)) {
-            log.warn(MessageConstants.MESSAGE_009, jobConfigDTO);
-            throw new BizException(MessageConstants.MESSAGE_009);
-        }
-        //2、 执行保存Savepoint到本地数据库
-        savepointBackupService.insertSavepoint(id, savepointPath, new Date());
+    String savepointPath = yarnRestRpcAdapter
+        .getSavepointPath(jobConfigDTO.getJobId(), jobInfo.getId());
+    if (StringUtils.isEmpty(savepointPath)) {
+      log.warn(MessageConstants.MESSAGE_009, jobConfigDTO);
+      throw new BizException(MessageConstants.MESSAGE_009);
     }
+    //2、 执行保存Savepoint到本地数据库
+    savepointBackupService.insertSavepoint(id, savepointPath, new Date());
+  }
 
 
-    @Override
-    public void open(Long id, String userName) {
-        jobConfigService.openOrClose(id, YN.Y, userName);
+  @Override
+  public void open(Long id, String userName) {
+    jobConfigService.openOrClose(id, YN.Y, userName);
+  }
+
+  @Override
+  public void close(Long id, String userName) {
+    jobBaseServiceAO.checkClose(jobConfigService.getJobConfigById(id));
+
+    jobConfigService.openOrClose(id, YN.N, userName);
+  }
+
+
+  private void stop(JobConfigDTO jobConfigDTO) {
+    Integer retryNum = 1;
+    while (retryNum <= TRY_TIMES) {
+      JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
+      log.info("任务[{}]当前状态为：{}", jobConfigDTO.getId(), jobInfo);
+      if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
+        log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobInfo, retryNum,
+            jobConfigDTO.getJobId());
+        yarnRestRpcAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobInfo.getId());
+      } else {
+        log.info("任务已经停止 jobYarnInfo={} id={}", jobInfo, jobConfigDTO.getJobId());
+        break;
+      }
+      retryNum++;
     }
-
-    @Override
-    public void close(Long id, String userName) {
-        jobBaseServiceAO.checkClose(jobConfigService.getJobConfigById(id));
-
-        jobConfigService.openOrClose(id, YN.N, userName);
-    }
-
-
-    private void stop(JobConfigDTO jobConfigDTO) {
-        Integer retryNum = 1;
-        while (retryNum <= TRY_TIMES) {
-            JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-            log.info("任务[{}]当前状态为：{}", jobConfigDTO.getId(), jobInfo);
-            if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
-                log.info("执行停止操作 jobYarnInfo={} retryNum={} id={}", jobInfo, retryNum, jobConfigDTO.getJobId());
-                yarnRestRpcAdapter.cancelJobForYarnByAppId(jobConfigDTO.getJobId(), jobInfo.getId());
-            } else {
-                log.info("任务已经停止 jobYarnInfo={} id={}", jobInfo, jobConfigDTO.getJobId());
-                break;
-            }
-            retryNum++;
-        }
-    }
+  }
 }

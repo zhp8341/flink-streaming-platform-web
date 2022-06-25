@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 
 /**
  * SchedulerTask 线程池
+ *
  * @author zhuhuipei
  * @Description:
  * @date 2018/9/6
@@ -18,19 +19,19 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class TaskPoolConfig {
 
-    private int corePoolSize = 25;
+  private int corePoolSize = 25;
 
-    private int maxPoolSize = 50;
+  private int maxPoolSize = 50;
 
-    private int queueCapacity = 10;
+  private int queueCapacity = 10;
 
-    @Bean
-    public Executor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(maxPoolSize);
-        executor.setQueueCapacity(queueCapacity);
-        executor.initialize();
-        return executor;
-    }
+  @Bean
+  public Executor taskExecutor() {
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(corePoolSize);
+    executor.setMaxPoolSize(maxPoolSize);
+    executor.setQueueCapacity(queueCapacity);
+    executor.initialize();
+    return executor;
+  }
 }

@@ -11,13 +11,13 @@ import lombok.Data;
 @Data
 public class PageParam {
 
-    /**
-     * 当前页码
-     */
-    private int pageNum = 1;
-    /**
-     * 每页数量
-     */
-    private int pageSize = 15;
+  /**
+   * 当前页码
+   */
+  private int pageNum = 1;
+  /**
+   * 每页数量
+   */
+  private int pageSize = 15;
 
 }

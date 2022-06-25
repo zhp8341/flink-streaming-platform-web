@@ -15,25 +15,26 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BaseController {
 
-    /**
-     * 取得HttpServletRequest对象.
-     *
-     * @return HttpServletRequest对象.
-     */
-    protected HttpServletRequest getServletRequest() {
+  /**
+   * 取得HttpServletRequest对象.
+   *
+   * @return HttpServletRequest对象.
+   */
+  protected HttpServletRequest getServletRequest() {
 
-        ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attrs.getRequest();
-        return request;
+    ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes();
+    HttpServletRequest request = attrs.getRequest();
+    return request;
+  }
+
+
+  public String getUserName() {
+    UserSession userSession = UserSessionUtil.userSession(getServletRequest());
+    if (userSession == null) {
+      return "";
     }
-
-
-    public String getUserName() {
-        UserSession userSession = UserSessionUtil.userSession(getServletRequest());
-        if (userSession == null) {
-            return "";
-        }
-        return userSession.getName();
-    }
+    return userSession.getName();
+  }
 
 }

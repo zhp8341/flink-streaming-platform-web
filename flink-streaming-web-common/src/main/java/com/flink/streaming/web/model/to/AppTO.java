@@ -13,60 +13,60 @@ import lombok.Data;
 @Data
 public class AppTO {
 
-    /**
-     * yarn appid
-     */
-    private String id;
+  /**
+   * yarn appid
+   */
+  private String id;
 
-    /**
-     * 运行用户 如 hadoop
-     */
-    private String user;
+  /**
+   * 运行用户 如 hadoop
+   */
+  private String user;
 
-    /**
-     * 运行的任务名称
-     */
-    private String name;
+  /**
+   * 运行的任务名称
+   */
+  private String name;
 
-    /**
-     * 队列名称
-     */
-    private String queue;
+  /**
+   * 队列名称
+   */
+  private String queue;
 
-    /**
-     * 运行状态
-     */
-    private String state;
+  /**
+   * 运行状态
+   */
+  private String state;
 
-    private String finalStatus;
+  private String finalStatus;
 
-    private Integer progress;
+  private Integer progress;
 
-    private String trackingUI;
+  private String trackingUI;
 
-    /**
-     * 连接地址
-     */
-    private String trackingUrl;
-
-
-    /**
-     * 应用类型
-     */
-    private String applicationType;
+  /**
+   * 连接地址
+   */
+  private String trackingUrl;
 
 
-    /**
-     * 运行开始时间
-     */
-    private Long startedTime;
+  /**
+   * 应用类型
+   */
+  private String applicationType;
 
 
-    private Long finishedTime;
+  /**
+   * 运行开始时间
+   */
+  private Long startedTime;
 
-    /**
-     * AM 容器地址
-     */
-    private String amContainerLogs;
+
+  private Long finishedTime;
+
+  /**
+   * AM 容器地址
+   */
+  private String amContainerLogs;
 
 }

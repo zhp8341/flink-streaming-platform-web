@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 public class JobStandaloneInfo {
 
-    private String jid;
+  private String jid;
 
-    private String state;
+  private String state;
 
-    private String errors;
+  private String errors;
 
 
 }

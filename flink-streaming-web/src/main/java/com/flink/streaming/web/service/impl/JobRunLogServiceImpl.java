@@ -23,64 +23,64 @@ import org.springframework.stereotype.Service;
 @Service
 public class JobRunLogServiceImpl implements JobRunLogService {
 
-    @Autowired
-    private JobRunLogMapper jobRunLogMapper;
+  @Autowired
+  private JobRunLogMapper jobRunLogMapper;
 
-    @Override
-    public Long insertJobRunLog(JobRunLogDTO jobRunLogDTO) {
-        JobRunLog jobRunLog = JobRunLogDTO.toEntity(jobRunLogDTO);
-        jobRunLogMapper.insert(jobRunLog);
-        return jobRunLog.getId();
+  @Override
+  public Long insertJobRunLog(JobRunLogDTO jobRunLogDTO) {
+    JobRunLog jobRunLog = JobRunLogDTO.toEntity(jobRunLogDTO);
+    jobRunLogMapper.insert(jobRunLog);
+    return jobRunLog.getId();
+  }
+
+  @Override
+  public void updateLogById(String localLog, Long id) {
+    try {
+      JobRunLog jobRunLog = new JobRunLog();
+      jobRunLog.setId(id);
+      jobRunLog.setLocalLog(localLog);
+      jobRunLogMapper.update(jobRunLog);
+    } catch (Exception e) {
+      log.error("更新日志 失败 id={} ,localLog={}", id, localLog, e);
     }
 
-    @Override
-    public void updateLogById(String localLog, Long id) {
-        try {
-            JobRunLog jobRunLog = new JobRunLog();
-            jobRunLog.setId(id);
-            jobRunLog.setLocalLog(localLog);
-            jobRunLogMapper.update(jobRunLog);
-        } catch (Exception e) {
-            log.error("更新日志 失败 id={} ,localLog={}", id, localLog, e);
-        }
+  }
 
+  @Override
+  public void updateJobRunLogById(JobRunLogDTO jobRunLogDTO) {
+    jobRunLogMapper.update(JobRunLogDTO.toEntity(jobRunLogDTO));
+  }
+
+  @Override
+  public PageModel<JobRunLogDTO> queryJobRunLog(JobRunLogParam jobRunLogParam) {
+    if (jobRunLogParam == null) {
+      jobRunLogParam = new JobRunLogParam();
     }
+    PageHelper.startPage(jobRunLogParam.getPageNum(), jobRunLogParam.getPageSize(), YN.Y.getCode());
 
-    @Override
-    public void updateJobRunLogById(JobRunLogDTO jobRunLogDTO) {
-        jobRunLogMapper.update(JobRunLogDTO.toEntity(jobRunLogDTO));
+    //只能查最近30天的
+    Page<JobRunLog> page = jobRunLogMapper.selectByParam(jobRunLogParam);
+    if (page == null) {
+      return null;
     }
+    PageModel<JobRunLogDTO> pageModel = new PageModel<>();
+    pageModel.setPages(page.getPages());
+    pageModel.addAll(JobRunLogDTO.toListDTO(page.getResult()));
+    pageModel.setPageSize(page.getPageSize());
+    pageModel.setTotal(page.getTotal());
+    pageModel.setPageNum(page.getPageNum());
+    return pageModel;
+  }
 
-    @Override
-    public PageModel<JobRunLogDTO> queryJobRunLog(JobRunLogParam jobRunLogParam) {
-        if (jobRunLogParam == null) {
-            jobRunLogParam = new JobRunLogParam();
-        }
-        PageHelper.startPage(jobRunLogParam.getPageNum(), jobRunLogParam.getPageSize(), YN.Y.getCode());
+  @Override
+  public JobRunLogDTO getDetailLogById(Long id) {
+    return JobRunLogDTO.toDTO(jobRunLogMapper.selectById(id));
+  }
 
-        //只能查最近30天的
-        Page<JobRunLog> page = jobRunLogMapper.selectByParam(jobRunLogParam);
-        if (page == null) {
-            return null;
-        }
-        PageModel<JobRunLogDTO> pageModel = new PageModel<>();
-        pageModel.setPages(page.getPages());
-        pageModel.addAll(JobRunLogDTO.toListDTO(page.getResult()));
-        pageModel.setPageSize(page.getPageSize());
-        pageModel.setTotal(page.getTotal());
-        pageModel.setPageNum(page.getPageNum());
-        return pageModel;
-    }
-
-    @Override
-    public JobRunLogDTO getDetailLogById(Long id) {
-        return JobRunLogDTO.toDTO(jobRunLogMapper.selectById(id));
-    }
-
-    @Override
-    public void deleteLogByJobConfigId(Long jobConfigId) {
-        jobRunLogMapper.deleteByJobConfigId(jobConfigId);
-    }
+  @Override
+  public void deleteLogByJobConfigId(Long jobConfigId) {
+    jobRunLogMapper.deleteByJobConfigId(jobConfigId);
+  }
 
 
 }

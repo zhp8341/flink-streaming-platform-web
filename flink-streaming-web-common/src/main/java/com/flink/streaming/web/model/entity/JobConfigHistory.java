@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author zhuhuipei
  * @date 2021/5/5
  * @time 19:49
@@ -14,76 +13,75 @@ import java.util.Date;
 @Data
 public class JobConfigHistory implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    /**
-     * job_config主表Id
-     */
-    private Long jobConfigId;
+  /**
+   * job_config主表Id
+   */
+  private Long jobConfigId;
 
-    /**
-     * 任务名称
-     */
-    private String jobName;
+  /**
+   * 任务名称
+   */
+  private String jobName;
 
-    /**
-     * 任务描述
-     */
-    private String jobDesc;
+  /**
+   * 任务描述
+   */
+  private String jobDesc;
 
-    /**
-     * 提交模式: standalone 、yarn 、yarn-session 
-     */
-    private String deployMode;
+  /**
+   * 提交模式: standalone 、yarn 、yarn-session
+   */
+  private String deployMode;
 
-    /**
-     * flink运行配置
-     */
-    private String flinkRunConfig;
+  /**
+   * flink运行配置
+   */
+  private String flinkRunConfig;
 
-    /**
-     * checkPoint配置
-     */
-    private String flinkCheckpointConfig;
+  /**
+   * checkPoint配置
+   */
+  private String flinkCheckpointConfig;
 
-    /**
-     * udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar
-     */
-    private String extJarPath;
+  /**
+   * udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar
+   */
+  private String extJarPath;
 
-    /**
-     * 更新版本号
-     */
-    private Integer version;
-    
-    /**
-     * 任务类型 0:sql 1:自定义jar'
-     */
-    private Integer jobType;
+  /**
+   * 更新版本号
+   */
+  private Integer version;
 
-    private Boolean isDeleted;
+  /**
+   * 任务类型 0:sql 1:自定义jar'
+   */
+  private Integer jobType;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  private Boolean isDeleted;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    private String creator;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String editor;
+  private String creator;
 
-    /**
-     * sql语句
-     */
-    private String flinkSql;
+  private String editor;
 
+  /**
+   * sql语句
+   */
+  private String flinkSql;
 
 
 }

@@ -10,18 +10,18 @@ import org.apache.commons.lang3.StringUtils;
  * @time 20:41
  */
 public enum DeployModeEnum {
-    YARN_PER, STANDALONE, LOCAL;
+  YARN_PER, STANDALONE, LOCAL;
 
-    public static DeployModeEnum getModel(String model) {
-        if (StringUtils.isEmpty(model)) {
-            throw new BizException("运行模式不能为空");
-        }
-        for (DeployModeEnum deployModeEnum : DeployModeEnum.values()) {
-            if (deployModeEnum.name().equals(model.trim().toUpperCase())) {
-                return deployModeEnum;
-            }
-
-        }
-        throw new BizException("运行模式不存在");
+  public static DeployModeEnum getModel(String model) {
+    if (StringUtils.isEmpty(model)) {
+      throw new BizException("运行模式不能为空");
     }
+    for (DeployModeEnum deployModeEnum : DeployModeEnum.values()) {
+      if (deployModeEnum.name().equals(model.trim().toUpperCase())) {
+        return deployModeEnum;
+      }
+
+    }
+    throw new BizException("运行模式不存在");
+  }
 }

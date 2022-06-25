@@ -23,34 +23,36 @@ import java.io.*;
 @Slf4j
 public class FlinkLogApiController {
 
-    @Autowired
-    public SystemConfigService systemConfigService;
+  @Autowired
+  private SystemConfigService systemConfigService;
 
-    @RequestMapping(value = "/getFlinkLocalJobLog")
-    public String  getFlinkLocalJobLog(HttpServletResponse response){
-        try {
-            String fileName=String.format("flink-%s-client-%s.log", LinuxInfoUtil.loginName(), IpUtil.getHostName());
-            String flinkName=systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
-            String logPath=flinkName+"log/"+fileName;
-            log.info("日志文件地址 logPath={}",logPath);
-            File file = new File(logPath);
-            InputStream fis = new BufferedInputStream(new FileInputStream(file));
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            response.reset();
-            response.addHeader("Content-Length", "" + file.length());
-            response.setContentType("text/plain; charset=utf-8");
-            OutputStream toClient = new BufferedOutputStream(response.getOutputStream(),2048);
-            toClient.write(buffer);
-            toClient.flush();
-            toClient.close();
-        } catch (Exception ex) {
-            log.error("[getFlinkLocalJobLog is error]",ex);
-            return ex.getMessage();
-        }
-        return "ok";
+  @RequestMapping(value = "/getFlinkLocalJobLog")
+  public String getFlinkLocalJobLog(HttpServletResponse response) {
+    try {
+      String fileName = String
+          .format("flink-%s-client-%s.log", LinuxInfoUtil.loginName(), IpUtil.getHostName());
+      String flinkName = systemConfigService
+          .getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
+      String logPath = flinkName + "log/" + fileName;
+      log.info("日志文件地址 logPath={}", logPath);
+      File file = new File(logPath);
+      InputStream fis = new BufferedInputStream(new FileInputStream(file));
+      byte[] buffer = new byte[fis.available()];
+      fis.read(buffer);
+      fis.close();
+      response.reset();
+      response.addHeader("Content-Length", "" + file.length());
+      response.setContentType("text/plain; charset=utf-8");
+      OutputStream toClient = new BufferedOutputStream(response.getOutputStream(), 2048);
+      toClient.write(buffer);
+      toClient.flush();
+      toClient.close();
+    } catch (Exception ex) {
+      log.error("[getFlinkLocalJobLog is error]", ex);
+      return ex.getMessage();
     }
+    return "ok";
+  }
 
 
 }

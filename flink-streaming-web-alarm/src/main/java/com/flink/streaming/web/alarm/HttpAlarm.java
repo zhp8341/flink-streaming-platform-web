@@ -10,12 +10,12 @@ import com.flink.streaming.web.model.vo.CallbackDTO;
  */
 public interface HttpAlarm {
 
-    /**
-     * 回调http
-     *
-     * @author zhuhuipei
-     * @date 2021/2/21
-     * @time 11:39
-     */
-    boolean send(String url, CallbackDTO callbackDTO);
+  /**
+   * 回调http
+   *
+   * @author zhuhuipei
+   * @date 2021/2/21
+   * @time 11:39
+   */
+  boolean send(String url, CallbackDTO callbackDTO);
 }

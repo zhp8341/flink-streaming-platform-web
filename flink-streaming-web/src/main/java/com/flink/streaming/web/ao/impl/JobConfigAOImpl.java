@@ -19,23 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class JobConfigAOImpl implements JobConfigAO {
 
-    @Autowired
-    private JobConfigService jobConfigService;
+  @Autowired
+  private JobConfigService jobConfigService;
 
-    @Autowired
-    private JobAlarmConfigService jobAlarmConfigService;
+  @Autowired
+  private JobAlarmConfigService jobAlarmConfigService;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void addJobConfig(JobConfigDTO jobConfigDTO) {
-        Long jobConfigId = jobConfigService.addJobConfig(jobConfigDTO);
-        jobAlarmConfigService.upSertBatchJobAlarmConfig(jobConfigDTO.getAlarmTypeEnumList(), jobConfigId);
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void addJobConfig(JobConfigDTO jobConfigDTO) {
+    Long jobConfigId = jobConfigService.addJobConfig(jobConfigDTO);
+    jobAlarmConfigService
+        .upSertBatchJobAlarmConfig(jobConfigDTO.getAlarmTypeEnumList(), jobConfigId);
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateJobConfigById(JobConfigDTO jobConfigDTO) {
-        jobConfigService.updateJobConfigByIdWithWriteHistory(jobConfigDTO);
-        jobAlarmConfigService.upSertBatchJobAlarmConfig(jobConfigDTO.getAlarmTypeEnumList(), jobConfigDTO.getId());
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void updateJobConfigById(JobConfigDTO jobConfigDTO) {
+    jobConfigService.updateJobConfigByIdWithWriteHistory(jobConfigDTO);
+    jobAlarmConfigService
+        .upSertBatchJobAlarmConfig(jobConfigDTO.getAlarmTypeEnumList(), jobConfigDTO.getId());
+  }
 }

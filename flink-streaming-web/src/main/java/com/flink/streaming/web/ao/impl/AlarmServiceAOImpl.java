@@ -26,73 +26,73 @@ import org.springframework.stereotype.Component;
 public class AlarmServiceAOImpl implements AlarmServiceAO {
 
 
-    @Autowired
-    private AlartLogService alartLogService;
+  @Autowired
+  private AlartLogService alartLogService;
 
-    @Autowired
-    private JobRunLogService jobRunLogService;
-
-
-    @Autowired
-    private DingDingAlarm dingDingAlarm;
+  @Autowired
+  private JobRunLogService jobRunLogService;
 
 
-    @Autowired
-    private HttpAlarm httpAlarm;
+  @Autowired
+  private DingDingAlarm dingDingAlarm;
 
-    @Override
-    public boolean sendForDingding(String url, String content, Long jobConfigId) {
 
-        boolean isSuccess = false;
-        String failLog = "";
-        try {
-            isSuccess = dingDingAlarm.send(url, content);
-        } catch (Exception e) {
-            log.error("dingDingAlarm.send is error", e);
-            failLog = e.getMessage();
-        }
-        this.insertLog(isSuccess, jobConfigId, failLog, content, AlarmLogTypeEnum.DINGDING);
+  @Autowired
+  private HttpAlarm httpAlarm;
 
-        return isSuccess;
+  @Override
+  public boolean sendForDingding(String url, String content, Long jobConfigId) {
+
+    boolean isSuccess = false;
+    String failLog = "";
+    try {
+      isSuccess = dingDingAlarm.send(url, content);
+    } catch (Exception e) {
+      log.error("dingDingAlarm.send is error", e);
+      failLog = e.getMessage();
     }
+    this.insertLog(isSuccess, jobConfigId, failLog, content, AlarmLogTypeEnum.DINGDING);
 
-    @Override
-    public boolean sendForHttp(String url, CallbackDTO callbackDTO) {
+    return isSuccess;
+  }
 
-        boolean isSuccess = false;
-        String failLog = "";
-        try {
-            isSuccess = httpAlarm.send(url, callbackDTO);
-        } catch (Exception e) {
-            log.error("dingDingAlarm.send is error", e);
-            failLog = e.getMessage();
-        }
-        this.insertLog(isSuccess, callbackDTO.getJobConfigId(), failLog, JSON.toJSONString(callbackDTO),
-                AlarmLogTypeEnum.CALLBACK_URL);
+  @Override
+  public boolean sendForHttp(String url, CallbackDTO callbackDTO) {
 
-        return isSuccess;
+    boolean isSuccess = false;
+    String failLog = "";
+    try {
+      isSuccess = httpAlarm.send(url, callbackDTO);
+    } catch (Exception e) {
+      log.error("dingDingAlarm.send is error", e);
+      failLog = e.getMessage();
     }
+    this.insertLog(isSuccess, callbackDTO.getJobConfigId(), failLog, JSON.toJSONString(callbackDTO),
+        AlarmLogTypeEnum.CALLBACK_URL);
+
+    return isSuccess;
+  }
 
 
-    private void insertLog(boolean isSuccess, Long jobConfigId, String failLog, String content,
-                           AlarmLogTypeEnum alarMLogTypeEnum) {
-        JobRunLogDTO jobRunLogDTO = jobRunLogService.getDetailLogById(jobConfigId);
-        AlartLogDTO alartLogDTO = new AlartLogDTO();
-        alartLogDTO.setJobConfigId(jobConfigId);
-        alartLogDTO.setAlarMLogTypeEnum(alarMLogTypeEnum);
-        alartLogDTO.setMessage(content);
-        if (jobRunLogDTO != null) {
-            alartLogDTO.setJobName(jobRunLogDTO.getJobName());
-        } else {
-            alartLogDTO.setJobName("测试");
-        }
-        if (isSuccess) {
-            alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.SUCCESS);
-        } else {
-            alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.FAIL);
-            alartLogDTO.setFailLog(failLog);
-        }
-        alartLogService.addAlartLog(alartLogDTO);
-
+  private void insertLog(boolean isSuccess, Long jobConfigId, String failLog, String content,
+      AlarmLogTypeEnum alarMLogTypeEnum) {
+    JobRunLogDTO jobRunLogDTO = jobRunLogService.getDetailLogById(jobConfigId);
+    AlartLogDTO alartLogDTO = new AlartLogDTO();
+    alartLogDTO.setJobConfigId(jobConfigId);
+    alartLogDTO.setAlarMLogTypeEnum(alarMLogTypeEnum);
+    alartLogDTO.setMessage(content);
+    if (jobRunLogDTO != null) {
+      alartLogDTO.setJobName(jobRunLogDTO.getJobName());
+    } else {
+      alartLogDTO.setJobName("测试");
     }
+    if (isSuccess) {
+      alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.SUCCESS);
+    } else {
+      alartLogDTO.setAlarmLogStatusEnum(AlarmLogStatusEnum.FAIL);
+      alartLogDTO.setFailLog(failLog);
+    }
+    alartLogService.addAlartLog(alartLogDTO);
+
+  }
 }

@@ -11,25 +11,25 @@ import lombok.Getter;
 @Getter
 public enum JobTypeEnum {
 
-    SQL_STREAMING(0), JAR(1), SQL_BATCH(2);
+  SQL_STREAMING(0), JAR(1), SQL_BATCH(2);
 
-    private int code;
+  private int code;
 
-    JobTypeEnum(int code) {
-        this.code = code;
+  JobTypeEnum(int code) {
+    this.code = code;
+  }
+
+  public static JobTypeEnum getJobTypeEnum(Integer code) {
+    if (code == null) {
+      return null;
+    }
+    for (JobTypeEnum jobTypeEnum : JobTypeEnum.values()) {
+      if (code == jobTypeEnum.getCode()) {
+        return jobTypeEnum;
+      }
     }
 
-    public static JobTypeEnum getJobTypeEnum(Integer code) {
-        if (code == null) {
-            return null;
-        }
-        for (JobTypeEnum jobTypeEnum : JobTypeEnum.values()) {
-            if (code == jobTypeEnum.getCode()) {
-                return jobTypeEnum;
-            }
-        }
+    return null;
+  }
 
-        return null;
-    }
-    
 }

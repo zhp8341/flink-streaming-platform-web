@@ -12,21 +12,21 @@ import lombok.Data;
  */
 @Data
 public class JobRunParam {
-    /**
-     * sql语句目录
-     */
-    private String sqlPath;
 
-    /**
-     * 任务类型
-     */
-    private JobTypeEnum jobTypeEnum;
+  /**
+   * sql语句目录
+   */
+  private String sqlPath;
 
-    /**
-     * CheckPoint 参数
-     */
-    private CheckPointParam checkPointParam;
+  /**
+   * 任务类型
+   */
+  private JobTypeEnum jobTypeEnum;
 
+  /**
+   * CheckPoint 参数
+   */
+  private CheckPointParam checkPointParam;
 
 
 }

@@ -13,5 +13,5 @@ import java.util.List;
 @Data
 public class AppListTO {
 
-    private List<AppTO> app;
+  private List<AppTO> app;
 }

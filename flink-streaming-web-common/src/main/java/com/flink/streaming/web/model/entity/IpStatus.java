@@ -11,42 +11,42 @@ import java.util.Date;
 @Data
 public class IpStatus implements Serializable {
 
-    private Long id;
+  private Long id;
 
-    /**
-     * ip
-     */
-    private String ip;
+  /**
+   * ip
+   */
+  private String ip;
 
-    /**
-     * 1:运行 2:停止
-     *
-     * @see com.flink.streaming.web.enums.IpStatusEnum
-     */
-    private Integer status;
+  /**
+   * 1:运行 2:停止
+   *
+   * @see com.flink.streaming.web.enums.IpStatusEnum
+   */
+  private Integer status;
 
-    /**
-     * 最后一次启动时间
-     */
-    private Date lastTime;
+  /**
+   * 最后一次启动时间
+   */
+  private Date lastTime;
 
 
-    private Integer isDeleted;
+  private Integer isDeleted;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String creator;
+  private String creator;
 
-    private String editor;
+  private String editor;
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
 }

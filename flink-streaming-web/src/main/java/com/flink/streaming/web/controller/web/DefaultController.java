@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @Slf4j
 public class DefaultController {
-    @RequestMapping("/")
-    public String defaultUrl(ModelMap modelMap) {
-        return "forward:/admin/listPage";
-    }
+
+  @RequestMapping("/")
+  public String defaultUrl(ModelMap modelMap) {
+    return "forward:/admin/listPage";
+  }
 
 }

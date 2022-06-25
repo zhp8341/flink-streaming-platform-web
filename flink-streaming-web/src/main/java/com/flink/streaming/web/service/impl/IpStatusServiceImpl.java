@@ -25,64 +25,64 @@ import java.util.Date;
 @Slf4j
 public class IpStatusServiceImpl implements IpStatusService {
 
-    @Autowired
-    private IpStatusMapper ipStatusMapper;
+  @Autowired
+  private IpStatusMapper ipStatusMapper;
 
-    @Override
-    public void registerIp() {
-        String ip = IpUtil.getInstance().getLocalIP();
-        if (StringUtils.isEmpty(ip)) {
-            log.error(" get ip is null");
-            throw new BizException(SysErrorEnum.PARAM_IS_NULL);
-        }
-        IpStatus ipStatus = new IpStatus();
-        ipStatus.setIp(ip);
-        ipStatus.setStatus(IpStatusEnum.START.getCode());
-        ipStatus.setLastTime(new Date());
-        ipStatus.setIsDeleted(YN.N.getValue());
+  @Override
+  public void registerIp() {
+    String ip = IpUtil.getInstance().getLocalIP();
+    if (StringUtils.isEmpty(ip)) {
+      log.error(" get ip is null");
+      throw new BizException(SysErrorEnum.PARAM_IS_NULL);
+    }
+    IpStatus ipStatus = new IpStatus();
+    ipStatus.setIp(ip);
+    ipStatus.setStatus(IpStatusEnum.START.getCode());
+    ipStatus.setLastTime(new Date());
+    ipStatus.setIsDeleted(YN.N.getValue());
 
-        if (ipStatusMapper.selectByIp(ip) == null) {
-            ipStatusMapper.insert(ipStatus);
-        } else {
-            ipStatusMapper.updateStatusByIp(ipStatus);
-        }
-
+    if (ipStatusMapper.selectByIp(ip) == null) {
+      ipStatusMapper.insert(ipStatus);
+    } else {
+      ipStatusMapper.updateStatusByIp(ipStatus);
     }
 
-    @Override
-    public void cancelIp() {
-        String ip = IpUtil.getInstance().getLocalIP();
-        IpStatus ipStatus = new IpStatus();
-        ipStatus.setIp(ip);
-        ipStatus.setStatus(IpStatusEnum.STOP.getCode());
-        ipStatusMapper.updateStatusByIp(ipStatus);
-    }
+  }
 
-    @Override
-    public void updateHeartbeatBylocalIp() {
-        registerIp();
-    }
+  @Override
+  public void cancelIp() {
+    String ip = IpUtil.getInstance().getLocalIP();
+    IpStatus ipStatus = new IpStatus();
+    ipStatus.setIp(ip);
+    ipStatus.setStatus(IpStatusEnum.STOP.getCode());
+    ipStatusMapper.updateStatusByIp(ipStatus);
+  }
 
-    @Override
-    public boolean isLeader() {
+  @Override
+  public void updateHeartbeatBylocalIp() {
+    registerIp();
+  }
 
-        try {
-            String ip = IpUtil.getInstance().getLocalIP();
-            if (StringUtils.isEmpty(ip)) {
-                return false;
-            }
-            IpStatus ipStatus = ipStatusMapper.selectLastIp();
-            if (ipStatus == null) {
-                log.error("selectLastIp is null");
-                return false;
-            }
-            if (ip.equals(ipStatus.getIp())) {
-                return true;
-            }
-        } catch (Exception e) {
-            log.error("isLeader is error", e);
-        }
+  @Override
+  public boolean isLeader() {
 
+    try {
+      String ip = IpUtil.getInstance().getLocalIP();
+      if (StringUtils.isEmpty(ip)) {
         return false;
+      }
+      IpStatus ipStatus = ipStatusMapper.selectLastIp();
+      if (ipStatus == null) {
+        log.error("selectLastIp is null");
+        return false;
+      }
+      if (ip.equals(ipStatus.getIp())) {
+        return true;
+      }
+    } catch (Exception e) {
+      log.error("isLeader is error", e);
     }
+
+    return false;
+  }
 }

@@ -14,41 +14,41 @@ import java.util.List;
 @Data
 public class SavepointBackupDTO {
 
-    private Long id;
+  private Long id;
 
-    private Long jobConfigId;
+  private Long jobConfigId;
 
-    /**
-     * backup地址
-     */
-    private String savepointPath;
-
-
-    private Date backupTime;
+  /**
+   * backup地址
+   */
+  private String savepointPath;
 
 
-    public static SavepointBackupDTO toDTO(SavepointBackup savepointBackup) {
-        if (savepointBackup == null) {
-            return null;
-        }
-        SavepointBackupDTO savepointBackupDTO = new SavepointBackupDTO();
-        savepointBackupDTO.setId(savepointBackup.getId());
-        savepointBackupDTO.setJobConfigId(savepointBackup.getJobConfigId());
-        savepointBackupDTO.setSavepointPath(savepointBackup.getSavepointPath());
-        savepointBackupDTO.setBackupTime(savepointBackup.getBackupTime());
-        return savepointBackupDTO;
+  private Date backupTime;
+
+
+  public static SavepointBackupDTO toDTO(SavepointBackup savepointBackup) {
+    if (savepointBackup == null) {
+      return null;
     }
+    SavepointBackupDTO savepointBackupDTO = new SavepointBackupDTO();
+    savepointBackupDTO.setId(savepointBackup.getId());
+    savepointBackupDTO.setJobConfigId(savepointBackup.getJobConfigId());
+    savepointBackupDTO.setSavepointPath(savepointBackup.getSavepointPath());
+    savepointBackupDTO.setBackupTime(savepointBackup.getBackupTime());
+    return savepointBackupDTO;
+  }
 
-    public static List<SavepointBackupDTO> toDTOList(List<SavepointBackup> savepointBackupList) {
-        if (CollectionUtil.isEmpty(savepointBackupList)) {
-            return Collections.emptyList();
-        }
-        List<SavepointBackupDTO> list = CollectionUtil.newArrayList();
-        for (SavepointBackup savepointBackup : savepointBackupList) {
-            list.add(toDTO(savepointBackup));
-        }
-        return list;
+  public static List<SavepointBackupDTO> toDTOList(List<SavepointBackup> savepointBackupList) {
+    if (CollectionUtil.isEmpty(savepointBackupList)) {
+      return Collections.emptyList();
     }
+    List<SavepointBackupDTO> list = CollectionUtil.newArrayList();
+    for (SavepointBackup savepointBackup : savepointBackupList) {
+      list.add(toDTO(savepointBackup));
+    }
+    return list;
+  }
 
 
 }

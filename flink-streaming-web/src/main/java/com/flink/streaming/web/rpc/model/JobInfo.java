@@ -11,9 +11,9 @@ import lombok.Data;
 @Data
 public class JobInfo {
 
-    private String id;
+  private String id;
 
-    private String status;
+  private String status;
 
 
 }

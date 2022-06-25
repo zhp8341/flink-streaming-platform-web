@@ -10,47 +10,47 @@ import java.util.Date;
 @Data
 public class AlartLog {
 
-    private Long id;
+  private Long id;
 
-    private Long jobConfigId;
+  private Long jobConfigId;
 
-    private String jobName;
+  private String jobName;
 
-    /**
-     * 消息内容
-     */
-    private String message;
+  /**
+   * 消息内容
+   */
+  private String message;
 
-    /**
-     * 1:钉钉
-     */
-    private Integer type;
+  /**
+   * 1:钉钉
+   */
+  private Integer type;
 
-    /**
-     * 1:成功 0:失败
-     */
-    private Integer status;
+  /**
+   * 1:成功 0:失败
+   */
+  private Integer status;
 
 
-    /**
-     * 失败原因
-     */
-    private String failLog;
+  /**
+   * 失败原因
+   */
+  private String failLog;
 
-    private Integer isDeleted;
+  private Integer isDeleted;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String creator;
+  private String creator;
 
-    private String editor;
+  private String editor;
 
 }

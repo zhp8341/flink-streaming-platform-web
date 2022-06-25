@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.flink.streaming.web.mapper.JobConfigMapper">
-    <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfig">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
-        <result column="job_desc" jdbcType="VARCHAR" property="jobDesc"/>
-        <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
-        <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig"/>
-        <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
-        <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
-        <result column="is_open" jdbcType="BIT" property="isOpen"/>
-        <result column="status" jdbcType="BIT" property="status"/>
-        <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
-        <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
-        <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
-        <result column="version" jdbcType="INTEGER" property="version"/>
+  <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfig">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+    <result column="job_desc" jdbcType="VARCHAR" property="jobDesc"/>
+    <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
+    <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig"/>
+    <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
+    <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
+    <result column="is_open" jdbcType="BIT" property="isOpen"/>
+    <result column="status" jdbcType="BIT" property="status"/>
+    <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
+    <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
+    <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
+    <result column="version" jdbcType="INTEGER" property="version"/>
 
-        <result column="job_type" jdbcType="INTEGER" property="jobType"/>
-        <result column="custom_args" jdbcType="VARCHAR" property="customArgs"/>
-        <result column="custom_main_class" jdbcType="VARCHAR" property="customMainClass"/>
-        <result column="custom_jar_url" jdbcType="VARCHAR" property="customJarUrl"/>
+    <result column="job_type" jdbcType="INTEGER" property="jobType"/>
+    <result column="custom_args" jdbcType="VARCHAR" property="customArgs"/>
+    <result column="custom_main_class" jdbcType="VARCHAR" property="customMainClass"/>
+    <result column="custom_jar_url" jdbcType="VARCHAR" property="customJarUrl"/>
 
-        <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
-        <result column="creator" jdbcType="VARCHAR" property="creator"/>
-        <result column="editor" jdbcType="VARCHAR" property="editor"/>
-    </resultMap>
-    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
-               type="com.flink.streaming.web.model.entity.JobConfig">
-        <result column="flink_sql" jdbcType="LONGVARCHAR" property="flinkSql"/>
-    </resultMap>
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+    <result column="creator" jdbcType="VARCHAR" property="creator"/>
+    <result column="editor" jdbcType="VARCHAR" property="editor"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+    type="com.flink.streaming.web.model.entity.JobConfig">
+    <result column="flink_sql" jdbcType="LONGVARCHAR" property="flinkSql"/>
+  </resultMap>
 
-    <sql id="Base_Column_List">
-        id,
+  <sql id="Base_Column_List">
+    id
+    ,
         job_name,
         job_desc,
         deploy_mode,
@@ -55,237 +57,243 @@
         edit_time,
         creator,
         editor
-    </sql>
-    <sql id="Blob_Column_List">
-        flink_sql
-    </sql>
+  </sql>
+  <sql id="Blob_Column_List">
+    flink_sql
+  </sql>
 
-    <insert id="insert" parameterType="com.flink.streaming.web.model.entity.JobConfig">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into job_config (job_name, job_desc, deploy_mode, flink_run_config,
-        flink_checkpoint_config, job_id, is_open,
-        status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
-        is_deleted, create_time, edit_time,
-        creator, editor, flink_sql,ext_jar_path
-        )
-        values (#{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
-        #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
-        #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
-        #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
-        #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
-        0, now(), now(),
-        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
-        #{extJarPath,jdbcType=VARCHAR}
-        )
-    </insert>
+  <insert id="insert" parameterType="com.flink.streaming.web.model.entity.JobConfig">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into job_config (job_name, job_desc, deploy_mode, flink_run_config,
+    flink_checkpoint_config, job_id, is_open,
+    status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
+    is_deleted, create_time, edit_time,
+    creator, editor, flink_sql,ext_jar_path
+    )
+    values (#{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
+    #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
+    #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
+    #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
+    #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
+    0, now(), now(),
+    #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
+    #{extJarPath,jdbcType=VARCHAR}
+    )
+  </insert>
 
-    <insert id="insertWithId" parameterType="com.flink.streaming.web.model.entity.JobConfig">
-        insert into job_config (id, job_name, job_desc, deploy_mode, flink_run_config,
-        flink_checkpoint_config, job_id, is_open,
-        status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
-        is_deleted, create_time, edit_time,
-        creator, editor, flink_sql,ext_jar_path
-        )
-        values (#{id,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
-        #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
-        #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{isOpen,jdbcType=BIT},
-        #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0,#{jobType,jdbcType=BIT},
-        #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
-        0, now(), now(),
-        #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
-        #{extJarPath,jdbcType=VARCHAR}
-        )
-    </insert>
+  <insert id="insertWithId" parameterType="com.flink.streaming.web.model.entity.JobConfig">
+    insert into job_config (id, job_name, job_desc, deploy_mode, flink_run_config,
+                            flink_checkpoint_config, job_id, is_open,
+                            status, last_start_time, version, job_type, custom_args,
+                            custom_main_class, custom_jar_url,
+                            is_deleted, create_time, edit_time,
+                            creator, editor, flink_sql, ext_jar_path)
+    values (#{id,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
+            #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
+            #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR},
+            #{isOpen,jdbcType=BIT},
+            #{status,jdbcType=BIT}, #{lastStartTime,jdbcType=TIMESTAMP}, 0, #{jobType,jdbcType=BIT},
+            #{customArgs,jdbcType=VARCHAR}, #{customMainClass,jdbcType=VARCHAR},
+            #{customJarUrl,jdbcType=VARCHAR},
+            0, now(), now(),
+            #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR},
+            #{flinkSql,jdbcType=LONGVARCHAR},
+            #{extJarPath,jdbcType=VARCHAR})
+  </insert>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-        select
-        <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
-        from job_config
-        where id = #{id,jdbcType=BIGINT} and is_deleted=0
-    </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from job_config
+    where id = #{id,jdbcType=BIGINT} and is_deleted=0
+  </select>
 
-    <select id="selectByPrimaryKeyContainDelete" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-        select
-		<include refid="Base_Column_List"/>,
-        <include refid="Blob_Column_List"/>
-        from job_config
-        where id = #{id,jdbcType=BIGINT}
-    </select>
+  <select id="selectByPrimaryKeyContainDelete" parameterType="java.lang.Long"
+    resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>,
+    <include refid="Blob_Column_List"/>
+    from job_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
 
-    <select id="findJobConfig" parameterType="com.flink.streaming.web.model.param.JobConfigParam"
-            resultMap="ResultMapWithBLOBs">
-        select
-        <include refid="Base_Column_List"/>
-        ,
-        <include refid="Blob_Column_List"/>
+  <select id="findJobConfig" parameterType="com.flink.streaming.web.model.param.JobConfigParam"
+    resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
 
-        from job_config
+    from job_config
 
-        where is_deleted=0
+    where is_deleted=0
 
-        <if test="jobName != null and jobName != ''">
-            <![CDATA[
+    <if test="jobName != null and jobName != ''">
+      <![CDATA[
 	               and job_name like CONCAT('%',#{jobName,jdbcType=VARCHAR},'%')
 			 ]]>
-        </if>
+    </if>
 
 
-        <if test="status != null ">
-            <![CDATA[
+    <if test="status != null ">
+      <![CDATA[
 	               and status = #{status,jdbcType=BIT}
 			 ]]>
-        </if>
+    </if>
 
-        <if test="jobType != null ">
-            <![CDATA[
+    <if test="jobType != null ">
+      <![CDATA[
 	               and job_type = #{jobType,jdbcType=BIT}
 			 ]]>
-        </if>
+    </if>
 
-        <if test="open != null ">
-            <![CDATA[
+    <if test="open != null ">
+      <![CDATA[
 	               and is_open = #{open,jdbcType=BIT}
 			 ]]>
-        </if>
+    </if>
 
-        <if test="jobId != null and jobId != '' ">
-            <![CDATA[
+    <if test="jobId != null and jobId != '' ">
+      <![CDATA[
 	               and job_id = #{jobId,jdbcType=VARCHAR}
 			 ]]>
-        </if>
+    </if>
 
-        <if test="deployMode != null and deployMode != '' ">
-            <![CDATA[
+    <if test="deployMode != null and deployMode != '' ">
+      <![CDATA[
 	               deploy_mode = #{deployMode,jdbcType=VARCHAR},
 			 ]]>
-        </if>
+    </if>
 
-        order by create_time desc
+    order by create_time desc
 
-    </select>
+  </select>
 
-    <select id="findJobConfigByStatus"  resultMap="ResultMapWithBLOBs">
-        select
-        <include refid="Base_Column_List"/>
+  <select id="findJobConfigByStatus" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
 
-        from job_config
+    from job_config
 
-        where is_deleted=0 and  status in
+    where is_deleted=0 and status in
 
-        <foreach collection="statusList" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
+    <foreach collection="statusList" item="id" index="index" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
 
-    </select>
+  </select>
 
 
-    <select id="selectCountByJobName" resultType="java.lang.Long">
-        select
-        count(job_name)
-        from job_config
-        where job_name = #{jobName,jdbcType=VARCHAR}
-        <if test="id != null ">
-            <![CDATA[
+  <select id="selectCountByJobName" resultType="java.lang.Long">
+    select
+    count(job_name)
+    from job_config
+    where job_name = #{jobName,jdbcType=VARCHAR}
+    <if test="id != null ">
+      <![CDATA[
 	               and id != #{id,jdbcType=BIT}
 			 ]]>
-        </if>
-    </select>
+    </if>
+  </select>
 
 
-    <update id="updateStatusByStart" >
-        update job_config
-        <set>
-            version=version+1,
-            editor = #{userName,jdbcType=VARCHAR},
-            status = #{status,jdbcType=BIT},
-            last_run_log_id = #{jobRunLogId,jdbcType=BIT}
-        </set>
-        where id = #{id,jdbcType=BIGINT} and is_deleted=0 and version=#{oldVersion,jdbcType=INTEGER}
-    </update>
+  <update id="updateStatusByStart">
+    update job_config
+    <set>
+      version=version+1,
+      editor = #{userName,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT},
+      last_run_log_id = #{jobRunLogId,jdbcType=BIT}
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_deleted=0 and version=#{oldVersion,jdbcType=INTEGER}
+  </update>
 
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.flink.streaming.web.model.entity.JobConfig">
-        update job_config
-        <set>
-            version=version+1,
+  <update id="updateByPrimaryKeySelective"
+    parameterType="com.flink.streaming.web.model.entity.JobConfig">
+    update job_config
+    <set>
+      version=version+1,
 
-            <if test="jobName != null">
-                job_name = #{jobName,jdbcType=VARCHAR},
-            </if>
-            <if test="jobDesc != null">
-                job_desc = #{jobDesc,jdbcType=VARCHAR},
-            </if>
-            <if test="deployMode != null">
-                deploy_mode = #{deployMode,jdbcType=VARCHAR},
-            </if>
-            <if test="flinkRunConfig != null">
-                flink_run_config = #{flinkRunConfig,jdbcType=VARCHAR},
-            </if>
-            <if test="flinkCheckpointConfig != null">
-                flink_checkpoint_config = #{flinkCheckpointConfig,jdbcType=VARCHAR},
-            </if>
-            <if test="jobId != null">
-                job_id = #{jobId,jdbcType=VARCHAR},
-            </if>
-            <if test="isOpen != null">
-                is_open = #{isOpen,jdbcType=BIT},
-            </if>
-            <if test="status != null">
-                status = #{status,jdbcType=BIT},
-            </if>
+      <if test="jobName != null">
+        job_name = #{jobName,jdbcType=VARCHAR},
+      </if>
+      <if test="jobDesc != null">
+        job_desc = #{jobDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="deployMode != null">
+        deploy_mode = #{deployMode,jdbcType=VARCHAR},
+      </if>
+      <if test="flinkRunConfig != null">
+        flink_run_config = #{flinkRunConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="flinkCheckpointConfig != null">
+        flink_checkpoint_config = #{flinkCheckpointConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="jobId != null">
+        job_id = #{jobId,jdbcType=VARCHAR},
+      </if>
+      <if test="isOpen != null">
+        is_open = #{isOpen,jdbcType=BIT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
 
-            <if test="extJarPath != null">
-                ext_jar_path = #{extJarPath,jdbcType=VARCHAR},
-            </if>
+      <if test="extJarPath != null">
+        ext_jar_path = #{extJarPath,jdbcType=VARCHAR},
+      </if>
 
-            <if test="lastStartTime != null">
-                last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
-            </if>
+      <if test="lastStartTime != null">
+        last_start_time = #{lastStartTime,jdbcType=TIMESTAMP},
+      </if>
 
-            <if test="customArgs != null">
-                custom_args = #{customArgs,jdbcType=VARCHAR},
-            </if>
-            <if test="customMainClass != null">
-                custom_main_class = #{customMainClass,jdbcType=VARCHAR},
-            </if>
-            <if test="customJarUrl != null">
-                custom_jar_url = #{customJarUrl,jdbcType=VARCHAR},
-            </if>
+      <if test="customArgs != null">
+        custom_args = #{customArgs,jdbcType=VARCHAR},
+      </if>
+      <if test="customMainClass != null">
+        custom_main_class = #{customMainClass,jdbcType=VARCHAR},
+      </if>
+      <if test="customJarUrl != null">
+        custom_jar_url = #{customJarUrl,jdbcType=VARCHAR},
+      </if>
 
-            <if test="isDeleted != null">
-                is_deleted = #{isDeleted,jdbcType=BIT},
-            </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=BIT},
+      </if>
 
-            <if test="editor != null">
-                editor = #{editor,jdbcType=VARCHAR},
-            </if>
-            <if test="flinkSql != null">
-                flink_sql = #{flinkSql,jdbcType=LONGVARCHAR},
-            </if>
+      <if test="editor != null">
+        editor = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="flinkSql != null">
+        flink_sql = #{flinkSql,jdbcType=LONGVARCHAR},
+      </if>
 
-            <if test="lastRunLogId != null">
-                last_run_log_id = #{lastRunLogId,jdbcType=BIT},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT} and is_deleted=0
-    </update>
+      <if test="lastRunLogId != null">
+        last_run_log_id = #{lastRunLogId,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT} and is_deleted=0
+  </update>
 
-    <update id="deleteById">
-        update job_config
-        set is_deleted=1,
-            editor    = #{userName,jdbcType=VARCHAR}
-        where id = #{id,jdbcType=BIGINT}
-          and is_deleted = 0
-    </update>
+  <update id="deleteById">
+    update job_config
+    set is_deleted=1,
+        editor    = #{userName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+      and is_deleted = 0
+  </update>
 
-    <update id="recoveryDeleteJobConfigById">
-        update job_config 
-        set is_deleted=0, editor=#{userName,jdbcType=VARCHAR}
-        where id=#{id,jdbcType=BIGINT} and is_deleted=1
-    </update>
+  <update id="recoveryDeleteJobConfigById">
+    update job_config
+    set is_deleted=0,
+        editor=#{userName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+      and is_deleted = 1
+  </update>
 
 </mapper>

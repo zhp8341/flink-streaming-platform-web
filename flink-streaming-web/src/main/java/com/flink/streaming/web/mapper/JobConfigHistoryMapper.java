@@ -12,11 +12,11 @@ import java.util.List;
 @Repository
 public interface JobConfigHistoryMapper {
 
-    int insert(JobConfigHistory record);
+  int insert(JobConfigHistory record);
 
-    List<JobConfigHistory> selectByJobConfigId(@Param("jobConfigId") Long jobConfigId);
+  List<JobConfigHistory> selectByJobConfigId(@Param("jobConfigId") Long jobConfigId);
 
-    JobConfigHistory selectById(@Param("id") Long id);
-    
-    Page<JobConfigHistory> findJobConfigHistory(JobConfigHisotryParam jobConfigParam);
+  JobConfigHistory selectById(@Param("id") Long id);
+
+  Page<JobConfigHistory> findJobConfigHistory(JobConfigHisotryParam jobConfigParam);
 }

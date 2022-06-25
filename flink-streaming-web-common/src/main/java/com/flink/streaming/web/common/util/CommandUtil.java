@@ -17,124 +17,130 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class CommandUtil {
 
-    private static final String APP_CLASS_NAME = "com.flink.streaming.core.JobApplication";
+  private static final String APP_CLASS_NAME = "com.flink.streaming.core.JobApplication";
 
-    /**
-     * 本地/Standalone Cluster模式
-     *
-     * @author zhuhuipei
-     * @date 2020/11/1
-     * @time 09:59
-     */
-    public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO,
-                                                   JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
-        StringBuilder command = new StringBuilder();
-        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d");
+  /**
+   * 本地/Standalone Cluster模式
+   *
+   * @author zhuhuipei
+   * @date 2020/11/1
+   * @time 09:59
+   */
+  public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO,
+      JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
+    StringBuilder command = new StringBuilder();
+    command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d");
 
-        if (StringUtils.isNotEmpty(savepointPath)) {
-            command.append(" -s ").append(savepointPath);
-        }
-
-        if (jobConfigDTO.getDeployModeEnum() == DeployModeEnum.STANDALONE) {
-            command.append(" ").append(jobConfigDTO.getFlinkRunConfig());
-        }
-
-        if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-            String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
-            for (String url : urls) {
-                command.append(" -C ").append(url.trim());
-            }
-        }
-        switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL_BATCH:
-            case SQL_STREAMING:
-                command.append(" -c ").append(APP_CLASS_NAME);
-                command.append(" ").append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
-                command.append(" -sql ").append(jobRunParamDTO.getSqlPath());
-                if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
-                    command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
-                }
-                command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode());
-                break;
-            case JAR:
-                command.append(" -c ").append(jobConfigDTO.getCustomMainClass());
-                command.append(" ").append(jobRunParamDTO.getMainJarPath());
-                command.append(" ").append(jobConfigDTO.getCustomArgs());
-                break;
-        }
-
-        log.info("buildRunCommandForLocal runCommand={}", command.toString());
-        return command.toString();
+    if (StringUtils.isNotEmpty(savepointPath)) {
+      command.append(" -s ").append(savepointPath);
     }
 
-    /**
-     * jar并且构建运行命令
-     *
-     * @author zhuhuipei
-     * @date 2020-09-18
-     * @time 00:57
-     */
-    public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO,
-                                                       JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
-        StringBuilder command = new StringBuilder();
-        command.append(jobRunParamDTO.getFlinkBinPath()).append(" run");
-        if (StringUtils.isNotEmpty(savepointPath)) {
-            command.append(" -s ").append(savepointPath);
-        }
-        command.append(" ").append(jobRunParamDTO.getFlinkRunParam());
-        command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfigDTO.getJobName()));
-        command.append(" -yd -m yarn-cluster");
-
-        if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-            String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
-            for (String url : urls) {
-                command.append(" -C ").append(url.trim());
-            }
-        }
-
-        switch (jobConfigDTO.getJobTypeEnum()) {
-            case SQL_STREAMING:
-            case SQL_BATCH:
-                command.append(" -c ").append(APP_CLASS_NAME);
-                command.append(" ").append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
-                command.append(" -sql ").append(jobRunParamDTO.getSqlPath());
-                if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
-                    command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
-                }
-                command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode());
-                break;
-            case JAR:
-                command.append(" -c ").append(jobConfigDTO.getCustomMainClass());
-                command.append(" ").append(jobRunParamDTO.getMainJarPath());
-                command.append(" ").append(jobConfigDTO.getCustomArgs());
-        }
-
-        log.info("buildRunCommandForYarnCluster runCommand={}", command.toString());
-        return command.toString();
+    if (jobConfigDTO.getDeployModeEnum() == DeployModeEnum.STANDALONE) {
+      command.append(" ").append(jobConfigDTO.getFlinkRunConfig());
     }
 
-
-    public static String buildSavepointCommandForYarn(String jobId, String targetDirectory, String yarnAppId,
-                                                      String flinkHome) {
-        StringBuilder command = new StringBuilder(
-                SystemConstants.buildFlinkBin(flinkHome));
-        command.append(" savepoint ")
-                .append(jobId).append(" ")
-                .append(targetDirectory).append(" ")
-                .append("-yid ").append(yarnAppId);
-        return command.toString();
+    if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
+      String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
+      for (String url : urls) {
+        command.append(" -C ").append(url.trim());
+      }
+    }
+    switch (jobConfigDTO.getJobTypeEnum()) {
+      case SQL_BATCH:
+      case SQL_STREAMING:
+        command.append(" -c ").append(APP_CLASS_NAME);
+        command.append(" ").append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
+        command.append(" -sql ").append(jobRunParamDTO.getSqlPath());
+        if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
+          command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
+        }
+        command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode());
+        break;
+      case JAR:
+        command.append(" -c ").append(jobConfigDTO.getCustomMainClass());
+        command.append(" ").append(jobRunParamDTO.getMainJarPath());
+        command.append(" ").append(jobConfigDTO.getCustomArgs());
+        break;
+      default:
+        log.warn("不支持的模式 {}", jobConfigDTO.getJobTypeEnum());
     }
 
+    log.info("buildRunCommandForLocal runCommand={}", command);
+    return command.toString();
+  }
 
-    public static String buildSavepointCommandForCluster(String jobId, String targetDirectory,
-                                                         String flinkHome) {
-        StringBuilder command = new StringBuilder(
-                SystemConstants.buildFlinkBin(flinkHome));
-        command.append(" savepoint ")
-                .append(jobId).append(" ")
-                .append(targetDirectory).append(" ");
-        return command.toString();
+  /**
+   * jar并且构建运行命令
+   *
+   * @author zhuhuipei
+   * @date 2020-09-18
+   * @time 00:57
+   */
+  public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO,
+      JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
+    StringBuilder command = new StringBuilder();
+    command.append(jobRunParamDTO.getFlinkBinPath()).append(" run");
+    if (StringUtils.isNotEmpty(savepointPath)) {
+      command.append(" -s ").append(savepointPath);
     }
+    command.append(" ").append(jobRunParamDTO.getFlinkRunParam());
+    command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfigDTO.getJobName()));
+    command.append(" -yd -m yarn-cluster");
+
+    if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
+      String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
+      for (String url : urls) {
+        command.append(" -C ").append(url.trim());
+      }
+    }
+
+    switch (jobConfigDTO.getJobTypeEnum()) {
+      case SQL_STREAMING:
+      case SQL_BATCH:
+        command.append(" -c ").append(APP_CLASS_NAME);
+        command.append(" ").append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
+        command.append(" -sql ").append(jobRunParamDTO.getSqlPath());
+        if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
+          command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
+        }
+        command.append(" -type ").append(jobConfigDTO.getJobTypeEnum().getCode());
+        break;
+      case JAR:
+        command.append(" -c ").append(jobConfigDTO.getCustomMainClass());
+        command.append(" ").append(jobRunParamDTO.getMainJarPath());
+        command.append(" ").append(jobConfigDTO.getCustomArgs());
+        break;
+      default:
+        log.warn("不支持的模式 {}", jobConfigDTO.getJobTypeEnum());
+    }
+
+    log.info("buildRunCommandForYarnCluster runCommand={}", command.toString());
+    return command.toString();
+  }
+
+
+  public static String buildSavepointCommandForYarn(String jobId, String targetDirectory,
+      String yarnAppId,
+      String flinkHome) {
+    StringBuilder command = new StringBuilder(
+        SystemConstants.buildFlinkBin(flinkHome));
+    command.append(" savepoint ")
+        .append(jobId).append(" ")
+        .append(targetDirectory).append(" ")
+        .append("-yid ").append(yarnAppId);
+    return command.toString();
+  }
+
+
+  public static String buildSavepointCommandForCluster(String jobId, String targetDirectory,
+      String flinkHome) {
+    StringBuilder command = new StringBuilder(
+        SystemConstants.buildFlinkBin(flinkHome));
+    command.append(" savepoint ")
+        .append(jobId).append(" ")
+        .append(targetDirectory).append(" ");
+    return command.toString();
+  }
 
 
 }

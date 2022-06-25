@@ -10,33 +10,34 @@ import java.util.Date;
  */
 @Data
 public class SavepointBackup implements Serializable {
-    private Long id;
 
-    private Long jobConfigId;
+  private Long id;
 
-    /**
-     * 报错地址
-     */
-    private String savepointPath;
+  private Long jobConfigId;
 
-    private Integer isDeleted;
+  /**
+   * 报错地址
+   */
+  private String savepointPath;
 
-    private Date backupTime;
+  private Integer isDeleted;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  private Date backupTime;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    private String creator;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String editor;
+  private String creator;
 
-    private static final long serialVersionUID = 1L;
+  private String editor;
+
+  private static final long serialVersionUID = 1L;
 
 }

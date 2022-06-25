@@ -1,80 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.flink.streaming.web.mapper.IpStatusMapper">
   <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.IpStatus">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="ip" jdbcType="VARCHAR" property="ip" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
-    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
-    <result column="creator" jdbcType="VARCHAR" property="creator" />
-    <result column="editor" jdbcType="VARCHAR" property="editor" />
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="ip" jdbcType="VARCHAR" property="ip"/>
+    <result column="status" jdbcType="INTEGER" property="status"/>
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime"/>
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
+    <result column="creator" jdbcType="VARCHAR" property="creator"/>
+    <result column="editor" jdbcType="VARCHAR" property="editor"/>
   </resultMap>
 
-    <sql id="Base_Column_List">
-        id, ip, status, last_time, is_deleted, create_time, edit_time, creator, editor
-    </sql>
+  <sql id="Base_Column_List">
+    id
+    , ip, status, last_time, is_deleted, create_time, edit_time, creator, editor
+  </sql>
 
-    <insert id="insert" parameterType="com.flink.streaming.web.model.entity.IpStatus">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into ip_status (ip, status, last_time,
-        is_deleted, create_time, edit_time,
-        creator, editor)
-        values (
-         #{ip,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP},
-        0, now(), now(),
-        'sys', 'sys')
-    </insert>
-
-
-    <select id="selectAll"  resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from ip_status
-        where is_deleted=0
-    </select>
-
-    <select id="selectByIp"  resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from ip_status
-        where ip = #{ip,jdbcType=VARCHAR}
-    </select>
-
-    <select id="selectLastIp"  resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from ip_status
-        WHERE
-        is_deleted = 0
-        AND STATUS = 1   and  last_time >= DATE_ADD(NOW(),INTERVAL -61 SECOND)
-        ORDER BY
-        id DESC
-        limit 1
-    </select>
+  <insert id="insert" parameterType="com.flink.streaming.web.model.entity.IpStatus">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ip_status (ip, status, last_time,
+    is_deleted, create_time, edit_time,
+    creator, editor)
+    values (
+    #{ip,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP},
+    0, now(), now(),
+    'sys', 'sys')
+  </insert>
 
 
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ip_status
+    where is_deleted=0
+  </select>
 
-    <update id="updateStatusByIp" parameterType="com.flink.streaming.web.model.entity.IpStatus">
-        update ip_status
-        <set>
-            <if test="status != null">
-                status = #{status,jdbcType=INTEGER},
-            </if>
-            <if test="lastTime != null">
-                last_time = #{lastTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="isDeleted != null">
-                is_deleted = #{isDeleted,jdbcType=BIT},
-            </if>
-        </set>
-        where ip = #{ip,jdbcType=VARCHAR}
-    </update>
+  <select id="selectByIp" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ip_status
+    where ip = #{ip,jdbcType=VARCHAR}
+  </select>
 
+  <select id="selectLastIp" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from ip_status
+    WHERE
+    is_deleted = 0
+    AND STATUS = 1 and last_time >= DATE_ADD(NOW(),INTERVAL -61 SECOND)
+    ORDER BY
+    id DESC
+    limit 1
+  </select>
+
+
+  <update id="updateStatusByIp" parameterType="com.flink.streaming.web.model.entity.IpStatus">
+    update ip_status
+    <set>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null">
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=BIT},
+      </if>
+    </set>
+    where ip = #{ip,jdbcType=VARCHAR}
+  </update>
 
 
 </mapper>

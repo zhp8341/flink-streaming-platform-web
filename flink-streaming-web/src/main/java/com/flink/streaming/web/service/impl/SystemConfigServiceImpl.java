@@ -54,8 +54,8 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
   @Override
   public List<SystemConfigDTO> getSystemConfig(SysConfigEnumType sysConfigEnumType) {
-    return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType != null ?
-        sysConfigEnumType.name() : null));
+    return SystemConfigDTO.toListDTO(systemConfigMapper.selectAllConfig(sysConfigEnumType != null
+        ? sysConfigEnumType.name() : null));
   }
 
   @Override

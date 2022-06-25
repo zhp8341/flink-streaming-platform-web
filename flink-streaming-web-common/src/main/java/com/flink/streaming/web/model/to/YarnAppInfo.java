@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 public class YarnAppInfo {
 
-    private AppListTO apps;
+  private AppListTO apps;
 }

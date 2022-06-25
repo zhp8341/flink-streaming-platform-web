@@ -9,11 +9,11 @@ package com.flink.streaming.web.alarm;
 public interface DingDingAlarm {
 
 
-    /**
-     * @author zhuhuipei
-     * @date 2020-09-25
-     * @time 23:02
-     */
-    boolean send(String url, String content);
+  /**
+   * @author zhuhuipei
+   * @date 2020-09-25
+   * @time 23:02
+   */
+  boolean send(String url, String content);
 
 }

@@ -11,12 +11,12 @@ import lombok.Data;
 @Data
 public class SysConfigVO {
 
-    private String key;
+  private String key;
 
-    private String desc;
+  private String desc;
 
-    public SysConfigVO(String key, String desc) {
-        this.key = key;
-        this.desc = desc;
-    }
+  public SysConfigVO(String key, String desc) {
+    this.key = key;
+    this.desc = desc;
+  }
 }

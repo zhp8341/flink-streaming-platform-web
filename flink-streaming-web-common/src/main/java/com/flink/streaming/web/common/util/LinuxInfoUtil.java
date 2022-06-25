@@ -12,12 +12,12 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class LinuxInfoUtil {
 
-    public static String  loginName(){
-        String userName=System.getProperty("user.name");
-        if (StringUtils.isNotEmpty(userName)){
-            return userName;
-        }
-        throw  new BizException(MessageConstants.MESSAGE_011);
-
+  public static String loginName() {
+    String userName = System.getProperty("user.name");
+    if (StringUtils.isNotEmpty(userName)) {
+      return userName;
     }
+    throw new BizException(MessageConstants.MESSAGE_011);
+
+  }
 }

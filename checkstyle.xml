@@ -4,6 +4,8 @@
   "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+    <module name="SuppressionCommentFilter">
+    </module>
 
     <module name="NewlineAtEndOfFile"/>
 
@@ -12,14 +14,12 @@
     </module>
 
     <module name="TreeWalker">
+        <module name="FileContentsHolder"/>
         <module name="IllegalImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports" />
 
-        <module name="JavadocType">
-            <property name="allowUnknownTags" value="true"/>
-            <message key="javadoc.missing" value="Class comments: Missing Javadoc comments."/>
-        </module>
+
 
         <module name="LocalFinalVariableName" />
         <module name="LocalVariableName" />
@@ -37,7 +37,7 @@
         <module name="ParameterName " />
         <module name="ConstantName" />
 
-        <module name="ArrayTypeStyle"/>
+<!--        <module name="ArrayTypeStyle"/>-->
         <module name="UpperEll"/>
 
         <module name="LineLength">
@@ -45,7 +45,7 @@
         </module>
         <module name="MethodLength">
             <property name="tokens" value="METHOD_DEF" />
-            <property name="max" value="50" />
+            <property name="max" value="90" />
         </module>
         <module name="ParameterNumber">
             <property name="max" value="5" />
@@ -95,20 +95,13 @@
         <module name="NestedIfDepth">
             <property name="max" value="3"/>
         </module>
-        <module name="UncommentedMain">
-            <property name="excludedClasses" value=".*[Application,Test]$"/>
-        </module>
-        <module name="Regexp">
-            <property name="format" value="System\.out\.println"/>
-            <property name="illegalPattern" value="true"/>
-        </module>
         <module name="ReturnCount">
-            <property name="max" value="3"/>
+            <property name="max" value="6"/>
         </module>
         <module name="NestedTryDepth ">
-            <property name="max" value="3"/>
+            <property name="max" value="4"/>
         </module>
-        <module name="SuperClone" />
+<!--        <module name="SuperClone" />-->
         <module name="SuperFinalize" />
 
     </module>

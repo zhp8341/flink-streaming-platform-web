@@ -21,162 +21,162 @@ import java.util.List;
 @Data
 public class JobConfigHistoryDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    /**
-     * job_config主表Id
-     */
-    private Long jobConfigId;
+  /**
+   * job_config主表Id
+   */
+  private Long jobConfigId;
 
-    /**
-     * 任务名称
-     */
-    private String jobName;
-    
-    /**
-     * 任务描述
-     */
-    private String jobDesc;
+  /**
+   * 任务名称
+   */
+  private String jobName;
 
-    /**
-     * 提交模式: standalone 、yarn 、yarn-session
-     */
-    private String deployMode;
+  /**
+   * 任务描述
+   */
+  private String jobDesc;
 
-    /**
-     * flink运行配置
-     */
-    private String flinkRunConfig;
+  /**
+   * 提交模式: standalone 、yarn 、yarn-session
+   */
+  private String deployMode;
 
-    /**
-     * checkPoint配置
-     */
-    private String flinkCheckpointConfig;
+  /**
+   * flink运行配置
+   */
+  private String flinkRunConfig;
 
-    /**
-     * udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar
-     */
-    private String extJarPath;
+  /**
+   * checkPoint配置
+   */
+  private String flinkCheckpointConfig;
 
-    /**
-     * 更新版本号
-     */
-    private Integer version;
+  /**
+   * udf地址及连接器jar 如http://xxx.xxx.com/flink-streaming-udf.jar
+   */
+  private String extJarPath;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  /**
+   * 更新版本号
+   */
+  private Integer version;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    private String creator;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
-    private String editor;
+  private String creator;
 
-    /**
-     * sql语句
-     */
-    private String flinkSql;
-    
-    /**
-     * 任务类型
-     */
-    private JobTypeEnum jobTypeEnum;
+  private String editor;
+
+  /**
+   * sql语句
+   */
+  private String flinkSql;
+
+  /**
+   * 任务类型
+   */
+  private JobTypeEnum jobTypeEnum;
 
 
-    public static JobConfigHistory toEntity(JobConfigHistoryDTO jobConfigHistoryDTO) {
-        if (jobConfigHistoryDTO == null) {
-            return null;
-        }
-        JobConfigHistory jobConfigHistory = new JobConfigHistory();
-        jobConfigHistory.setId(jobConfigHistoryDTO.getId());
-        jobConfigHistory.setJobConfigId(jobConfigHistoryDTO.getJobConfigId());
-        jobConfigHistory.setJobName(jobConfigHistoryDTO.getJobName());
-        jobConfigHistory.setJobDesc(jobConfigHistoryDTO.getJobDesc());
-        jobConfigHistory.setDeployMode(jobConfigHistoryDTO.getDeployMode());
-        jobConfigHistory.setFlinkRunConfig(jobConfigHistoryDTO.getFlinkRunConfig());
-        jobConfigHistory.setFlinkCheckpointConfig(jobConfigHistoryDTO.getFlinkCheckpointConfig());
-        jobConfigHistory.setExtJarPath(jobConfigHistoryDTO.getExtJarPath());
-        jobConfigHistory.setVersion(jobConfigHistoryDTO.getVersion());
-        jobConfigHistory.setCreateTime(jobConfigHistoryDTO.getCreateTime());
-        jobConfigHistory.setEditTime(jobConfigHistoryDTO.getEditTime());
-        jobConfigHistory.setCreator(jobConfigHistoryDTO.getCreator());
-        jobConfigHistory.setEditor(jobConfigHistoryDTO.getEditor());
-        jobConfigHistory.setFlinkSql(jobConfigHistoryDTO.getFlinkSql());
-        if (jobConfigHistoryDTO.getJobTypeEnum() != null) {
-            jobConfigHistory.setJobType(jobConfigHistoryDTO.getJobTypeEnum().getCode());
-        }
-        return jobConfigHistory;
+  public static JobConfigHistory toEntity(JobConfigHistoryDTO jobConfigHistoryDTO) {
+    if (jobConfigHistoryDTO == null) {
+      return null;
+    }
+    JobConfigHistory jobConfigHistory = new JobConfigHistory();
+    jobConfigHistory.setId(jobConfigHistoryDTO.getId());
+    jobConfigHistory.setJobConfigId(jobConfigHistoryDTO.getJobConfigId());
+    jobConfigHistory.setJobName(jobConfigHistoryDTO.getJobName());
+    jobConfigHistory.setJobDesc(jobConfigHistoryDTO.getJobDesc());
+    jobConfigHistory.setDeployMode(jobConfigHistoryDTO.getDeployMode());
+    jobConfigHistory.setFlinkRunConfig(jobConfigHistoryDTO.getFlinkRunConfig());
+    jobConfigHistory.setFlinkCheckpointConfig(jobConfigHistoryDTO.getFlinkCheckpointConfig());
+    jobConfigHistory.setExtJarPath(jobConfigHistoryDTO.getExtJarPath());
+    jobConfigHistory.setVersion(jobConfigHistoryDTO.getVersion());
+    jobConfigHistory.setCreateTime(jobConfigHistoryDTO.getCreateTime());
+    jobConfigHistory.setEditTime(jobConfigHistoryDTO.getEditTime());
+    jobConfigHistory.setCreator(jobConfigHistoryDTO.getCreator());
+    jobConfigHistory.setEditor(jobConfigHistoryDTO.getEditor());
+    jobConfigHistory.setFlinkSql(jobConfigHistoryDTO.getFlinkSql());
+    if (jobConfigHistoryDTO.getJobTypeEnum() != null) {
+      jobConfigHistory.setJobType(jobConfigHistoryDTO.getJobTypeEnum().getCode());
+    }
+    return jobConfigHistory;
+  }
+
+
+  public static JobConfigHistoryDTO toDTO(JobConfigHistory jobConfigHistory) {
+    if (jobConfigHistory == null) {
+      return null;
+    }
+    JobConfigHistoryDTO jobConfigHistoryDTO = new JobConfigHistoryDTO();
+    jobConfigHistoryDTO.setId(jobConfigHistory.getId());
+    jobConfigHistoryDTO.setJobConfigId(jobConfigHistory.getJobConfigId());
+    jobConfigHistoryDTO.setJobName(jobConfigHistory.getJobName());
+    jobConfigHistoryDTO.setJobDesc(jobConfigHistory.getJobDesc());
+    jobConfigHistoryDTO.setDeployMode(jobConfigHistory.getDeployMode());
+    jobConfigHistoryDTO.setFlinkRunConfig(jobConfigHistory.getFlinkRunConfig());
+    jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfigHistory.getFlinkCheckpointConfig());
+    jobConfigHistoryDTO.setExtJarPath(jobConfigHistory.getExtJarPath());
+    jobConfigHistoryDTO.setVersion(jobConfigHistory.getVersion());
+    jobConfigHistoryDTO.setCreateTime(jobConfigHistory.getCreateTime());
+    jobConfigHistoryDTO.setEditTime(jobConfigHistory.getEditTime());
+    jobConfigHistoryDTO.setCreator(jobConfigHistory.getCreator());
+    jobConfigHistoryDTO.setEditor(jobConfigHistory.getEditor());
+    jobConfigHistoryDTO.setFlinkSql(jobConfigHistory.getFlinkSql());
+    jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfigHistory.getJobType()));
+    return jobConfigHistoryDTO;
+  }
+
+  public static List<JobConfigHistoryDTO> toListDTO(List<JobConfigHistory> jobConfigHistoryList) {
+    if (CollectionUtil.isEmpty(jobConfigHistoryList)) {
+      return Collections.EMPTY_LIST;
     }
 
+    List<JobConfigHistoryDTO> list = Lists.newArrayList();
 
-    public static JobConfigHistoryDTO toDTO(JobConfigHistory jobConfigHistory) {
-        if (jobConfigHistory == null) {
-            return null;
-        }
-        JobConfigHistoryDTO jobConfigHistoryDTO = new JobConfigHistoryDTO();
-        jobConfigHistoryDTO.setId(jobConfigHistory.getId());
-        jobConfigHistoryDTO.setJobConfigId(jobConfigHistory.getJobConfigId());
-        jobConfigHistoryDTO.setJobName(jobConfigHistory.getJobName());
-        jobConfigHistoryDTO.setJobDesc(jobConfigHistory.getJobDesc());
-        jobConfigHistoryDTO.setDeployMode(jobConfigHistory.getDeployMode());
-        jobConfigHistoryDTO.setFlinkRunConfig(jobConfigHistory.getFlinkRunConfig());
-        jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfigHistory.getFlinkCheckpointConfig());
-        jobConfigHistoryDTO.setExtJarPath(jobConfigHistory.getExtJarPath());
-        jobConfigHistoryDTO.setVersion(jobConfigHistory.getVersion());
-        jobConfigHistoryDTO.setCreateTime(jobConfigHistory.getCreateTime());
-        jobConfigHistoryDTO.setEditTime(jobConfigHistory.getEditTime());
-        jobConfigHistoryDTO.setCreator(jobConfigHistory.getCreator());
-        jobConfigHistoryDTO.setEditor(jobConfigHistory.getEditor());
-        jobConfigHistoryDTO.setFlinkSql(jobConfigHistory.getFlinkSql());
-        jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfigHistory.getJobType()));
-        return jobConfigHistoryDTO;
+    for (JobConfigHistory jobConfigHistory : jobConfigHistoryList) {
+
+      JobConfigHistoryDTO jobConfigHistoryDTO = JobConfigHistoryDTO.toDTO(jobConfigHistory);
+      if (jobConfigHistoryDTO != null) {
+        list.add(jobConfigHistoryDTO);
+      }
     }
 
-    public static List<JobConfigHistoryDTO> toListDTO(List<JobConfigHistory> jobConfigHistoryList) {
-        if (CollectionUtil.isEmpty(jobConfigHistoryList)) {
-            return Collections.EMPTY_LIST;
-        }
+    return list;
+  }
 
-        List<JobConfigHistoryDTO> list = Lists.newArrayList();
 
-        for (JobConfigHistory jobConfigHistory : jobConfigHistoryList) {
-
-            JobConfigHistoryDTO jobConfigHistoryDTO = JobConfigHistoryDTO.toDTO(jobConfigHistory);
-            if (jobConfigHistoryDTO != null) {
-                list.add(jobConfigHistoryDTO);
-            }
-        }
-
-        return list;
+  public static JobConfigHistoryDTO to(JobConfig jobConfig) {
+    if (jobConfig == null) {
+      return null;
     }
-
-
-    public static JobConfigHistoryDTO to(JobConfig jobConfig) {
-        if (jobConfig == null) {
-            return null;
-        }
-        JobConfigHistoryDTO jobConfigHistoryDTO = new JobConfigHistoryDTO();
-        jobConfigHistoryDTO.setJobConfigId (jobConfig.getId());
-        jobConfigHistoryDTO.setJobName(jobConfig.getJobName());
-        jobConfigHistoryDTO.setJobDesc(jobConfig.getJobDesc());
-        jobConfigHistoryDTO.setDeployMode(jobConfig.getDeployMode());
-        jobConfigHistoryDTO.setFlinkRunConfig(jobConfig.getFlinkRunConfig());
-        jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfig.getFlinkCheckpointConfig());
-        jobConfigHistoryDTO.setExtJarPath(jobConfig.getExtJarPath());
-        jobConfigHistoryDTO.setVersion(jobConfig.getVersion());
-        jobConfigHistoryDTO.setCreateTime(jobConfig.getCreateTime());
-        jobConfigHistoryDTO.setEditTime(jobConfig.getEditTime());
-        jobConfigHistoryDTO.setCreator(jobConfig.getCreator());
-        jobConfigHistoryDTO.setEditor(jobConfig.getEditor());
-        jobConfigHistoryDTO.setFlinkSql(jobConfig.getFlinkSql());
-        jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfig.getJobType()));
-        return jobConfigHistoryDTO;
-    }
+    JobConfigHistoryDTO jobConfigHistoryDTO = new JobConfigHistoryDTO();
+    jobConfigHistoryDTO.setJobConfigId(jobConfig.getId());
+    jobConfigHistoryDTO.setJobName(jobConfig.getJobName());
+    jobConfigHistoryDTO.setJobDesc(jobConfig.getJobDesc());
+    jobConfigHistoryDTO.setDeployMode(jobConfig.getDeployMode());
+    jobConfigHistoryDTO.setFlinkRunConfig(jobConfig.getFlinkRunConfig());
+    jobConfigHistoryDTO.setFlinkCheckpointConfig(jobConfig.getFlinkCheckpointConfig());
+    jobConfigHistoryDTO.setExtJarPath(jobConfig.getExtJarPath());
+    jobConfigHistoryDTO.setVersion(jobConfig.getVersion());
+    jobConfigHistoryDTO.setCreateTime(jobConfig.getCreateTime());
+    jobConfigHistoryDTO.setEditTime(jobConfig.getEditTime());
+    jobConfigHistoryDTO.setCreator(jobConfig.getCreator());
+    jobConfigHistoryDTO.setEditor(jobConfig.getEditor());
+    jobConfigHistoryDTO.setFlinkSql(jobConfig.getFlinkSql());
+    jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfig.getJobType()));
+    return jobConfigHistoryDTO;
+  }
 }

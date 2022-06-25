@@ -12,18 +12,18 @@ import java.util.List;
 @Repository
 public interface UserMapper {
 
-    User selectByUsername(@Param("username") String username);
+  User selectByUsername(@Param("username") String username);
 
-    User selectByUserId(@Param("userid") Integer userid);
+  User selectByUserId(@Param("userid") Integer userid);
 
-    int insert(User user);
+  int insert(User user);
 
-    int updateByPrimaryKeySelective(User user);
-    
-    int updateByUserIdSelective(User user);
+  int updateByPrimaryKeySelective(User user);
 
-    List<User> findAll();
-    
-    Page<User> queryAllByPage(PageParam pageparam);
+  int updateByUserIdSelective(User user);
+
+  List<User> findAll();
+
+  Page<User> queryAllByPage(PageParam pageparam);
 
 }

@@ -15,38 +15,39 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
-public class WaitForPoolConfig {
+public final class WaitForPoolConfig {
 
-    private static int corePoolSize = 20;
+  private static int corePoolSize = 20;
 
-    private static int maximumPoolSize = 400;
+  private static int maximumPoolSize = 400;
 
-    private static long keepAliveTime = 10;
+  private static long keepAliveTime = 10;
 
 
-    private static ThreadPoolExecutor threadPoolExecutor;
+  private static ThreadPoolExecutor threadPoolExecutor;
 
-    private static WaitForPoolConfig alarmPoolConfig;
+  private static WaitForPoolConfig alarmPoolConfig;
 
-    private WaitForPoolConfig() {
-        BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(100, true);
-        threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MINUTES,
-                workQueue, new ThreadPoolExecutor.AbortPolicy());
-    }
+  private WaitForPoolConfig() {
+    BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(100, true);
+    threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime,
+        TimeUnit.MINUTES,
+        workQueue, new ThreadPoolExecutor.AbortPolicy());
+  }
 
-    public static synchronized WaitForPoolConfig getInstance() {
+  public static synchronized WaitForPoolConfig getInstance() {
+    if (null == alarmPoolConfig) {
+      synchronized (WaitForPoolConfig.class) {
         if (null == alarmPoolConfig) {
-            synchronized (WaitForPoolConfig.class) {
-                if (null == alarmPoolConfig) {
-                    alarmPoolConfig = new WaitForPoolConfig();
-                }
-            }
+          alarmPoolConfig = new WaitForPoolConfig();
         }
-        log.info("WaitForPoolConfig threadPoolExecutor={}", threadPoolExecutor);
-        return alarmPoolConfig;
+      }
     }
+    log.info("WaitForPoolConfig threadPoolExecutor={}", threadPoolExecutor);
+    return alarmPoolConfig;
+  }
 
-    public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
-    }
+  public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
+    return threadPoolExecutor;
+  }
 }

@@ -11,49 +11,49 @@ import java.util.Date;
  */
 @Data
 public class User {
-    /**
-     * 用户编号
-     */
-    private Integer id;
 
-    /**
-     * 用户帐号
-     */
-    private String username;
-    
-    /**
-     * 用户名称
-     */
-    private String name;
+  /**
+   * 用户编号
+   */
+  private Integer id;
 
-    /**
-     * 密码
-     */
-    private String password;
+  /**
+   * 用户帐号
+   */
+  private String username;
 
-    /**
-     * @see com.flink.streaming.web.enums.UserStatusEnum
-     * 1:启用 0: 停用
-     */
-    private Integer status;
+  /**
+   * 用户名称
+   */
+  private String name;
 
-    /**
-     * 1:删除 0: 未删除
-     */
-    private Integer isDeleted;
+  /**
+   * 密码
+   */
+  private String password;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+  /**
+   * @see com.flink.streaming.web.enums.UserStatusEnum 1:启用 0: 停用
+   */
+  private Integer status;
 
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 1:删除 0: 未删除
+   */
+  private Integer isDeleted;
 
-    private String creator;
+  /**
+   * 创建时间
+   */
+  private Date createTime;
 
-    private String editor;
+  /**
+   * 修改时间
+   */
+  private Date editTime;
+
+  private String creator;
+
+  private String editor;
 
 }

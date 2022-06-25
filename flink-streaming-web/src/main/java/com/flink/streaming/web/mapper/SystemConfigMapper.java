@@ -10,17 +10,17 @@ import java.util.List;
 public interface SystemConfigMapper {
 
 
-    int insert(SystemConfig systemConfig);
+  int insert(SystemConfig systemConfig);
 
 
-    List<SystemConfig> selectAllConfig(@Param("type") String type);
+  List<SystemConfig> selectAllConfig(@Param("type") String type);
 
 
-    SystemConfig selectConfigByKey(@Param("key") String key);
+  SystemConfig selectConfigByKey(@Param("key") String key);
 
-    int deleteByKey(@Param("key") String key);
+  int deleteByKey(@Param("key") String key);
 
-    int updateByKey(SystemConfig systemConfig);
+  int updateByKey(SystemConfig systemConfig);
 
 
 }

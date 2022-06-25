@@ -18,138 +18,138 @@ import java.util.List;
 @Data
 public class JobRunLogDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    private Long jobConfigId;
+  private Long jobConfigId;
 
-    /**
-     * 任务名称
-     */
-    private String jobName;
-    
-    /**
-     * 任务描述
-     */
-    private String jobDesc;
-    
-    /**
-     * 提交模式: standalone 、yarn 、yarn-session
-     */
-    private String deployMode;
+  /**
+   * 任务名称
+   */
+  private String jobName;
 
-    /**
-     * 运行后的任务id
-     */
-    private String jobId;
+  /**
+   * 任务描述
+   */
+  private String jobDesc;
 
-    /**
-     * 远程日志url的地址
-     */
-    private String remoteLogUrl;
+  /**
+   * 提交模式: standalone 、yarn 、yarn-session
+   */
+  private String deployMode;
 
-    /**
-     * 启动时间
-     */
-    private Date startTime;
+  /**
+   * 运行后的任务id
+   */
+  private String jobId;
 
-    /**
-     * 结束时间
-     */
-    private Date endTime;
+  /**
+   * 远程日志url的地址
+   */
+  private String remoteLogUrl;
 
-    /**
-     * 任务状态
-     */
-    private String jobStatus;
+  /**
+   * 启动时间
+   */
+  private Date startTime;
 
+  /**
+   * 结束时间
+   */
+  private Date endTime;
 
-    private String creator;
-
-    private String editor;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 修改时间
-     */
-    private Date editTime;
+  /**
+   * 任务状态
+   */
+  private String jobStatus;
 
 
-    /**
-     * 启动时本地日志
-     */
-    private String localLog;
+  private String creator;
 
-    private String runIp;
+  private String editor;
+
+  /**
+   * 创建时间
+   */
+  private Date createTime;
+
+  /**
+   * 修改时间
+   */
+  private Date editTime;
 
 
-    public static JobRunLog toEntity(JobRunLogDTO jobRunLogDTO) {
-        if (jobRunLogDTO == null) {
-            return null;
-        }
-        JobRunLog jobRunLog = new JobRunLog();
-        jobRunLog.setId(jobRunLogDTO.getId());
-        jobRunLog.setJobConfigId(jobRunLogDTO.getJobConfigId());
-        jobRunLog.setJobName(jobRunLogDTO.getJobName());
-        jobRunLog.setJobDesc(jobRunLogDTO.getJobDesc());
-        jobRunLog.setDeployMode(jobRunLogDTO.getDeployMode());
-        jobRunLog.setJobId(jobRunLogDTO.getJobId());
-        jobRunLog.setRemoteLogUrl(jobRunLogDTO.getRemoteLogUrl());
-        jobRunLog.setStartTime(jobRunLogDTO.getStartTime());
-        jobRunLog.setEndTime(jobRunLogDTO.getEndTime());
-        jobRunLog.setJobStatus(jobRunLogDTO.getJobStatus());
-        jobRunLog.setCreator(jobRunLogDTO.getCreator());
-        jobRunLog.setEditor(jobRunLogDTO.getEditor());
-        jobRunLog.setCreateTime(jobRunLogDTO.getCreateTime());
-        jobRunLog.setEditTime(jobRunLogDTO.getEditTime());
-        jobRunLog.setLocalLog(jobRunLogDTO.getLocalLog());
-        jobRunLog.setRunIp(jobRunLogDTO.getRunIp());
-        return jobRunLog;
+  /**
+   * 启动时本地日志
+   */
+  private String localLog;
+
+  private String runIp;
+
+
+  public static JobRunLog toEntity(JobRunLogDTO jobRunLogDTO) {
+    if (jobRunLogDTO == null) {
+      return null;
     }
+    JobRunLog jobRunLog = new JobRunLog();
+    jobRunLog.setId(jobRunLogDTO.getId());
+    jobRunLog.setJobConfigId(jobRunLogDTO.getJobConfigId());
+    jobRunLog.setJobName(jobRunLogDTO.getJobName());
+    jobRunLog.setJobDesc(jobRunLogDTO.getJobDesc());
+    jobRunLog.setDeployMode(jobRunLogDTO.getDeployMode());
+    jobRunLog.setJobId(jobRunLogDTO.getJobId());
+    jobRunLog.setRemoteLogUrl(jobRunLogDTO.getRemoteLogUrl());
+    jobRunLog.setStartTime(jobRunLogDTO.getStartTime());
+    jobRunLog.setEndTime(jobRunLogDTO.getEndTime());
+    jobRunLog.setJobStatus(jobRunLogDTO.getJobStatus());
+    jobRunLog.setCreator(jobRunLogDTO.getCreator());
+    jobRunLog.setEditor(jobRunLogDTO.getEditor());
+    jobRunLog.setCreateTime(jobRunLogDTO.getCreateTime());
+    jobRunLog.setEditTime(jobRunLogDTO.getEditTime());
+    jobRunLog.setLocalLog(jobRunLogDTO.getLocalLog());
+    jobRunLog.setRunIp(jobRunLogDTO.getRunIp());
+    return jobRunLog;
+  }
 
 
-    public static JobRunLogDTO toDTO(JobRunLog jobRunLog) {
-        if (jobRunLog == null) {
-            return null;
-        }
-        JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
-        jobRunLogDTO.setId(jobRunLog.getId());
-        jobRunLogDTO.setJobConfigId(jobRunLog.getJobConfigId());
-        jobRunLogDTO.setJobName(jobRunLog.getJobName());
-        jobRunLogDTO.setJobDesc(jobRunLog.getJobDesc());
-        jobRunLogDTO.setDeployMode(jobRunLog.getDeployMode());
-        jobRunLogDTO.setJobId(jobRunLog.getJobId());
-        jobRunLogDTO.setRemoteLogUrl(jobRunLog.getRemoteLogUrl());
-        jobRunLogDTO.setStartTime(jobRunLog.getStartTime());
-        jobRunLogDTO.setEndTime(jobRunLog.getEndTime());
-        jobRunLogDTO.setJobStatus(jobRunLog.getJobStatus());
-        jobRunLogDTO.setCreateTime(jobRunLog.getCreateTime());
-        jobRunLogDTO.setEditTime(jobRunLog.getEditTime());
-        jobRunLogDTO.setCreator(jobRunLog.getCreator());
-        jobRunLogDTO.setEditor(jobRunLog.getEditor());
-        jobRunLogDTO.setLocalLog(jobRunLog.getLocalLog());
-        jobRunLogDTO.setRunIp(jobRunLog.getRunIp());
-        return jobRunLogDTO;
+  public static JobRunLogDTO toDTO(JobRunLog jobRunLog) {
+    if (jobRunLog == null) {
+      return null;
     }
+    JobRunLogDTO jobRunLogDTO = new JobRunLogDTO();
+    jobRunLogDTO.setId(jobRunLog.getId());
+    jobRunLogDTO.setJobConfigId(jobRunLog.getJobConfigId());
+    jobRunLogDTO.setJobName(jobRunLog.getJobName());
+    jobRunLogDTO.setJobDesc(jobRunLog.getJobDesc());
+    jobRunLogDTO.setDeployMode(jobRunLog.getDeployMode());
+    jobRunLogDTO.setJobId(jobRunLog.getJobId());
+    jobRunLogDTO.setRemoteLogUrl(jobRunLog.getRemoteLogUrl());
+    jobRunLogDTO.setStartTime(jobRunLog.getStartTime());
+    jobRunLogDTO.setEndTime(jobRunLog.getEndTime());
+    jobRunLogDTO.setJobStatus(jobRunLog.getJobStatus());
+    jobRunLogDTO.setCreateTime(jobRunLog.getCreateTime());
+    jobRunLogDTO.setEditTime(jobRunLog.getEditTime());
+    jobRunLogDTO.setCreator(jobRunLog.getCreator());
+    jobRunLogDTO.setEditor(jobRunLog.getEditor());
+    jobRunLogDTO.setLocalLog(jobRunLog.getLocalLog());
+    jobRunLogDTO.setRunIp(jobRunLog.getRunIp());
+    return jobRunLogDTO;
+  }
 
-    public static List<JobRunLogDTO> toListDTO(List<JobRunLog> jobRunLogList) {
-        if (CollectionUtils.isEmpty(jobRunLogList)) {
-            return Collections.emptyList();
-        }
-        List<JobRunLogDTO> list = new ArrayList<>();
-
-        for (JobRunLog jobRunLog : jobRunLogList) {
-            list.add(JobRunLogDTO.toDTO(jobRunLog));
-        }
-        return list;
-
-
+  public static List<JobRunLogDTO> toListDTO(List<JobRunLog> jobRunLogList) {
+    if (CollectionUtils.isEmpty(jobRunLogList)) {
+      return Collections.emptyList();
     }
+    List<JobRunLogDTO> list = new ArrayList<>();
+
+    for (JobRunLog jobRunLog : jobRunLogList) {
+      list.add(JobRunLogDTO.toDTO(jobRunLog));
+    }
+    return list;
+
+
+  }
 
 
 }

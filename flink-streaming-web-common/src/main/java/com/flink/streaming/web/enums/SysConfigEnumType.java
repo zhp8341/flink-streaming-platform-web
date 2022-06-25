@@ -7,5 +7,5 @@ package com.flink.streaming.web.enums;
  * @time 01:30
  */
 public enum SysConfigEnumType {
-    SYS, ALART
+  SYS, ALART
 }

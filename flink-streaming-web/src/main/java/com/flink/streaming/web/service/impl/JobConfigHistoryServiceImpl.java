@@ -26,40 +26,41 @@ import java.util.List;
 @Log
 public class JobConfigHistoryServiceImpl implements JobConfigHistoryService {
 
-    @Autowired
-    private JobConfigHistoryMapper jobConfigHistoryMapper;
+  @Autowired
+  private JobConfigHistoryMapper jobConfigHistoryMapper;
 
-    @Override
-    public void insertJobConfigHistory(JobConfigHistoryDTO jobConfigHistoryDTO) {
-        jobConfigHistoryMapper.insert(JobConfigHistoryDTO.toEntity(jobConfigHistoryDTO));
-    }
+  @Override
+  public void insertJobConfigHistory(JobConfigHistoryDTO jobConfigHistoryDTO) {
+    jobConfigHistoryMapper.insert(JobConfigHistoryDTO.toEntity(jobConfigHistoryDTO));
+  }
 
-    @Override
-    public List<JobConfigHistoryDTO> getJobConfigHistoryByJobConfigId(Long jobConfigId) {
-        return JobConfigHistoryDTO.toListDTO(jobConfigHistoryMapper.selectByJobConfigId(jobConfigId));
-    }
+  @Override
+  public List<JobConfigHistoryDTO> getJobConfigHistoryByJobConfigId(Long jobConfigId) {
+    return JobConfigHistoryDTO.toListDTO(jobConfigHistoryMapper.selectByJobConfigId(jobConfigId));
+  }
 
-    @Override
-    public JobConfigHistoryDTO getJobConfigHistoryById(Long id) {
-        return JobConfigHistoryDTO.toDTO(jobConfigHistoryMapper.selectById(id));
+  @Override
+  public JobConfigHistoryDTO getJobConfigHistoryById(Long id) {
+    return JobConfigHistoryDTO.toDTO(jobConfigHistoryMapper.selectById(id));
+  }
+
+  @Override
+  public PageModel<JobConfigHistoryDTO> queryJobConfigHistory(
+      JobConfigHisotryParam jobConfigParam) {
+    if (jobConfigParam == null) {
+      jobConfigParam = new JobConfigHisotryParam();
     }
-    
-    @Override
-    public PageModel<JobConfigHistoryDTO> queryJobConfigHistory(JobConfigHisotryParam jobConfigParam) {
-        if (jobConfigParam == null) {
-            jobConfigParam = new JobConfigHisotryParam();
-        }
-        PageHelper.startPage(jobConfigParam.getPageNum(), jobConfigParam.getPageSize(), YN.Y.getCode());
-        Page<JobConfigHistory> page = jobConfigHistoryMapper.findJobConfigHistory(jobConfigParam);
-        if (page == null) {
-            return null;
-        }
-        PageModel<JobConfigHistoryDTO> pageModel = new PageModel<JobConfigHistoryDTO>();
-        pageModel.setPageNum(page.getPageNum());
-        pageModel.setPages(page.getPages());
-        pageModel.setPageSize(page.getPageSize());
-        pageModel.setTotal(page.getTotal());
-        pageModel.addAll(JobConfigHistoryDTO.toListDTO(page.getResult()));
-        return pageModel;
+    PageHelper.startPage(jobConfigParam.getPageNum(), jobConfigParam.getPageSize(), YN.Y.getCode());
+    Page<JobConfigHistory> page = jobConfigHistoryMapper.findJobConfigHistory(jobConfigParam);
+    if (page == null) {
+      return null;
     }
+    PageModel<JobConfigHistoryDTO> pageModel = new PageModel<JobConfigHistoryDTO>();
+    pageModel.setPageNum(page.getPageNum());
+    pageModel.setPages(page.getPages());
+    pageModel.setPageSize(page.getPageSize());
+    pageModel.setTotal(page.getTotal());
+    pageModel.addAll(JobConfigHistoryDTO.toListDTO(page.getResult()));
+    return pageModel;
+  }
 }

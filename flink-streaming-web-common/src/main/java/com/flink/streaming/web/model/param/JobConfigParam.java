@@ -12,30 +12,30 @@ import lombok.Data;
 @Data
 public class JobConfigParam extends PageParam {
 
-    /**
-     * @author zhuhuipei
-     * @date 2020-07-15
-     * @time 02:07
-     * @see com.flink.streaming.web.enums.JobConfigStatus
-     */
-    private Integer status;
+  /**
+   * @author zhuhuipei
+   * @date 2020-07-15
+   * @time 02:07
+   * @see com.flink.streaming.web.enums.JobConfigStatus
+   */
+  private Integer status;
 
 
-    /**
-     * 任务名称
-     */
-    private String jobName;
+  /**
+   * 任务名称
+   */
+  private String jobName;
 
 
-    /**
-     * 任务类型 0:sql 1:自定义jar'
-     */
-    private Integer jobType;
+  /**
+   * 任务类型 0:sql 1:自定义jar'
+   */
+  private Integer jobType;
 
 
-    private Integer open;
+  private Integer open;
 
-    private String jobId;
+  private String jobId;
 
-    private String deployMode;
+  private String deployMode;
 }

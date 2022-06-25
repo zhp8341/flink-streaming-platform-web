@@ -11,27 +11,28 @@ import java.util.List;
 @Repository
 public interface JobConfigMapper {
 
-    int insert(JobConfig record);
-    
-    int insertWithId(JobConfig record);
+  int insert(JobConfig record);
 
-    long selectCountByJobName(@Param("jobName") String jobName, @Param("id") Long id);
+  int insertWithId(JobConfig record);
 
-    JobConfig selectByPrimaryKey(Long id);
-    
-    JobConfig selectByPrimaryKeyContainDelete(Long id);
+  long selectCountByJobName(@Param("jobName") String jobName, @Param("id") Long id);
 
-    int updateByPrimaryKeySelective(JobConfig record);
+  JobConfig selectByPrimaryKey(Long id);
+
+  JobConfig selectByPrimaryKeyContainDelete(Long id);
+
+  int updateByPrimaryKeySelective(JobConfig record);
 
 
-    int updateStatusByStart(@Param("id") Long id, @Param("status") Integer status, @Param("userName") String userName,
-                         @Param("jobRunLogId") Long jobRunLogId, @Param("oldVersion") Integer oldVersion);
+  int updateStatusByStart(@Param("id") Long id, @Param("status") Integer status,
+      @Param("userName") String userName,
+      @Param("jobRunLogId") Long jobRunLogId, @Param("oldVersion") Integer oldVersion);
 
-    Page<JobConfig> findJobConfig(JobConfigParam jobConfigParam);
+  Page<JobConfig> findJobConfig(JobConfigParam jobConfigParam);
 
-    int deleteById(@Param("id") Long id, @Param("userName") String userName);
-    
-    int recoveryDeleteJobConfigById(@Param("id") Long id, @Param("userName") String userName);
+  int deleteById(@Param("id") Long id, @Param("userName") String userName);
 
-    List<JobConfig> findJobConfigByStatus(@Param("statusList") List<Integer> statusList);
+  int recoveryDeleteJobConfigById(@Param("id") Long id, @Param("userName") String userName);
+
+  List<JobConfig> findJobConfigByStatus(@Param("statusList") List<Integer> statusList);
 }
