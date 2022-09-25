@@ -38,7 +38,7 @@ public class JobLogApiController extends BaseController {
   /**
    * 查询作业列表
    *
-   * @param jobConfigParam
+   * @param jobRunLogParam
    * @return
    * @author wxj
    * @date 2021年12月1日 下午5:09:06

@@ -31,4 +31,13 @@ public class SystemConstant {
   public static final String QUERY_JOBID_KEY_WORD_BACKUP = "Job has been submitted with JobID";
 
 
+  public static final String JAR_ROOT_PATH = "/upload_jars/";
+
+
+
+
+
+
+
+
 }

@@ -7,7 +7,7 @@
     <module name="SuppressionCommentFilter">
     </module>
 
-    <module name="NewlineAtEndOfFile"/>
+<!--    <module name="NewlineAtEndOfFile"/>-->
 
     <module name="FileLength">
         <property name="max" value="1500"/>

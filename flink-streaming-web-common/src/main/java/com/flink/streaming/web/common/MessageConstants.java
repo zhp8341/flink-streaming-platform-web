@@ -33,5 +33,7 @@ public class MessageConstants {
 
   public static final String MESSAGE_011 = "无法获取 user.name";
 
+  public static final String MESSAGE_012 = "文件已经存在";
+
 
 }

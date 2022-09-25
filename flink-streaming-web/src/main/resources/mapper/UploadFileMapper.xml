@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flink.streaming.web.mapper.UploadFileMapper">
+  <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.UploadFile">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="editor" jdbcType="VARCHAR" property="editor" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, file_name, file_path, `type`, is_deleted, create_time, edit_time, creator, editor
+  </sql>
+
+  <insert id="insert" parameterType="com.flink.streaming.web.model.entity.UploadFile">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into upload_file (file_name, file_path, `type`,
+    is_deleted, create_time, edit_time,
+    creator, editor)
+    values (#{fileName,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+    0,  now(), now(),
+    #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="deleteById">
+    update upload_file
+    set is_deleted=1
+    where id = #{id,jdbcType=BIGINT} and is_deleted=0
+  </update>
+
+
+  <select id="findFilesByPage" parameterType="com.flink.streaming.web.model.param.UploadFileParam"
+    resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from upload_file
+    where is_deleted=0
+    <if test="fileName != null and fileName != ''">
+      <![CDATA[
+	       and file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+			 ]]>
+    </if>
+  </select>
+
+  <select id="getFileByName"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from upload_file
+    where is_deleted=0 and file_name=#{fileName,jdbcType=VARCHAR}
+  </select>
+
+
+</mapper>
