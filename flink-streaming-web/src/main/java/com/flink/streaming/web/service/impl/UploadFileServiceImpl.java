@@ -41,10 +41,10 @@ public class UploadFileServiceImpl implements UploadFileService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void deleteFile(Long id, String fileName) {
-    UploadFile uploadFile = uploadFileMapper.getFileByName(fileName);
+  public void deleteFile(Long id) {
+    UploadFile uploadFile = uploadFileMapper.getFileById(id);
     if (uploadFile == null) {
-      log.warn("fileName = {} is no ", fileName);
+      log.warn("fileName = {}  id={} is no ", id);
       return;
     }
     uploadFileMapper.deleteById(id);

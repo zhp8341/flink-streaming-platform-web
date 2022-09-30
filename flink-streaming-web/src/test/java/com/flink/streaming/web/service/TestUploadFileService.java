@@ -34,7 +34,7 @@ public class TestUploadFileService extends TestRun {
   @Test
   public void  deleteFile(){
     System.out.println(System.getProperty("user.dir"));
-    uploadFileService.deleteFile(1L,"/Users/edy/git/flink-streaming-platform-web/test_file/1.jar");
+    uploadFileService.deleteFile(1L);
   }
 
   @Test

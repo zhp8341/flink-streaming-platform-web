@@ -10,13 +10,13 @@ import com.flink.streaming.web.model.param.UploadFileParam;
 import com.flink.streaming.web.model.vo.PageVO;
 import com.flink.streaming.web.service.UploadFileService;
 import java.io.File;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,10 +37,11 @@ public class UploadApiController extends BaseController {
 //  @Autowired
 //  private SystemConfigService systemConfigService;
 
-  @PostMapping("/upload")
-  public RestResult<?> upload(@RequestParam MultipartFile file, HttpServletRequest request) {
-    try {
 
+  @ResponseBody
+  @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = "multipart/form-data")
+  public RestResult<?> upload(@RequestPart MultipartFile file)  {
+    try {
       String uploadPath = this.getJarRootPath();
       File uploadDir = new File(uploadPath);
       if (!uploadDir.exists()) {
@@ -64,9 +65,9 @@ public class UploadApiController extends BaseController {
   }
 
   @RequestMapping("/deleteFile")
-  public RestResult<?> deleteFile(Long id, String originalFilename) {
+  public RestResult<?> deleteFile(Long id) {
     try {
-      uploadFileService.deleteFile(id, originalFilename);
+      uploadFileService.deleteFile(id);
       return RestResult.success();
     } catch (Exception e) {
       log.error("deleteFile is error", e);

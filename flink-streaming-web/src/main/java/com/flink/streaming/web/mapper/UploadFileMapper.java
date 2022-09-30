@@ -14,6 +14,8 @@ public interface UploadFileMapper {
 
   UploadFile getFileByName(@Param("fileName") String fileName);
 
+  UploadFile getFileById(@Param("id") Long id);
+
   int insert(UploadFile uploadFile);
 
   Page<UploadFile> findFilesByPage(UploadFileParam uploadFileParam);

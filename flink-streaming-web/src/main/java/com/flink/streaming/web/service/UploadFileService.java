@@ -8,7 +8,7 @@ public interface UploadFileService {
 
   void addFile(UploadFileDTO uploadFileDTO);
 
-  void deleteFile(Long id, String fileName);
+  void deleteFile(Long id);
 
   PageModel<UploadFileDTO> queryUploadFile(UploadFileParam uploadFileParam);
 

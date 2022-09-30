@@ -57,4 +57,13 @@
   </select>
 
 
+
+  <select id="getFileById"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from upload_file
+    where is_deleted=0 and id = #{id,jdbcType=BIGINT}
+  </select>
+
+
 </mapper>

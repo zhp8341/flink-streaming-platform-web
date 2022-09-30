@@ -137,3 +137,12 @@ new Vue({
   i18n,
   render: h => h(App)
 })
+
+
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
+import uploader from 'vue-simple-uploader'
+Vue.use(uploader)
+
+

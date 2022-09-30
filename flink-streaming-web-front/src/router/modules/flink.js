@@ -187,6 +187,18 @@ export const flinkRouter = [
     ]
   },
   {
+    path: '/flink/jarManage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'jarManage',
+        meta: { title: '三方jar管理', icon: 'el-icon-upload' },
+        component: () => import('@/views/flink/upload')
+      }
+    ]
+  },
+  {
     path: '/flink/system-manage',
     component: Layout,
     children: [
