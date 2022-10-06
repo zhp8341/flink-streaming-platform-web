@@ -2,6 +2,7 @@ package com.flink.streaming.web.service.impl;
 
 import static com.flink.streaming.web.common.MessageConstants.MESSAGE_012;
 
+import com.flink.streaming.web.config.CustomConfig;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.UploadFileMapper;
@@ -29,6 +30,9 @@ public class UploadFileServiceImpl implements UploadFileService {
 
   @Autowired
   private UploadFileMapper uploadFileMapper;
+
+  @Autowired
+  private CustomConfig customConfig;
 
   @Override
   public void addFile(UploadFileDTO uploadFileDTO) {
@@ -69,12 +73,12 @@ public class UploadFileServiceImpl implements UploadFileService {
     pageModel.setPages(page.getPages());
     pageModel.setPageSize(page.getPageSize());
     pageModel.setTotal(page.getTotal());
-    pageModel.addAll(UploadFileDTO.toDTOList(page.getResult()));
+    pageModel.addAll(UploadFileDTO.toDTOList(page.getResult(),customConfig.getUrlForDown()));
     return pageModel;
   }
 
   @Override
   public UploadFileDTO getUploadFileByFileName(String fileName) {
-    return UploadFileDTO.toDTO(uploadFileMapper.getFileByName(fileName));
+    return UploadFileDTO.toDTO(uploadFileMapper.getFileByName(fileName),customConfig.getUrlForDown());
   }
 }

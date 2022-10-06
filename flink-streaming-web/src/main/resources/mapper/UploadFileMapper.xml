@@ -47,6 +47,7 @@
 	       and file_name like CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
 			 ]]>
     </if>
+    order by edit_time desc
   </select>
 
   <select id="getFileByName"  resultMap="BaseResultMap">

@@ -43,6 +43,7 @@ public class UploadApiController extends BaseController {
   public RestResult<?> upload(@RequestPart MultipartFile file)  {
     try {
       String uploadPath = this.getJarRootPath();
+      log.info("uploadPath={}",uploadPath);
       File uploadDir = new File(uploadPath);
       if (!uploadDir.exists()) {
         uploadDir.mkdirs();

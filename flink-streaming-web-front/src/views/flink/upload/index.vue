@@ -1,24 +1,38 @@
 <template>
   <div v-loading="loading" class="fl-container">
-    <el-form ref="queryform" :model="queryform"  :inline="true">
+    <div style="margin-bottom:2px;color:red">
+      <span class="wl-title">1、不支持集群部署的时候使用此功能,另外jar全部存在本地服务器上 ./flink-streaming-platform-web/upload_jars</span>
+    </div>
+    <div style="margin-bottom:2px;color:red">
+      <span class="wl-title">2、该功能主要是提供了jar管理:如：连接器jar 等 方便创建SQL流任务需要的jar</span>
+    </div>
+
+    <el-form ref="queryform" :model="queryform" :inline="true">
       <el-form-item>
         <el-form-item>
           <el-input v-model="queryform.fileName" placeholder="文件名(模糊查询)" class="wl-input" @input="handleQuery()">
             <el-button slot="append" type="primary" icon="el-icon-search" class="wl-search" @click="handleQuery()" />
           </el-input>
         </el-form-item>
-        <el-button type="primary" class="el-icon-plus" @click="openAddUserDialog()">新增</el-button>
-        <uploader :options="options" :file-status-text="statusText" class="uploader-example" ref="uploader" @file-complete="fileComplete" @complete="complete"></uploader>
+        <uploader ref="uploader" :options="options" :file-status-text="statusText" class="uploader-example" @file-complete="fileComplete" @complete="complete">
+          <uploader-unsupport />
+          <uploader-drop>
+            <p>请上传jar包</p>
+            <uploader-btn :attrs="attrs">上传jar文件</uploader-btn>
+          </uploader-drop>
+          <uploader-list />
+        </uploader>
       </el-form-item>
     </el-form>
     <el-table :data="list" :header-cell-style="{background:'#f4f4f5','text-align':'center'}" class="wl-table" border>
-      <el-table-column prop="id" :show-overflow-tooltip="true" label="编号" min-width="60" width="80" align="center" />
+      <el-table-column prop="id" :show-overflow-tooltip="true" label="编号" min-width="50" width="80" align="center" />
       <el-table-column prop="fileName" :show-overflow-tooltip="true" label="文件名" align="center" />
-      <el-table-column prop="createTimeStr" :show-overflow-tooltip="true" label="创建时间" min-width="40" align="center" />
-      <el-table-column prop="operate" label="操作" width="120" fixed="right" align="center" >
-        <template slot-scope="scope" >
+      <el-table-column prop="downloadJarHttp" :show-overflow-tooltip="true" label="http地址" min-width="40" align="center" />
+      <el-table-column prop="createTimeStr" :show-overflow-tooltip="true" label="上传时间" min-width="25" align="center" />
+      <el-table-column prop="operate" label="操作" width="180" fixed="right" align="center">
+        <template slot-scope="scope">
           <el-link type="primary" icon="el-icon-delete" @click.native="deleteFile(scope.row)">删除</el-link>
-          <el-link type="primary" @click.native="doCopy(scope.row)">复制</el-link>
+          <el-link type="primary" @click.native="doCopy(scope.row)">复制http</el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -34,24 +48,24 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-
   </div>
 </template>
 
 <script>
-import {queryUploadFile,deleteFile} from '@/api/upload'
-
+import { queryUploadFile, deleteFile } from '@/api/upload'
 
 export default {
   name: 'UploadManage',
   data() {
     return {
       options: {
-        target: 'http://localhost:9527/api/upload', // '//jsonplaceholder.typicode.com/posts/',
+        target: '/api/upload',
+        chunkSize: 1024 * 1024 * 1024,
         testChunks: false
       },
       attrs: {
-        accept: 'image/*'
+        // 接受的文件类型 根据实际需要
+        accept: ['.JAR']
       },
       statusText: {
         success: '成功了',
@@ -60,10 +74,7 @@ export default {
         paused: '暂停中',
         waiting: '等待中'
       },
-      loading: false,
-      addDialogVisible: false,
-      editDialogVisible: false,
-      pwdDialogVisible: false,
+      loading: true,
       queryform: {
         fileName: ''
       },
@@ -90,10 +101,12 @@ export default {
       this.pageSize = pageSize
       this.handleQuery()
     },
-    complete () {
+    complete() {
       console.log('complete', arguments)
+      this.queryUserList()
     },
-    fileComplete () {
+    fileComplete() {
+      this.queryUserList()
       console.log('file complete', arguments)
     },
     handleCurrentChange(pageno) { // 处理分页事件
@@ -103,7 +116,7 @@ export default {
     queryUserList() {
       this.loading = true
       const fileName = this.queryform.fileName ? this.queryform.fileName.trim() : ''
-      queryUploadFile(this.currentPage, this.pageSize,fileName).then(response => {
+      queryUploadFile(this.currentPage, this.pageSize, fileName).then(response => {
         this.loading = false
         const { code, success, message, data } = response
         if (code !== '200' || !success) {
@@ -122,11 +135,11 @@ export default {
         console.log(error)
       })
     },
-    doCopy(row){
-      const { id, fileName } = row
-      this.$copyText(fileName).then(function (e) {
-        alert("复制jar地址成功:"+fileName)
-      }, function (e) {
+    doCopy(row) {
+      const { id, fileName, downloadJarHttp } = row
+      this.$copyText(downloadJarHttp).then(function(e) {
+        alert('复制jar地址成功:' + downloadJarHttp)
+      }, function(e) {
         alert('Can not copy')
         console.log(e)
       })
@@ -154,14 +167,6 @@ export default {
           console.log(error)
         })
       })
-    },
-
-    openAddUserDialog() {
-      this.addform.username = ''
-      this.addform.name = ''
-      this.addform.pwd1 = ''
-      this.addform.pwd2 = ''
-      this.addDialogVisible = true
     }
   }
 }
@@ -183,5 +188,11 @@ export default {
 .wl-table >>> .el-link {
   margin-right: 2px;
   margin-left: 2px;
+}
+.wl-title {
+  font-size: 16px;
+  font-weight: 600;
+  cursor: default;
+  padding-right: 2px;
 }
 </style>

@@ -44,6 +44,8 @@ public class UploadFileDTO {
 
   private String editor;
 
+  private String downloadJarHttp;
+
   public static UploadFile toEntity(UploadFileDTO uploadFileDTO) {
     if (uploadFileDTO == null) {
       return null;
@@ -60,7 +62,7 @@ public class UploadFileDTO {
   }
 
 
-  public static UploadFileDTO toDTO(UploadFile uploadFile) {
+  public static UploadFileDTO toDTO(UploadFile uploadFile,String downloadUrl) {
     if (uploadFile == null) {
       return null;
     }
@@ -69,6 +71,7 @@ public class UploadFileDTO {
     uploadFileDTO.setFileName(uploadFile.getFileName());
     uploadFileDTO.setFilePath(uploadFile.getFilePath());
     uploadFileDTO.setType(uploadFile.getType());
+    uploadFileDTO.setDownloadJarHttp(downloadUrl+uploadFile.getFileName());
     if (uploadFile.getCreateTime() != null) {
       uploadFileDTO.setCreateTime(uploadFile.getCreateTime());
       uploadFileDTO.setCreateTimeStr(DateFormatUtils.toFormatString(uploadFile.getCreateTime()));
@@ -76,13 +79,13 @@ public class UploadFileDTO {
     return uploadFileDTO;
   }
 
-  public static List<UploadFileDTO> toDTOList(List<UploadFile> uploadFileList) {
+  public static List<UploadFileDTO> toDTOList(List<UploadFile> uploadFileList,String downloadUrl) {
     if (CollectionUtils.isEmpty(uploadFileList)) {
       return Collections.emptyList();
     }
     List<UploadFileDTO> list = Lists.newArrayList();
     for (UploadFile uploadFile : uploadFileList) {
-      list.add(toDTO(uploadFile));
+      list.add(toDTO(uploadFile,downloadUrl));
     }
     return list;
   }

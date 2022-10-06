@@ -1,11 +1,15 @@
 package com.flink.streaming.web.common.util;
 
 import com.flink.streaming.web.exceptions.BizException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * @author zhuhuipei
@@ -22,6 +26,7 @@ public final class IpUtil {
 
   private IpUtil() {
     ip = getIp();
+    log.info("本机ip：{}", ip);
   }
 
   public static IpUtil getInstance() {
@@ -57,6 +62,56 @@ public final class IpUtil {
     return ipAddrStr;
   }
 
+  public String getHostIp() {
+    try {
+      Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+      while (allNetInterfaces.hasMoreElements()) {
+        NetworkInterface netInterface = allNetInterfaces.nextElement();
+        Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+        while (addresses.hasMoreElements()) {
+          InetAddress ip = addresses.nextElement();
+          if (ip != null
+              && ip instanceof Inet4Address
+              && !ip.isLoopbackAddress()
+              //loopback地址即本机地址，IPv4的loopback范围是127.0.0.0 ~ 127.255.255.255
+              && ip.getHostAddress().indexOf(":") == -1) {
+            log.info("本机的IP = {} ", ip.getHostAddress());
+            return ip.getHostAddress();
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  private List<String> getIpAddress() {
+    try {
+      List<String> list = new LinkedList<>();
+      Enumeration enumeration = NetworkInterface.getNetworkInterfaces();
+      while (enumeration.hasMoreElements()) {
+        NetworkInterface network = (NetworkInterface) enumeration.nextElement();
+        if (network.isVirtual() || !network.isUp()) {
+          continue;
+        } else {
+          Enumeration addresses = network.getInetAddresses();
+          while (addresses.hasMoreElements()) {
+            InetAddress address = (InetAddress) addresses.nextElement();
+            if (address != null && (address instanceof Inet4Address)) {
+              list.add(address.getHostAddress());
+            }
+          }
+        }
+      }
+      return list;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+
   public static String getHostName() {
     try {
       InetAddress addr = InetAddress.getLocalHost();
@@ -72,6 +127,8 @@ public final class IpUtil {
   public static void main(String[] args) {
     System.out.println(IpUtil.getInstance().getLocalIP());
     System.out.println(IpUtil.getInstance().getLocalIP());
+    System.out.println(IpUtil.getInstance().getIpAddress());
+    System.out.println(IpUtil.getInstance().getHostIp());
     System.out.println(getHostName());
     System.out.println(System.getProperty("user.name"));
   }
