@@ -83,7 +83,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="10">
-          <el-form-item >
+          <el-form-item>
             <a href="#/flink/jarManage/index" style="color: red" target="_blank">点击jar管理</a>
           </el-form-item>
         </el-col>
