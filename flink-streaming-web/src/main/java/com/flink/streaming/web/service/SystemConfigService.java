@@ -74,6 +74,15 @@ public interface SystemConfigService {
    */
   String getFlinkHttpAddress(DeployModeEnum deployModeEnum);
 
+  /*
+   *上传jar的目录地址
+   * @Param:[]
+   * @return: java.lang.String
+   * @Author: zhuhuipei
+   * @date 2022/10/8
+   */
+  String getUploadJarsPath();
+
 
   /**
    * 检查配置是否存在

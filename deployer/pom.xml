@@ -25,6 +25,11 @@
             <artifactId>flink-streaming-web</artifactId>
             <version>${flink_streaming_version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.prometheus.jmx</groupId>
+            <artifactId>jmx_prometheus_javaagent</artifactId>
+            <version>0.16.1</version>
+        </dependency>
     </dependencies>
 
 

@@ -26,6 +26,6 @@
 
 
 
-当前适配的Flink版本是1.13.2  https://ci.apache.org/projects/flink/flink-docs-release-1.13/
+当前适配的Flink版本是1.14.3  https://ci.apache.org/projects/flink/flink-docs-release-1.14/
 
 flink-streaming-platform-web官方地址  https://github.com/zhp8341/flink-streaming-platform-web

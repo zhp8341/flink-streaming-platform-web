@@ -1,6 +1,7 @@
 package com.flink.streaming.web.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.exceptions.BizException;
@@ -115,6 +116,16 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     }
 
 
+  }
+
+  @Override
+  public String getUploadJarsPath() {
+    String path = this
+        .getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
+    if (StringUtils.isEmpty(path)) {
+      throw new BizException("请先去系统设置界面设置Flink管理平台目录(即flink_streaming_platform_web)");
+    }
+    return path + "/" + SystemConstant.JAR_ROOT_PATH;
   }
 
   @Override

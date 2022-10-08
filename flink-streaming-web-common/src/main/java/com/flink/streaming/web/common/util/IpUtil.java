@@ -64,24 +64,22 @@ public final class IpUtil {
 
   public String getHostIp() {
     try {
+      InetAddress inetAddress = null;
       Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
       while (allNetInterfaces.hasMoreElements()) {
         NetworkInterface netInterface = allNetInterfaces.nextElement();
         Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
         while (addresses.hasMoreElements()) {
-          InetAddress ip = addresses.nextElement();
-          if (ip != null
-              && ip instanceof Inet4Address
-              && !ip.isLoopbackAddress()
-              //loopback地址即本机地址，IPv4的loopback范围是127.0.0.0 ~ 127.255.255.255
-              && ip.getHostAddress().indexOf(":") == -1) {
-            log.info("本机的IP = {} ", ip.getHostAddress());
-            return ip.getHostAddress();
+          inetAddress = addresses.nextElement();
+          if (inetAddress != null && inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()
+              && inetAddress.getHostAddress().indexOf(":") == -1) {
+            log.info("本机的IP = {} ", inetAddress.getHostAddress());
+            return inetAddress.getHostAddress();
           }
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("getHostIp is error", e);
     }
     return null;
   }

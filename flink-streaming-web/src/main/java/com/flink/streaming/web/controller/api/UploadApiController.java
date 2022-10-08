@@ -1,22 +1,22 @@
 package com.flink.streaming.web.controller.api;
 
-import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.FileTypeEnum;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.controller.web.BaseController;
+import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.dto.UploadFileDTO;
 import com.flink.streaming.web.model.param.UploadFileParam;
 import com.flink.streaming.web.model.vo.PageVO;
+import com.flink.streaming.web.service.SystemConfigService;
 import com.flink.streaming.web.service.UploadFileService;
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,16 +34,15 @@ public class UploadApiController extends BaseController {
   @Autowired
   private UploadFileService uploadFileService;
 
-//  @Autowired
-//  private SystemConfigService systemConfigService;
+  @Autowired
+  private SystemConfigService systemConfigService;
 
 
-  @ResponseBody
   @RequestMapping(value = "/upload", method = RequestMethod.POST, consumes = "multipart/form-data")
-  public RestResult<?> upload(@RequestPart MultipartFile file)  {
+  public RestResult<?> upload(@RequestPart MultipartFile file) {
     try {
-      String uploadPath = this.getJarRootPath();
-      log.info("uploadPath={}",uploadPath);
+      String uploadPath = systemConfigService.getUploadJarsPath();
+      log.info("uploadPath={}", uploadPath);
       File uploadDir = new File(uploadPath);
       if (!uploadDir.exists()) {
         uploadDir.mkdirs();
@@ -61,7 +60,7 @@ public class UploadApiController extends BaseController {
       return RestResult.success();
     } catch (Exception e) {
       log.error("upload is error", e);
-      return RestResult.error("上传失败 : " + e.getMessage());
+      throw new BizException(SysErrorEnum.UPLOAD_ERROR);
     }
   }
 
@@ -93,11 +92,6 @@ public class UploadApiController extends BaseController {
     }
   }
 
-
-
-  private String getJarRootPath() throws Exception {
-    return ResourceUtils.getURL("classpath:").getPath() + SystemConstant.JAR_ROOT_PATH;
-  }
 
 
 }

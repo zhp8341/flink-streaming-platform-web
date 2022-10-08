@@ -180,7 +180,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 微信二维码 http://img.ccblog.cn/flink/wx2.png
 
 
- 完全按照flink1.13.2的连接器相关的配置详见
+ 完全按照1.14.3的连接器相关的配置详见
 
 https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/table/kafka/
 

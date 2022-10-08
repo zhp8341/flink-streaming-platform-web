@@ -75,9 +75,16 @@
             <el-input v-model="form.jobDesc" placeholder="请输入任务描述" />
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="14">
           <el-form-item label="Jar包地址" prop="customJarUrl">
             <el-input v-model="form.customJarUrl" placeholder="如：http://ccblog.cn/xx.jar" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="10">
+          <el-form-item >
+            <a href="#/flink/jarManage/index" style="color: red" target="_blank">点击jar管理</a>
           </el-form-item>
         </el-col>
       </el-row>

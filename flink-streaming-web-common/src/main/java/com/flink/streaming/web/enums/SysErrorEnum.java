@@ -54,6 +54,7 @@ public enum SysErrorEnum {
 
 
   ALARM_DINGDING_NULL("50000", "请到报警管理-报警设置 配置钉钉告警url"),
+  UPLOAD_ERROR("50002", "上传失败"),
 
   ALARM_HTTP_NULL("50001", "请到报警管理-报警设置 配置回调url");
 

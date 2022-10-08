@@ -55,7 +55,6 @@
                 <artifactId>flink-streaming-validation</artifactId>
                 <version>1.1</version>
             </dependency>
-
             <dependency>
                 <groupId>com.streaming.platform.web</groupId>
                 <artifactId>flink-streaming-web-config</artifactId>

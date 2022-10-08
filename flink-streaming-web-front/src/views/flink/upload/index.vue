@@ -4,7 +4,7 @@
       <span class="wl-title">1、不支持集群部署的时候使用此功能,另外jar全部存在本地服务器上 ./flink-streaming-platform-web/upload_jars</span>
     </div>
     <div style="margin-bottom:2px;color:red">
-      <span class="wl-title">2、该功能主要是提供了jar管理:如：连接器jar 等 方便创建SQL流任务需要的jar</span>
+      <span class="wl-title">2、该功能主要是提供了jar管理:如：连接器jar、udf的jar 等 方便创建SQL流任务需要的jar</span>
     </div>
 
     <el-form ref="queryform" :model="queryform" :inline="true">
@@ -19,6 +19,7 @@
           <uploader-drop>
             <p>请上传jar包</p>
             <uploader-btn :attrs="attrs">上传jar文件</uploader-btn>
+            <uploader-btn :directory="true">选择文件夹</uploader-btn>
           </uploader-drop>
           <uploader-list />
         </uploader>

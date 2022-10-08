@@ -73,12 +73,13 @@ public class UploadFileServiceImpl implements UploadFileService {
     pageModel.setPages(page.getPages());
     pageModel.setPageSize(page.getPageSize());
     pageModel.setTotal(page.getTotal());
-    pageModel.addAll(UploadFileDTO.toDTOList(page.getResult(),customConfig.getUrlForDown()));
+    pageModel.addAll(UploadFileDTO.toDTOList(page.getResult(), customConfig.getUrlForDown()));
     return pageModel;
   }
 
   @Override
   public UploadFileDTO getUploadFileByFileName(String fileName) {
-    return UploadFileDTO.toDTO(uploadFileMapper.getFileByName(fileName),customConfig.getUrlForDown());
+    return UploadFileDTO
+        .toDTO(uploadFileMapper.getFileByName(fileName), customConfig.getUrlForDown());
   }
 }
