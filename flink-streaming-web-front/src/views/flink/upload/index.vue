@@ -14,9 +14,14 @@
             <el-button slot="append" type="primary" icon="el-icon-search" class="wl-search" @click="handleQuery()" />
           </el-input>
         </el-form-item>
-        <uploader ref="uploader" :options="options"
-                  :fileStatusText="fileStatusText"
-                  class="uploader-example" @file-complete="fileComplete" @complete="complete">
+        <uploader
+          ref="uploader"
+          :options="options"
+          :file-status-text="fileStatusText"
+          class="uploader-example"
+          @file-complete="fileComplete"
+          @complete="complete"
+        >
           <uploader-unsupport />
           <uploader-drop>
             <p>请上传jar包</p>
@@ -80,11 +85,11 @@ export default {
           waiting: '等待中'
         }
         if (status === 'success' || status === 'error') {
-          if(response.code==200){
+          if (response.code == 200) {
             return statusTextMap[status]
-          }else{
+          } else {
             alert(response.message)
-            return statusTextMap["error"]
+            return statusTextMap['error']
           }
         } else {
           return statusTextMap[status]
