@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.common.model.CheckPointParam;
@@ -8,13 +9,17 @@ import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.FlinkConstants;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.RestResult;
-import com.flink.streaming.web.enums.*;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.CliConfigUtil;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
 import com.flink.streaming.web.common.util.HttpUtil;
-import com.flink.streaming.web.common.util.MatcherUtils;
 import com.flink.streaming.web.controller.web.BaseController;
+import com.flink.streaming.web.enums.AlarmTypeEnum;
+import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobConfigStatus;
+import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.enums.YN;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobConfigHistoryDTO;
 import com.flink.streaming.web.model.dto.PageModel;
@@ -30,10 +35,6 @@ import com.flink.streaming.web.service.JobConfigHistoryService;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SavepointBackupService;
 import com.flink.streaming.web.service.SystemConfigService;
-
-import cn.hutool.core.collection.CollectionUtil;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.shaded.jackson2.org.yaml.snakeyaml.Yaml;
@@ -472,12 +473,12 @@ public class JobConfigApiController extends BaseController {
       }
 
       if (StringUtils.isEmpty(upsertJobConfigParam.getCustomJarUrl())) {
-        return RestResult.error("主类jar的http地址不能为空");
+        return RestResult.error("主类jar的不能为空");
       }
-      if (MatcherUtils.isHttpsOrHttp(upsertJobConfigParam.getCustomJarUrl())) {
-        return RestResult
-            .error("主类jar的http地址 不是http或者https:" + upsertJobConfigParam.getCustomJarUrl());
-      }
+//      if (MatcherUtils.isHttpsOrHttp(upsertJobConfigParam.getCustomJarUrl())) {
+//        return RestResult
+//            .error("主类jar的http地址 不是http或者https:" + upsertJobConfigParam.getCustomJarUrl());
+//      }
     }
     // sql配置需要校验的参数JobType=null是兼容之前配置
     if (JobTypeEnum.SQL_STREAMING.equals(upsertJobConfigParam.getJobType())
@@ -492,9 +493,9 @@ public class JobConfigApiController extends BaseController {
           if (StringUtils.isEmpty(url)) {
             continue;
           }
-          if (!MatcherUtils.isHttpsOrHttp(url)) {
-            return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
-          }
+//          if (!MatcherUtils.isHttpsOrHttp(url)) {
+//            return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
+//          }
         }
       }
     }
@@ -685,12 +686,10 @@ public class JobConfigApiController extends BaseController {
             .isEmpty(jobConfigDTO.getJobId())) {
           String[] urls = domain.split(";");
           for (String url : urls) {
-            if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
               jobConfigDTO.setFlinkRunUrl(url.trim() + String
                   .format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW,
                       jobConfigDTO.getJobId()));
               break;
-            }
           }
         }
       }

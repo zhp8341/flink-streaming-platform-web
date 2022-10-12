@@ -65,6 +65,16 @@ public interface SystemConfigService {
   String getYarnRmHttpAddress();
 
 
+  /*
+   *
+   * @Param:[deployModeEnum]
+   * @return: java.lang.String
+   * @Author: zhuhuipei
+   * @date 2022/10/11
+   */
+  String getFlinkAddress(DeployModeEnum deployModeEnum);
+
+
   /**
    * 获取flink地址
    *

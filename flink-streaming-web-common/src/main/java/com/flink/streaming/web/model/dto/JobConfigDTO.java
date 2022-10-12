@@ -1,11 +1,15 @@
 package com.flink.streaming.web.model.dto;
 
+import com.flink.streaming.common.constant.SystemConstant;
+import com.flink.streaming.web.common.util.MatcherUtils;
 import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.model.entity.JobConfig;
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -134,6 +138,28 @@ public class JobConfigDTO implements Serializable {
   private String alarmStrs;
 
   private Integer isDeleted;
+
+  private String downloadUrl;
+
+
+  public List<String> getExtJarPathUrl() {
+    if (extJarPath == null) {
+      return Collections.emptyList();
+    }
+    List<String> urlJarsList = Lists.newArrayList();
+    String[] urls = extJarPath.split(SystemConstant.LINE_FEED);
+    for (String url : urls) {
+      if (StringUtils.isEmpty(url)) {
+        continue;
+      }
+      if (MatcherUtils.isHttpsOrHttp(url)) {
+        urlJarsList.add(url.trim());
+      } else {
+        urlJarsList.add(downloadUrl + "/" + url.trim());
+      }
+    }
+    return urlJarsList;
+  }
 
   public static JobConfig toEntity(JobConfigDTO jobConfigDTO) {
     if (jobConfigDTO == null) {

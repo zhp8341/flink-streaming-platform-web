@@ -57,13 +57,13 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 
     if (StringUtils.isNotBlank(jobConfigDTO.getJobId())) {
       if (!jobConfigDTO.getJobTypeEnum().equals(JobTypeEnum.SQL_BATCH)) {
-        JobStandaloneInfo jobstatus = flinkRestRpcAdapter
+        JobStandaloneInfo jobStatus = flinkRestRpcAdapter
             .getJobInfoForStandaloneByAppId(jobConfigDTO.getJobId(),
                 jobConfigDTO.getDeployModeEnum());
-        if (StringUtils.isNotBlank(jobstatus.getState()) && SystemConstants.STATUS_RUNNING
-            .equalsIgnoreCase(jobstatus.getState())) {
+        if (StringUtils.isNotBlank(jobStatus.getState()) && SystemConstants.STATUS_RUNNING
+            .equalsIgnoreCase(jobStatus.getState())) {
           throw new BizException(
-              "请检查Flink任务列表，任务ID=[" + jobConfigDTO.getJobId() + "]处于[ " + jobstatus.getState()
+              "请检查Flink任务列表，任务ID=[" + jobConfigDTO.getJobId() + "]处于[ " + jobStatus.getState()
                   + "]状态，不能重复启动任务！");
         }
       }

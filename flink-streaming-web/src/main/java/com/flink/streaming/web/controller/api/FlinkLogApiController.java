@@ -3,6 +3,7 @@ package com.flink.streaming.web.controller.api;
 import com.flink.streaming.web.common.util.IpUtil;
 import com.flink.streaming.web.common.util.LinuxInfoUtil;
 import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,8 @@ public class FlinkLogApiController {
   @RequestMapping(value = "/getFlinkLocalJobLog")
   public String getFlinkLocalJobLog(HttpServletResponse response) {
     try {
-      String fileName = String
-          .format("flink-%s-client-%s.log", LinuxInfoUtil.loginName(), IpUtil.getHostName());
-      String flinkName = systemConfigService
-          .getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
-      String logPath = flinkName + "log/" + fileName;
+
+      String logPath = this.getLogPath();
       log.info("日志文件地址 logPath={}", logPath);
       File file = new File(logPath);
       InputStream fis = new BufferedInputStream(new FileInputStream(file));
@@ -54,5 +52,23 @@ public class FlinkLogApiController {
     return "ok";
   }
 
+  private String getLogPath() {
+    String fileName = String
+        .format("flink-%s-client-%s.log", LinuxInfoUtil.loginName(), IpUtil.getHostName());
+    String flinkName = systemConfigService
+        .getSystemConfigByKey(SysConfigEnum.FLINK_HOME.getKey());
+    String logPath = flinkName + "log/" + fileName;
+    File file = new File(logPath);
+    if (file.exists()) {
+      return logPath;
+    }
+    fileName = String
+        .format("flink--client-%s.log", IpUtil.getHostName());
+    logPath = flinkName + "log/" + fileName;
+    if (new File(logPath).exists()) {
+      return logPath;
+    }
+    throw new BizException("not find client-log file ");
+  }
 
 }

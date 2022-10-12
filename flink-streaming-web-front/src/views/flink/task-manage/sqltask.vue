@@ -113,11 +113,11 @@
                 <span slot="label"> <a href="#/flink/jarManage/index" style="color: red" target="_blank">点击jar管理</a>
                   三方JAR
                   <el-popover placement="right" trigger="hover">
-                    自定义udf、连接器等jar地址，多个请使用换行(如 http://xxxx.com/udf.jar) 目前只支持http 可在三方jar管理
+                    自定义udf、连接器等jar地址，多个请使用换行(如 http://xxxx.com/udf.jar 或者 xxx.jar 两者都支持) 目前只支持http 可在三方jar管理
                     <i slot="reference" class="el-icon-info" />
                   </el-popover>
                 </span>
-                <el-input v-model="form.extJarPath" type="textarea" resize="none" placeholder="自定义udf、连接器等jar地址，多个请使用换行(如 http://xxxx.com/udf.jar) 目前只支持http 可在三方jar管理" class="fl-jar-input" />
+                <el-input v-model="form.extJarPath" type="textarea" resize="none" placeholder="自定义udf、连接器等jar地址，多个请使用换行(如 http://xxxx.com/udf.jar 或者 xxx.jar 两者都支持) 目前只支持http 可在三方jar管理" class="fl-jar-input" />
               </el-form-item>
             </el-col>
           </el-row>

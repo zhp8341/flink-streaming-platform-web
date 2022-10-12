@@ -4,24 +4,24 @@ import cn.hutool.core.util.StrUtil;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
 import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.mapper.SystemConfigMapper;
 import com.flink.streaming.web.model.dto.SystemConfigDTO;
 import com.flink.streaming.web.model.entity.SystemConfig;
 import com.flink.streaming.web.service.SystemConfigService;
+import java.net.URL;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 /**
  * @author zhuhuipei
@@ -84,6 +84,20 @@ public class SystemConfigServiceImpl implements SystemConfigService {
       return url.trim();
     }
     throw new BizException("网络异常 url=" + url);
+  }
+
+  @Override
+  public String getFlinkAddress(DeployModeEnum deployModeEnum) {
+    try {
+      String url = this.getFlinkHttpAddress(deployModeEnum);
+      URL address = new URL(url);
+      String host = address.getHost();
+      Integer port = address.getPort() == -1 ? 80 : address.getPort();
+      return host + ":" + port;
+    } catch (Exception e) {
+      log.error("getFlinkAddress is error", e);
+    }
+    return null;
   }
 
   @Override

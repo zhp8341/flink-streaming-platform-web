@@ -1,7 +1,6 @@
 package com.flink.streaming.web.ao.impl;
 
 import cn.hutool.core.date.DateUtil;
-
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.annotation.NacosValue;
@@ -12,9 +11,22 @@ import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
-import com.flink.streaming.web.common.util.*;
+import com.flink.streaming.web.common.util.CliConfigUtil;
+import com.flink.streaming.web.common.util.CommandUtil;
+import com.flink.streaming.web.common.util.FileUtils;
+import com.flink.streaming.web.common.util.IpUtil;
+import com.flink.streaming.web.common.util.MatcherUtils;
+import com.flink.streaming.web.common.util.UrlUtil;
+import com.flink.streaming.web.common.util.YarnUtil;
+import com.flink.streaming.web.config.CustomConfig;
 import com.flink.streaming.web.config.JobThreadPool;
-import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobConfigStatus;
+import com.flink.streaming.web.enums.JobStatusEnum;
+import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.enums.SysConfigEnumType;
+import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunLogDTO;
@@ -27,11 +39,7 @@ import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.JobRunLogService;
 import com.flink.streaming.web.service.SystemConfigService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import com.flink.streaming.web.utils.SystemInfoUtil;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.Map;
@@ -39,6 +47,10 @@ import java.util.Properties;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author zhuhuipei
@@ -65,6 +77,8 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
   @Autowired
   private CommandRpcClinetAdapter commandRpcClinetAdapter;
 
+  @Autowired
+  private CustomConfig customConfig;
 
   @Autowired
   private JobConfigService jobConfigService;
@@ -216,12 +230,16 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             .append(SystemConstant.LINE_FEED);
         try {
           String command = "";
+          jobConfigDTO.setDownloadUrl(customConfig.getUrlForDown());
 
           //如果是自定义提交jar模式下载文件到本地
           this.downJar(jobRunParamDTO, jobConfigDTO);
           switch (jobConfigDTO.getDeployModeEnum()) {
             case YARN_PER:
-              //localLog.append("HADOOP_CLASSPATH=").append(System.getProperty("HADOOP_CLASSPATH")).append(SystemConstant.LINE_FEED);
+              String hadoopClassPath= SystemInfoUtil.getEnv("HADOOP_CLASSPATH");
+              log.info("YARN_PER模式下 HADOOP_CLASSPATH={}",hadoopClassPath);
+              localLog.append("HADOOP_CLASSPATH=").append(hadoopClassPath)
+                  .append(SystemConstant.LINE_FEED);
               //1、构建执行命令
               command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO,
                   jobConfigDTO, savepointPath);
@@ -230,9 +248,13 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
               break;
             case LOCAL:
             case STANDALONE:
+              String address = systemConfigService
+                  .getFlinkAddress(jobConfigDTO.getDeployModeEnum());
+              log.info("flink 远程提交地址是 address={}", address);
+              localLog.append("address=").append(address).append(SystemConstant.LINE_FEED);
               //1、构建执行命令
               command = CommandUtil
-                  .buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO, savepointPath);
+                  .buildRunCommandForCluster(jobRunParamDTO, jobConfigDTO, savepointPath, address);
               //2、提交任务
               appId = this.submitJobForStandalone(command, jobConfigDTO, localLog);
               break;
@@ -269,14 +291,22 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
        */
       private void downJar(JobRunParamDTO jobRunParamDTO, JobConfigDTO jobConfigDTO) {
         if (JobTypeEnum.JAR.getCode() == jobConfigDTO.getJobTypeEnum().getCode()) {
-          String savePath = jobRunParamDTO.getSysHome() + "tmp/udf_jar/";
-          try {
-            String pathName = UrlUtil.downLoadFromUrl(jobConfigDTO.getCustomJarUrl(), savePath);
-            jobRunParamDTO.setMainJarPath(pathName);
-          } catch (Exception e) {
-            log.error("文件下载失败 {}", jobConfigDTO.getCustomJarUrl(), e);
-            throw new BizException("文件下载失败");
+          String pathName = null;
+          if (MatcherUtils.isHttpsOrHttp(jobConfigDTO.getCustomJarUrl())) {
+            String savePath = jobRunParamDTO.getSysHome() + "tmp/udf_jar/";
+            try {
+              pathName = UrlUtil.downLoadFromUrl(jobConfigDTO.getCustomJarUrl(), savePath);
+            } catch (Exception e) {
+              log.error("文件下载失败 {} path={}", jobConfigDTO.getCustomJarUrl(), savePath, e);
+              throw new BizException("文件下载失败");
+            }
+          } else {
+            pathName =
+                systemConfigService.getUploadJarsPath() + "/" + jobConfigDTO.getCustomJarUrl();
           }
+          log.info("JAR模式下 pathName={}", pathName);
+          jobRunParamDTO.setMainJarPath(pathName);
+
         }
       }
 

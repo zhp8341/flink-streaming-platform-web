@@ -14,7 +14,9 @@
             <el-button slot="append" type="primary" icon="el-icon-search" class="wl-search" @click="handleQuery()" />
           </el-input>
         </el-form-item>
-        <uploader ref="uploader" :options="options" :file-status-text="statusText" class="uploader-example" @file-complete="fileComplete" @complete="complete">
+        <uploader ref="uploader" :options="options"
+                  :fileStatusText="fileStatusText"
+                  class="uploader-example" @file-complete="fileComplete" @complete="complete">
           <uploader-unsupport />
           <uploader-drop>
             <p>请上传jar包</p>
@@ -33,7 +35,8 @@
       <el-table-column prop="operate" label="操作" width="180" fixed="right" align="center">
         <template slot-scope="scope">
           <el-link type="primary" icon="el-icon-delete" @click.native="deleteFile(scope.row)">删除</el-link>
-          <el-link type="primary" @click.native="doCopy(scope.row)">复制http</el-link>
+          <el-link type="primary" @click.native="doCopy(scope.row)">复制URL</el-link>
+          <el-link type="primary" @click.native="doCopyFileName(scope.row)">复制文件名</el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -68,12 +71,24 @@ export default {
         // 接受的文件类型 根据实际需要
         accept: ['.JAR']
       },
-      statusText: {
-        success: '成功了',
-        error: '出错了',
-        uploading: '上传中',
-        paused: '暂停中',
-        waiting: '等待中'
+      fileStatusText(status, response) {
+        const statusTextMap = {
+          success: '成功了',
+          error: '出错了',
+          uploading: '上传中',
+          paused: '暂停中',
+          waiting: '等待中'
+        }
+        if (status === 'success' || status === 'error') {
+          if(response.code==200){
+            return statusTextMap[status]
+          }else{
+            alert(response.message)
+            return statusTextMap["error"]
+          }
+        } else {
+          return statusTextMap[status]
+        }
       },
       loading: true,
       queryform: {
@@ -140,6 +155,15 @@ export default {
       const { id, fileName, downloadJarHttp } = row
       this.$copyText(downloadJarHttp).then(function(e) {
         alert('复制jar地址成功:' + downloadJarHttp)
+      }, function(e) {
+        alert('Can not copy')
+        console.log(e)
+      })
+    },
+    doCopyFileName(row) {
+      const { id, fileName, downloadJarHttp } = row
+      this.$copyText(fileName).then(function(e) {
+        alert('复制jar文件名字成功:' + fileName)
       }, function(e) {
         alert('Can not copy')
         console.log(e)

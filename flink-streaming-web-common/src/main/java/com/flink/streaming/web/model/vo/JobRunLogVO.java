@@ -104,7 +104,9 @@ public class JobRunLogVO implements Serializable {
       jobRunLogVO.setLocalLog(jobRunLogDTO.getLocalLog());
     }
     if (port != null && StringUtils.isNotEmpty(jobRunLogDTO.getRunIp())) {
-      jobRunLogVO.setClinetJobUrl(String.format("http://%s:%s/log/getFlinkLocalJobLog",
+//      jobRunLogVO.setClinetJobUrl(String.format("http://%s:%s/log/getFlinkLocalJobLog",
+//          jobRunLogDTO.getRunIp(), port));
+      jobRunLogVO.setClinetJobUrl(String.format("/log/getFlinkLocalJobLog",
           jobRunLogDTO.getRunIp(), port));
     }
 

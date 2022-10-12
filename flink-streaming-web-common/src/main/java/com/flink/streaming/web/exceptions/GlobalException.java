@@ -30,9 +30,6 @@ public class GlobalException {
   @ResponseBody
   public RestResult bizExceptionHandler(HttpServletRequest req, BizException e) {
     log.error("发生业务异常！原因是：{}", e);
-    if (e.getErrorMsg().equalsIgnoreCase(SysErrorEnum.UPLOAD_ERROR.getErrorMsg())) {
-      throw new RuntimeException(e);
-    }
     return RestResult.error(e.getCode(), e.getErrorMsg());
   }
 

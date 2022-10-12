@@ -79,7 +79,7 @@
       <el-row>
         <el-col :span="14">
           <el-form-item label="Jar包地址" prop="customJarUrl">
-            <el-input v-model="form.customJarUrl" placeholder="如：http://ccblog.cn/xx.jar" />
+            <el-input v-model="form.customJarUrl" placeholder="如：http://ccblog.cn/xx.jar 或者 xxx.jar" />
           </el-form-item>
         </el-col>
         <el-col :span="10">

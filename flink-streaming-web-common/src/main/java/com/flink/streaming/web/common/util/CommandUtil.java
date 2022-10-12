@@ -5,6 +5,7 @@ import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -27,9 +28,13 @@ public class CommandUtil {
    * @time 09:59
    */
   public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO,
-      JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
+      JobConfigDTO jobConfigDTO, String savepointPath,String address) throws Exception {
     StringBuilder command = new StringBuilder();
     command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d");
+
+    if (StringUtils.isNotEmpty(address)){
+      command.append(" -m ").append(address);
+    }
 
     if (StringUtils.isNotEmpty(savepointPath)) {
       command.append(" -s ").append(savepointPath);
@@ -40,8 +45,8 @@ public class CommandUtil {
     }
 
     if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-      String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
-      for (String url : urls) {
+      List<String> urlJarsList  = jobConfigDTO.getExtJarPathUrl();
+      for (String url : urlJarsList) {
         command.append(" -C ").append(url.trim());
       }
     }
@@ -88,8 +93,8 @@ public class CommandUtil {
     command.append(" -yd -m yarn-cluster");
 
     if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-      String[] urls = jobConfigDTO.getExtJarPath().split(SystemConstant.LINE_FEED);
-      for (String url : urls) {
+      List<String> urlJarsList  = jobConfigDTO.getExtJarPathUrl();
+      for (String url : urlJarsList) {
         command.append(" -C ").append(url.trim());
       }
     }

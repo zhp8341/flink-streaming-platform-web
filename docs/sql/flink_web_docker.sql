@@ -200,7 +200,7 @@ CREATE TABLE `system_config` (
 -- Records of system_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `system_config` VALUES (1, 'flink_home', '/data/projects/flink-1.13.2/', 'SYS', 0, '2020-11-12 10:42:02', '2021-09-24 22:11:01', 'sys', 'sys');
+INSERT INTO `system_config` VALUES (1, 'flink_home', '/data/projects/flink/', 'SYS', 0, '2020-11-12 10:42:02', '2021-09-24 22:11:01', 'sys', 'sys');
 INSERT INTO `system_config` VALUES (2, 'flink_rest_http_address', 'http://127.0.0.1:8081/', 'SYS', 0, '2020-11-04 11:23:49', '2020-12-16 20:32:33', 'sys', 'sys');
 INSERT INTO `system_config` VALUES (3, 'flink_streaming_platform_web_home', '/data/projects/flink-streaming-platform-web/', 'SYS', 0, '2020-10-16 16:08:58', '2021-09-24 22:12:42', 'sys', 'sys');
 COMMIT;
@@ -233,3 +233,15 @@ BEGIN;
 INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e057f20f883e', 1, 0, '2020-07-10 22:15:04', '2020-07-24 22:21:35', 'sys', 'sys');
 COMMIT;
 
+CREATE TABLE `upload_file` (
+                               `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+                               `file_name` varchar(128) DEFAULT NULL COMMENT '文件名字',
+                               `file_path` varchar(512) DEFAULT NULL COMMENT '文件路径',
+                               `type` int(11) NOT NULL DEFAULT '1' COMMENT '1:jar',
+                               `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+                               `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                               `edit_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+                               `creator` varchar(32) DEFAULT 'sys',
+                               `editor` varchar(32) DEFAULT 'sys',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='上传文件管理';

@@ -210,5 +210,15 @@ INSERT INTO `user` VALUES (1, 'admin', '系统管理员', 'e10adc3949ba59abbe56e
 COMMIT;
 
 
-
-
+CREATE TABLE `upload_file` (
+                               `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+                               `file_name` varchar(128) DEFAULT NULL COMMENT '文件名字',
+                               `file_path` varchar(512) DEFAULT NULL COMMENT '文件路径',
+                               `type` int(11) NOT NULL DEFAULT '1' COMMENT '1:jar',
+                               `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
+                               `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                               `edit_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+                               `creator` varchar(32) DEFAULT 'sys',
+                               `editor` varchar(32) DEFAULT 'sys',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='上传文件管理';

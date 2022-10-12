@@ -3,8 +3,6 @@ package com.flink.streaming.web.controller.api;
 import com.flink.streaming.common.enums.FileTypeEnum;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.controller.web.BaseController;
-import com.flink.streaming.web.enums.SysErrorEnum;
-import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.PageModel;
 import com.flink.streaming.web.model.dto.UploadFileDTO;
 import com.flink.streaming.web.model.param.UploadFileParam;
@@ -60,7 +58,7 @@ public class UploadApiController extends BaseController {
       return RestResult.success();
     } catch (Exception e) {
       log.error("upload is error", e);
-      throw new BizException(SysErrorEnum.UPLOAD_ERROR);
+      return RestResult.error(e.getMessage());
     }
   }
 

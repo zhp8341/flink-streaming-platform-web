@@ -4,6 +4,7 @@ import com.flink.streaming.web.exceptions.BizException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -108,7 +109,23 @@ public final class IpUtil {
       return null;
     }
   }
-
+  public static InetAddress getInetAddress() throws SocketException {
+    Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
+    InetAddress ipHost = null;
+    while (allNetInterfaces.hasMoreElements()) {
+      NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
+      Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+      while (addresses.hasMoreElements()) {
+        ipHost = (InetAddress) addresses.nextElement();
+        if (ipHost != null && ipHost instanceof Inet4Address) {
+          System.out.println("本机的HOSTIP = " + ipHost.getHostAddress());
+          System.out.println("本机的HOSTNAME = " + ipHost.getHostName());
+          return ipHost;
+        }
+      }
+    }
+    return ipHost;
+  }
 
   public static String getHostName() {
     try {
@@ -122,12 +139,13 @@ public final class IpUtil {
 
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     System.out.println(IpUtil.getInstance().getLocalIP());
     System.out.println(IpUtil.getInstance().getLocalIP());
     System.out.println(IpUtil.getInstance().getIpAddress());
     System.out.println(IpUtil.getInstance().getHostIp());
     System.out.println(getHostName());
     System.out.println(System.getProperty("user.name"));
+    System.out.println(getInetAddress().getHostName());
   }
 }
