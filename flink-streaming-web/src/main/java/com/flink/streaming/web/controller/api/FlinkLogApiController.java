@@ -68,7 +68,7 @@ public class FlinkLogApiController {
     if (new File(logPath).exists()) {
       return logPath;
     }
-    throw new BizException("not find client-log file logPath="+logPath);
+    throw new BizException("not find client-log file logPath=" + logPath);
   }
 
 }
