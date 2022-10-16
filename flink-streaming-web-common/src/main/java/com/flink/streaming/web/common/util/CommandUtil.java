@@ -28,11 +28,11 @@ public class CommandUtil {
    * @time 09:59
    */
   public static String buildRunCommandForCluster(JobRunParamDTO jobRunParamDTO,
-      JobConfigDTO jobConfigDTO, String savepointPath,String address) throws Exception {
+      JobConfigDTO jobConfigDTO, String savepointPath, String address) throws Exception {
     StringBuilder command = new StringBuilder();
     command.append(jobRunParamDTO.getFlinkBinPath()).append(" run -d");
 
-    if (StringUtils.isNotEmpty(address)){
+    if (StringUtils.isNotEmpty(address)) {
       command.append(" -m ").append(address);
     }
 
@@ -45,7 +45,7 @@ public class CommandUtil {
     }
 
     if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-      List<String> urlJarsList  = jobConfigDTO.getExtJarPathUrl();
+      List<String> urlJarsList = jobConfigDTO.getExtJarPathUrl();
       for (String url : urlJarsList) {
         command.append(" -C ").append(url.trim());
       }
@@ -93,7 +93,7 @@ public class CommandUtil {
     command.append(" -yd -m yarn-cluster");
 
     if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
-      List<String> urlJarsList  = jobConfigDTO.getExtJarPathUrl();
+      List<String> urlJarsList = jobConfigDTO.getExtJarPathUrl();
       for (String url : urlJarsList) {
         command.append(" -C ").append(url.trim());
       }
