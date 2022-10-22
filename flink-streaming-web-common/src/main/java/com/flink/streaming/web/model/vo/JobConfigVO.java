@@ -1,6 +1,7 @@
 package com.flink.streaming.web.model.vo;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.util.DateFormatUtils;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
@@ -9,14 +10,13 @@ import com.flink.streaming.web.enums.AlarmTypeEnum;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author zhuhuipei
@@ -97,7 +97,8 @@ public class JobConfigVO {
     String domain = map.get(jobConfigDTO.getDeployModeEnum());
 
     if (StringUtils.isNotEmpty(domain)) {
-      if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum())
+      if ((DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum())
+          || DeployModeEnum.YARN_APPLICATION.equals(jobConfigDTO.getDeployModeEnum()))
           && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
         jobConfigVO.setFlinkRunUrl(HttpUtil.buildUrl(domain,
             FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId())));
@@ -110,12 +111,12 @@ public class JobConfigVO {
       }
       if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum())
           && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
-        String[] urls = domain.split(";");
+        String[] urls = domain.split(SystemConstant.SEMICOLON);
         for (String url : urls) {
           if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
             jobConfigVO.setFlinkRunUrl(url.trim()
                 + String.format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW,
-                    jobConfigDTO.getJobId()));
+                jobConfigDTO.getJobId()));
             break;
           }
         }

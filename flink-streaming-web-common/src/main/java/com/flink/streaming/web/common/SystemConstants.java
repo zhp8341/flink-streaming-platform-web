@@ -17,6 +17,10 @@ public class SystemConstants {
 
   public static final String STATUS_RUNNING = "RUNNING";
 
+  public static final String STATUS_INITIALIZING = "INITIALIZING";
+
+  public static final String STATUS_SCHEDULED = "SCHEDULED";
+
   public static final String STATUS_FINISHED = "FINISHED";
 
   public static final String STATUS_RESTARTING = "RESTARTING";

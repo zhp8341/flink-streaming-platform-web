@@ -272,6 +272,7 @@ public class JobConfigServiceImpl implements JobConfigService {
     }
     switch (deployModeEnum) {
       case YARN_PER:
+      case YARN_APPLICATION:
         String yarnHttpAddress = systemConfigService.getSystemConfigByKey(
             SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
         if (StringUtils.isEmpty(yarnHttpAddress)) {

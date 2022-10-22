@@ -1,14 +1,14 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 
 /**
  * @author zhuhuipei
@@ -18,6 +18,8 @@ import java.net.SocketTimeoutException;
  */
 @Slf4j
 public class HttpServiceCheckerUtil {
+
+  public static final int TIMEOUTMILLSECONDS = 2000;
 
   /**
    * 检查url地址连接是否正常
@@ -49,12 +51,15 @@ public class HttpServiceCheckerUtil {
     return true;
   }
 
+
   public static void main(String[] args) {
 //        String url = "https://youtube.com/";
-    String url = "http://pre-hadoop-master002:8088/xxx";
-    System.out.println(HttpServiceCheckerUtil.checkUrlConnect(url));
+    String url = "http://192.168.1.113:8088/";
+//    System.out.println(HttpServiceCheckerUtil.isConnect(url));
 
-
+    String request = cn.hutool.http.HttpUtil
+        .get("http://192.168.1.113:8088/" + FlinkYarnRestUriConstants.URI_YARN_INFO);
+    System.out.println(request);
   }
 
 }

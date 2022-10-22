@@ -8,10 +8,8 @@ import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.common.MessageConstants;
-import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.TipsConstants;
-import com.flink.streaming.web.common.util.CliConfigUtil;
 import com.flink.streaming.web.common.util.CommandUtil;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.IpUtil;
@@ -111,12 +109,13 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
     }
     switch (jobConfigDTO.getDeployModeEnum()) {
       case YARN_PER:
+      case YARN_APPLICATION:
         this.checYarnQueue(jobConfigDTO);
-        RestResult restResult = CliConfigUtil
-            .checkFlinkRunConfigForYarn(jobConfigDTO.getFlinkRunConfig());
-        if (restResult != null && !restResult.isSuccess()) {
-          throw new BizException("启动参数校验没有通过：" + restResult.getMessage());
-        }
+//        RestResult restResult = CliConfigUtil
+//            .checkFlinkRunConfigForYarn(jobConfigDTO.getFlinkRunConfig());
+//        if (restResult != null && !restResult.isSuccess()) {
+//          throw new BizException("启动参数校验没有通过：" + restResult.getMessage());
+//        }
         break;
       //TODO
       default:
@@ -192,13 +191,15 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
     }
     Map<String, String> systemConfigMap = SystemConfigDTO
         .toMap(systemConfigService.getSystemConfig(SysConfigEnumType.SYS));
-
+    String fileName = FileUtils.createFileName(String.valueOf(jobConfigDTO.getId()));
     String sqlPath = FileUtils
         .getSqlHome(systemConfigMap.get(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey()))
-        + FileUtils.createFileName(String.valueOf(jobConfigDTO.getId()));
+        + fileName;
     FileUtils.writeText(sqlPath, jobConfigDTO.getFlinkSql(), Boolean.FALSE);
 
-    return JobRunParamDTO.buildJobRunParam(systemConfigMap, jobConfigDTO, sqlPath);
+    String sqlUrl = customConfig.getUrlForReadLocal() + fileName;
+
+    return JobRunParamDTO.buildJobRunParam(systemConfigMap, jobConfigDTO, sqlPath, sqlUrl);
   }
 
   //CHECKSTYLE:OFF
@@ -236,8 +237,12 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
           this.downJar(jobRunParamDTO, jobConfigDTO);
           switch (jobConfigDTO.getDeployModeEnum()) {
             case YARN_PER:
-              String hadoopClassPath= SystemInfoUtil.getEnv("HADOOP_CLASSPATH");
-              log.info("YARN_PER模式下 HADOOP_CLASSPATH={}",hadoopClassPath);
+            case YARN_APPLICATION:
+              String hadoopClassPath = SystemInfoUtil.getEnv(SystemConstant.HADOOP_CLASSPATH);
+              if (StringUtils.isEmpty(hadoopClassPath)){
+                throw new BizException("yarn 模式 需要在客户端配置 HADOOP_CLASSPATH环境变量");
+              }
+              log.info("YARN模式下 HADOOP_CLASSPATH={}", hadoopClassPath);
               localLog.append("HADOOP_CLASSPATH=").append(hadoopClassPath)
                   .append(SystemConstant.LINE_FEED);
               //1、构建执行命令
@@ -245,6 +250,7 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
                   jobConfigDTO, savepointPath);
               //2、提交任务
               appId = this.submitJobForYarn(command, jobConfigDTO, localLog);
+              THREADAPPID.set(appId);
               break;
             case LOCAL:
             case STANDALONE:
@@ -302,7 +308,8 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
             }
           } else {
             pathName =
-                systemConfigService.getUploadJarsPath() + "/" + jobConfigDTO.getCustomJarUrl();
+                systemConfigService.getUploadJarsPath() + SystemConstant.VIRGULE + jobConfigDTO
+                    .getCustomJarUrl();
           }
           log.info("JAR模式下 pathName={}", pathName);
           jobRunParamDTO.setMainJarPath(pathName);
@@ -454,7 +461,8 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
       throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_HOME);
     }
 
-    if (DeployModeEnum.YARN_PER.equals(deployModeEnum)) {
+    if (DeployModeEnum.YARN_PER.equals(deployModeEnum) || DeployModeEnum.YARN_APPLICATION
+        .equals(deployModeEnum)) {
       if (!systemConfigMap.containsKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey())) {
         throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
       }

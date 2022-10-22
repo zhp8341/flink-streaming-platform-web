@@ -155,7 +155,7 @@ public class JobConfigDTO implements Serializable {
       if (MatcherUtils.isHttpsOrHttp(url)) {
         urlJarsList.add(url.trim());
       } else {
-        urlJarsList.add(downloadUrl + "/" + url.trim());
+        urlJarsList.add(downloadUrl + SystemConstant.VIRGULE  + url.trim());
       }
     }
     return urlJarsList;

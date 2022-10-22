@@ -85,6 +85,15 @@ public interface SystemConfigService {
   String getFlinkHttpAddress(DeployModeEnum deployModeEnum);
 
   /*
+   *获取统一地址
+   * @Param:[deployModeEnum]
+   * @return: java.lang.String
+   * @Author: zhuhuipei
+   * @date 2022/10/21
+   */
+  String getFlinkUrl(DeployModeEnum deployModeEnum);
+
+  /*
    *上传jar的目录地址
    * @Param:[]
    * @return: java.lang.String

@@ -39,16 +39,16 @@
       <el-form-item inline="true">
         <span slot="label">Yarn RM Http地址
           <el-popover placement="right" trigger="hover">
-            <p>Yarn的RM Http地址（yarn per模式必选）</p>
+            <p>yarn-per-job 和 yarn-application模式必选 可选主备多个地址用;分隔 默认第一个是主</p>
             <i slot="reference" class="el-icon-info" />
           </el-popover>
         </span>
-        <el-input v-model="form.yarn_rm_http_address" placeholder="Yarn的RM Http地址（yarn per模式必选）" class="fl-form-item" />
+        <el-input v-model="form.yarn_rm_http_address" placeholder="per-job 和 application模式必选 可选主备多个地址用;分隔 默认第一个是主" class="fl-form-item" />
         <el-button type="primary" @click="updateConfig('yarn_rm_http_address', form.yarn_rm_http_address)">提交</el-button>
         <el-button type="danger" @click="deleteConfig('yarn_rm_http_address')">删除</el-button>
       </el-form-item>
       <el-form-item inline="true">
-        <span slot="label">Flink服务Web地址
+        <span slot="label">Flink服务HTTP地址
           <el-popover placement="right" trigger="hover">
             <p>Flink Rest & web frontend 地址(Local Cluster模式)</p>
             <i slot="reference" class="el-icon-info" />
@@ -59,13 +59,13 @@
         <el-button type="danger" @click="deleteConfig('flink_rest_http_address')">删除</el-button>
       </el-form-item>
       <el-form-item inline="true">
-        <span slot="label">Flink HA服务Web地址
+        <span slot="label">Flink HA服务HTTP地址
           <el-popover placement="right" trigger="hover">
             <p>Flink Rest & web frontend HA 地址(Standalone Cluster模式支持HA，可以填写多个地址用;分隔)</p>
             <i slot="reference" class="el-icon-info" />
           </el-popover>
         </span>
-        <el-input v-model="form.flink_rest_ha_http_address" placeholder="Flink Rest & web frontend HA 地址(Standalone Cluster模式支持HA，可以填写多个地址用;分隔)" class="fl-form-item" />
+        <el-input v-model="form.flink_rest_ha_http_address" placeholder="HA http地址(Standalone Cluster模式支持HA，可以填写多个地址用;分隔)" class="fl-form-item" />
         <el-button type="primary" @click="updateConfig('flink_rest_ha_http_address', form.flink_rest_ha_http_address)">提交</el-button>
         <el-button type="danger" @click="deleteConfig('flink_rest_ha_http_address')">删除</el-button>
       </el-form-item>

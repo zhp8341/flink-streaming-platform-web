@@ -84,13 +84,20 @@ public class CommandUtil {
   public static String buildRunCommandForYarnCluster(JobRunParamDTO jobRunParamDTO,
       JobConfigDTO jobConfigDTO, String savepointPath) throws Exception {
     StringBuilder command = new StringBuilder();
-    command.append(jobRunParamDTO.getFlinkBinPath()).append(" run");
+    command.append(jobRunParamDTO.getFlinkBinPath());
+    if (DeployModeEnum.YARN_APPLICATION == jobConfigDTO.getDeployModeEnum()) {
+      command.append("  run-application -t yarn-application  ");
+    } else {
+      command.append(" run -d -t yarn-per-job ");
+    }
+
     if (StringUtils.isNotEmpty(savepointPath)) {
       command.append(" -s ").append(savepointPath);
     }
     command.append(" ").append(jobRunParamDTO.getFlinkRunParam());
-    command.append(" -ynm ").append(JobConfigDTO.buildRunName(jobConfigDTO.getJobName()));
-    command.append(" -yd -m yarn-cluster");
+    command.append(" -Dyarn.application.name=")
+        .append(JobConfigDTO.buildRunName(jobConfigDTO.getJobName()));
+
 
     if (StringUtils.isNotEmpty(jobConfigDTO.getExtJarPath())) {
       List<String> urlJarsList = jobConfigDTO.getExtJarPathUrl();
@@ -104,7 +111,7 @@ public class CommandUtil {
       case SQL_BATCH:
         command.append(" -c ").append(APP_CLASS_NAME);
         command.append(" ").append(jobRunParamDTO.getSysHome()).append(SystemConstant.JARVERSION);
-        command.append(" -sql ").append(jobRunParamDTO.getSqlPath());
+        command.append(" -sql ").append(jobRunParamDTO.getSqlUrl());
         if (StringUtils.isNotEmpty(jobRunParamDTO.getFlinkCheckpointConfig())) {
           command.append(" ").append(jobRunParamDTO.getFlinkCheckpointConfig());
         }

@@ -1,5 +1,7 @@
 package com.flink.streaming.web.common;
 
+import com.flink.streaming.common.constant.SystemConstant;
+
 /**
  * @author zhuhuipei
  * @Description:
@@ -35,20 +37,20 @@ public class FlinkYarnRestUriConstants {
   }
 
   public static String getUriJobsForStandalone(String appId) {
-    return URI_JOBS + "/" + appId;
+    return URI_JOBS + SystemConstant.VIRGULE  + appId;
   }
 
 
   public static String getUriCancelForYarn(String appId, String jobId) {
-    return getUriJobsForYarn(appId) + "/" + jobId + URI_YARN_CANCEL;
+    return getUriJobsForYarn(appId) + SystemConstant.VIRGULE  + jobId + URI_YARN_CANCEL;
   }
 
   public static String getUriCancelForStandalone(String jobId) {
-    return URI_JOBS + "/" + jobId + URI_YARN_CANCEL;
+    return URI_JOBS + SystemConstant.VIRGULE  + jobId + URI_YARN_CANCEL;
   }
 
   public static String getUriCheckpointForYarn(String appId, String jobId) {
-    return getUriJobsForYarn(appId) + "/" + jobId + URI_YARN_CHECKPOINT;
+    return getUriJobsForYarn(appId) + SystemConstant.VIRGULE  + jobId + URI_YARN_CHECKPOINT;
   }
 
   public static String rootUriForYarn(String appId) {

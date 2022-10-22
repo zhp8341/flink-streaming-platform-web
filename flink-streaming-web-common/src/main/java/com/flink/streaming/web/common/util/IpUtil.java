@@ -74,7 +74,6 @@ public final class IpUtil {
           inetAddress = addresses.nextElement();
           if (inetAddress != null && inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()
               && inetAddress.getHostAddress().indexOf(":") == -1) {
-            log.info("本机的IP = {} ", inetAddress.getHostAddress());
             return inetAddress.getHostAddress();
           }
         }
@@ -118,8 +117,6 @@ public final class IpUtil {
       while (addresses.hasMoreElements()) {
         ipHost = (InetAddress) addresses.nextElement();
         if (ipHost != null && ipHost instanceof Inet4Address) {
-          System.out.println("本机的HOSTIP = " + ipHost.getHostAddress());
-          System.out.println("本机的HOSTNAME = " + ipHost.getHostName());
           return ipHost;
         }
       }

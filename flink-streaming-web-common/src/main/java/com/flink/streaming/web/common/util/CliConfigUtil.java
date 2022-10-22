@@ -4,17 +4,17 @@ import com.flink.streaming.common.enums.CheckPointParameterEnums;
 import com.flink.streaming.common.enums.StateBackendEnum;
 import com.flink.streaming.common.model.CheckPointParam;
 import com.flink.streaming.web.common.FlinkConstants;
-import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.exceptions.BizException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.cli.*;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author zhuhuipei
@@ -25,29 +25,6 @@ import java.util.List;
 @Slf4j
 public class CliConfigUtil {
 
-  /**
-   * 检查flink运行启动参数
-   *
-   * @author zhuhuipei
-   * @date 2020-09-11
-   * @time 00:04
-   */
-  public static RestResult checkFlinkRunConfigForYarn(String flinkRunConfig) {
-    try {
-      CommandLine cl = getFlinkRunByCli(flinkRunConfig);
-      if (!cl.hasOption(SystemConstants.YQU)) {
-        return RestResult.error("任务必须包含队列参数 -yqu ");
-      }
-    } catch (UnrecognizedOptionException e) {
-      log.error("checkFlinkRunConfig is error", e);
-      return RestResult.error(
-          "flink运行配置参数校验通不过,不允许使用参数：" + e.getOption() + " 参数只支持 -p -yjm -yn -ytm -ys -yqu -yD");
-    } catch (Exception e) {
-      log.error("checkFlinkRunConfig is error", e);
-      return RestResult.error("flink运行配置参数校验通不过");
-    }
-    return null;
-  }
 
 
   /**
@@ -157,6 +134,20 @@ public class CliConfigUtil {
     options.addOption(SystemConstants.YQU, true, "");
     CommandLineParser parser = new DefaultParser();
     return parser.parse(options, config);
+  }
+
+  public static String getYarnQueueName(String flinkRunConfig) {
+    String[] configs = trim(flinkRunConfig);
+    for (String config : configs) {
+      if (config.contains("-Dyarn.application.queue=")) {
+        String value = config.split("=")[1];
+        if (StringUtils.isEmpty(value)) {
+          return "default";
+        }
+        return value;
+      }
+    }
+    return "default";
   }
 
 

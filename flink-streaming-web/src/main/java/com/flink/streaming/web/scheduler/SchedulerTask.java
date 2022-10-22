@@ -69,12 +69,13 @@ public class SchedulerTask {
     if (!ipStatusService.isLeader()) {
       return;
     }
-    log.info("#####[task]一致性校验检查#######");
+    log.info("#####[task-start]一致性校验检查#######");
     try {
       taskServiceAO.checkJobStatus();
     } catch (Exception e) {
       log.error("checkJobStatusByYarn is error", e);
     }
+    log.info("#####[task-end]一致性校验检查#######");
   }
 
 //    /**

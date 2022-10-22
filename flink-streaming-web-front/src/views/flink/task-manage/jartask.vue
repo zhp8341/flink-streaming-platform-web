@@ -22,24 +22,26 @@
             <el-input v-model="form.id" placeholder="任务编号" disabled />
           </el-form-item>
         </el-col>
-        <el-col :span="14">
-          <el-form-item label="运行参数" prop="flinkRunConfig" :required="!(this.form.deployModeEnum==='LOCAL')" label-width="100px">
-            <span slot="label">运行参数
+      </el-row>
+      <el-row>
+        <el-col :span="22">
+          <el-form-item label="运行配置" prop="flinkRunConfig">
+            <el-input v-model="form.flinkRunConfig" placeholder="请输入任务提交所需的资源参数如： -p 2  -Dtaskmanager.numberOfTaskSlots=2 -Dyarn.application.queue=default" />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="2">
+          <el-form-item label="参数说明" label-width="100px">
+            <span slot="label"><a href="https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/deployment/config/" style="color: blue" target="_blank">参数说明</a>
               <el-popover placement="right" trigger="hover">
                 <template v-if="form.deployModeEnum==='LOCAL'">
                   在LOCAL模式下无需配置
                 </template>
                 <template v-else-if="form.deployModeEnum==='YARN_PER'">
-                  参数（和Flink官方保持一致）但是只支持 -yD -p -yjm -yn -ytm -ys -yqu(必选)<br>
-                  -ys slot个数。<br>
-                  -yn task manager 数量。<br>
-                  -yjm job manager 的堆内存大小。<br>
-                  -ytm task manager 的堆内存大小。<br>
-                  -yqu yarn队列明<br>
-                  -p 并行度<br>
-                  -yD 如:-yD taskmanager.heap.mb=518<br>
-                  详见Flink官方文档<br>
-                  如： -yqu flink -yjm 1024m -ytm 2048m  -p 1  -ys 1
+                  参数如 ： -p 2 -Dyarn.application.queue=default -Dtaskmanager.numberOfTaskSlots=2 -Djobmanager.memory.process.size=1024m  -Dtaskmanager.memory.process.size=2048m
+                </template>
+                <template v-else-if="form.deployModeEnum==='YARN_APPLICATION'">
+                  参数如 ： -p 2 -Dyarn.application.queue=default -Dtaskmanager.numberOfTaskSlots=2 -Djobmanager.memory.process.size=1024m  -Dtaskmanager.memory.process.size=2048m
                 </template>
                 <template v-else-if="form.deployModeEnum==='STANDALONE'">
                   -d,--detached 如果存在，则以分离模式运行作业<br>
@@ -53,7 +55,6 @@
                 <i slot="reference" class="el-icon-info" />
               </el-popover>
             </span>
-            <el-input v-model="form.flinkRunConfig" placeholder="如yarn模式 -yjm 1024m -ytm 1024m -p 1 -yqu streaming" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -95,6 +96,7 @@
               <el-option label="Local Cluster" value="LOCAL" />
               <el-option label="Standalone Cluster" value="STANDALONE" />
               <el-option label="YARN PER" value="YARN_PER" />
+              <el-option label="YARN APPLICATION" value="YARN_APPLICATION" />
             </el-select>
           </el-form-item>
         </el-col>

@@ -1,5 +1,6 @@
 package com.flink.streaming.web.interceptor;
 
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.util.UserSessionUtil;
 import com.flink.streaming.web.model.dto.UserSession;
@@ -35,7 +36,7 @@ public class LoginInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
     log.debug("进入LoginInterceptor拦截器 {}", request.getRequestURI());
-    if ("/".equals(request.getRequestURI())) {
+    if (SystemConstant.VIRGULE .equals(request.getRequestURI())) {
       response.sendRedirect("/static/ui/index.html");
       return false;
     }

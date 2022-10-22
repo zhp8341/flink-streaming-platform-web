@@ -286,7 +286,7 @@ public class JobConfigApiController extends BaseController {
    * 查询历史版本
    *
    * @param modelMap
-   * @param jobConfigId
+   * @param jobConfigParam
    * @return
    * @author wxj
    * @date 2021年12月20日 上午11:07:22
@@ -356,7 +356,7 @@ public class JobConfigApiController extends BaseController {
         DeployModeEnum deployMode =
             task.getDeployMode() == null ? DeployModeEnum.STANDALONE : task.getDeployMode();
         String flinkSql = StringUtils.isBlank(task.getSqlFile()) ? null
-            : this.readTextFile(deployPath + "/" + task.getSqlFile());
+            : this.readTextFile(deployPath + SystemConstant.VIRGULE + task.getSqlFile());
         String alarmTypes = getAlarmTypes(task.getAlarmTypes());
         String flinkRunConfig = task.getFlinkRunConfig();
         UpsertJobConfigParam jobConfigParam = new UpsertJobConfigParam();
@@ -475,10 +475,6 @@ public class JobConfigApiController extends BaseController {
       if (StringUtils.isEmpty(upsertJobConfigParam.getCustomJarUrl())) {
         return RestResult.error("主类jar的不能为空");
       }
-//      if (MatcherUtils.isHttpsOrHttp(upsertJobConfigParam.getCustomJarUrl())) {
-//        return RestResult
-//            .error("主类jar的http地址 不是http或者https:" + upsertJobConfigParam.getCustomJarUrl());
-//      }
     }
     // sql配置需要校验的参数JobType=null是兼容之前配置
     if (JobTypeEnum.SQL_STREAMING.equals(upsertJobConfigParam.getJobType())
@@ -493,9 +489,6 @@ public class JobConfigApiController extends BaseController {
           if (StringUtils.isEmpty(url)) {
             continue;
           }
-//          if (!MatcherUtils.isHttpsOrHttp(url)) {
-//            return RestResult.error("udf地址错误： 非法的http或者是https地址 url=" + url);
-//          }
         }
       }
     }
@@ -509,14 +502,13 @@ public class JobConfigApiController extends BaseController {
       }
     }
 
-    if (DeployModeEnum.YARN_PER.name().equals(upsertJobConfigParam.getDeployMode())) {
+    if (DeployModeEnum.YARN_PER.name().equals(upsertJobConfigParam.getDeployMode()) ||
+        DeployModeEnum.YARN_APPLICATION.name().equals(upsertJobConfigParam.getDeployMode())) {
       if (StringUtils.isEmpty(upsertJobConfigParam.getFlinkRunConfig())) {
         return RestResult.error("flink运行配置不能为空");
       }
-      RestResult restResult = CliConfigUtil
-          .checkFlinkRunConfigForYarn(upsertJobConfigParam.getFlinkRunConfig());
-      if (restResult != null) {
-        return restResult;
+      if (upsertJobConfigParam.getFlinkRunConfig().contains("-Dyarn.application.name=")) {
+        return RestResult.error("请不要配置-Dyarn.application.name= 参数 ");
       }
     }
 
@@ -542,7 +534,8 @@ public class JobConfigApiController extends BaseController {
         log.info(" 本地模式启动 {}", deployModeEnum);
         return jobStandaloneServerAO;
       case YARN_PER:
-        log.info(" yan per 模式启动 {}", deployModeEnum);
+      case YARN_APPLICATION:
+        log.info(" yan  模式启动 {}", deployModeEnum);
         return jobYarnServerAO;
       case STANDALONE:
         log.info(" STANDALONE模式启动 {}", deployModeEnum);
@@ -587,6 +580,8 @@ public class JobConfigApiController extends BaseController {
     Map<DeployModeEnum, String> domainKey = new HashMap<>();
     domainKey.put(DeployModeEnum.YARN_PER,
         systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()));
+    domainKey.put(DeployModeEnum.YARN_APPLICATION,
+        systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()));
     domainKey.put(DeployModeEnum.LOCAL,
         systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey()));
     domainKey.put(DeployModeEnum.STANDALONE, systemConfigService
@@ -594,7 +589,9 @@ public class JobConfigApiController extends BaseController {
     // 补充FlinkRunUrl字段
     String domain = domainKey.get(jobConfigDTO.getDeployModeEnum());
     if (StringUtils.isNotEmpty(domain)) {
-      if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils
+      if ((DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum())
+          || DeployModeEnum.YARN_APPLICATION.equals(jobConfigDTO.getDeployModeEnum()))
+          && !StringUtils
           .isEmpty(jobConfigDTO.getJobId())) {
         jobConfigDTO.setFlinkRunUrl(HttpUtil.buildUrl(domain,
             FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId())));
@@ -606,7 +603,7 @@ public class JobConfigApiController extends BaseController {
       }
       if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils
           .isEmpty(jobConfigDTO.getJobId())) {
-        String[] urls = domain.split(";");
+        String[] urls = domain.split(SystemConstant.SEMICOLON);
         for (String url : urls) {
           if (HttpServiceCheckerUtil.checkUrlConnect(url)) {
             jobConfigDTO.setFlinkRunUrl(url.trim() + String
@@ -661,36 +658,23 @@ public class JobConfigApiController extends BaseController {
     List<Long> jobIdList = pageModel.stream().map(jobConfigVO -> jobConfigVO.getId())
         .collect(Collectors.toList());
     Map<Long, List<AlarmTypeEnum>> map = jobAlarmConfigService.findByJobIdList(jobIdList);
-    Map<DeployModeEnum, String> domainKey = new HashMap<>();
-    domainKey.put(DeployModeEnum.YARN_PER,
-        systemConfigService.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey()));
-    domainKey.put(DeployModeEnum.LOCAL,
-        systemConfigService.getSystemConfigByKey(SysConfigEnum.FLINK_REST_HTTP_ADDRESS.getKey()));
-    domainKey.put(DeployModeEnum.STANDALONE, systemConfigService
-        .getSystemConfigByKey(SysConfigEnum.FLINK_REST_HA_HTTP_ADDRESS.getKey()));
+
     for (JobConfigDTO jobConfigDTO : pageModel) {
       // 补充FlinkRunUrl字段
-      String domain = domainKey.get(jobConfigDTO.getDeployModeEnum());
+      String domain = systemConfigService.getFlinkUrl(jobConfigDTO.getDeployModeEnum());
+
       if (StringUtils.isNotEmpty(domain)) {
-        if (DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils
-            .isEmpty(jobConfigDTO.getJobId())) {
+        if ((DeployModeEnum.YARN_PER.equals(jobConfigDTO.getDeployModeEnum())
+            || DeployModeEnum.YARN_APPLICATION.equals(jobConfigDTO.getDeployModeEnum())
+            && !StringUtils.isEmpty(jobConfigDTO.getJobId()))) {
           jobConfigDTO.setFlinkRunUrl(HttpUtil.buildUrl(domain,
               FlinkYarnRestUriConstants.getUriOverviewForYarn(jobConfigDTO.getJobId())));
         }
-        if (DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils
-            .isEmpty(jobConfigDTO.getJobId())) {
+        if ((DeployModeEnum.LOCAL.equals(jobConfigDTO.getDeployModeEnum())
+            || DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()))
+            && !StringUtils.isEmpty(jobConfigDTO.getJobId())) {
           jobConfigDTO.setFlinkRunUrl(domain + String
               .format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW, jobConfigDTO.getJobId()));
-        }
-        if (DeployModeEnum.STANDALONE.equals(jobConfigDTO.getDeployModeEnum()) && !StringUtils
-            .isEmpty(jobConfigDTO.getJobId())) {
-          String[] urls = domain.split(";");
-          for (String url : urls) {
-              jobConfigDTO.setFlinkRunUrl(url.trim() + String
-                  .format(FlinkYarnRestUriConstants.URI_YARN_JOB_OVERVIEW,
-                      jobConfigDTO.getJobId()));
-              break;
-          }
         }
       }
       // 补充AlarmStrs字段

@@ -21,7 +21,7 @@ public class JobRunParamDTO {
   private String flinkBinPath;
 
   /**
-   * flink 运行参数 如：-yjm 1024m -ytm 2048m -yd -m yarn-cluster
+   * flink 运行参数 如：
    */
   private String flinkRunParam;
 
@@ -46,21 +46,24 @@ public class JobRunParamDTO {
    */
   private String mainJarPath;
 
+  private String sqlUrl;
+
 
   public JobRunParamDTO(String flinkBinPath,
       String flinkRunParam,
       String sqlPath,
       String sysHome,
-      String flinkCheckpointConfig) {
+      String flinkCheckpointConfig, String sqlUrl) {
     this.flinkBinPath = flinkBinPath;
     this.flinkRunParam = flinkRunParam;
     this.sqlPath = sqlPath;
     this.sysHome = sysHome;
     this.flinkCheckpointConfig = flinkCheckpointConfig;
+    this.sqlUrl = sqlUrl;
   }
 
   public static JobRunParamDTO buildJobRunParam(Map<String, String> systemConfigMap,
-      JobConfigDTO jobConfigDTO, String sqlPath) {
+      JobConfigDTO jobConfigDTO, String sqlPath, String sqlUrl) {
 
     String flinkBinPath = SystemConstants
         .buildFlinkBin(systemConfigMap.get(SysConfigEnum.FLINK_HOME.getKey()));
@@ -74,7 +77,7 @@ public class JobRunParamDTO {
         flinkRunParam,
         sqlPath,
         sysHome,
-        jobConfigDTO.getFlinkCheckpointConfig()
+        jobConfigDTO.getFlinkCheckpointConfig(), sqlUrl
     );
 
     return jobRunParamDTO;

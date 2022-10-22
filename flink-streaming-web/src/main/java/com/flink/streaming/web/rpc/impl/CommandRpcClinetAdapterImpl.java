@@ -47,7 +47,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
   @Override
   public String submitJob(String command, StringBuilder localLog, Long jobRunLogId,
       DeployModeEnum deployModeEnum) throws Exception {
-    log.info(" command ={} ", command);
+    log.info(" 任务提交命令是:{} ", command);
     localLog.append("启动命令：").append(command).append(SystemConstant.LINE_FEED);
     Process pcs = Runtime.getRuntime().exec(command);
 
@@ -55,7 +55,8 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
     this.clearLogStream(pcs.getErrorStream(),
         String.format("%s#startForLocal-error#%s", DateUtil.now(),
             deployModeEnum.name()));
-    String appId = this.clearInfoLogStream(pcs.getInputStream(), localLog, jobRunLogId);
+    String appId = this
+        .clearInfoLogStream(pcs.getInputStream(), localLog, jobRunLogId, deployModeEnum);
     int rs = pcs.waitFor();
     localLog.append("rs=").append(rs).append(SystemConstant.LINE_FEED);
     jobRunLogService.updateLogById(localLog.toString(), jobRunLogId);
@@ -63,10 +64,7 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
       localLog.append(" 执行异常 rs=").append(rs).append("   appId=").append(appId);
       throw new RuntimeException("执行异常 is error  rs=" + rs);
     }
-    if (StringUtils.isEmpty(appId)) {
-      localLog.append("appId无法获 ").append(TipsConstants.TIPS_1);
-      throw new RuntimeException("appId无法获取");
-    }
+
     return appId;
   }
 
@@ -139,7 +137,8 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
    * @date 2021/3/28
    * @time 11:15
    */
-  private String clearInfoLogStream(InputStream stream, StringBuilder localLog, Long jobRunLogId) {
+  private String clearInfoLogStream(InputStream stream, StringBuilder localLog, Long jobRunLogId,
+      DeployModeEnum deployModeEnum) {
 
     String appId = null;
     BufferedReader reader = null;
@@ -171,11 +170,18 @@ public class CommandRpcClinetAdapterImpl implements CommandRpcClinetAdapter {
           lastTime = System.currentTimeMillis();
         }
       }
-      if (appId == null || appId.length() != 32) {
-        log.error("解析appID异常 appId:{}", appId);
-        throw new BizException("解析appId异常");
+
+      if (DeployModeEnum.YARN_APPLICATION == deployModeEnum
+          || DeployModeEnum.YARN_PER == deployModeEnum) {
+        log.info("yarn 模式 不需要获取appId");
+      } else {
+        if (StringUtils.isEmpty(appId)) {
+          localLog.append("appId无法获 ").append(TipsConstants.TIPS_1);
+          throw new RuntimeException("解析appId异常");
+        }
       }
       JobBaseServiceAOImpl.THREADAPPID.set(appId);
+
       log.info("获取到的appId是 {}", appId);
       return appId;
     } catch (BizException e) {

@@ -16,5 +16,4 @@ public class FlinkConstants {
 
   public static final String RETAIN_ON_CANCELLATION = "RETAIN_ON_CANCELLATION";
 
-
 }

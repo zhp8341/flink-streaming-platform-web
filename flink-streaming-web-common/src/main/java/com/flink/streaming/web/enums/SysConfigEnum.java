@@ -30,7 +30,7 @@ public enum SysConfigEnum {
 
 
   YARN_RM_HTTP_ADDRESS("yarn_rm_http_address",
-      "yarn的rm Http地址（yarn per 模式必须） ",
+      "yarn的rm Http地址（yarn 模式必须） ",
       SysConfigEnumType.SYS.name()),
 
 

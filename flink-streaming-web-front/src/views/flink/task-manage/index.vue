@@ -90,6 +90,16 @@
             <el-link v-if="scope.row.jobId" :href="scope.row.flinkRunUrl" target="_blank">{{ scope.row.jobId }}</el-link>
           </template>
         </el-table-column>
+        <el-table-column label="日志" width="115" align="center">
+          <template slot-scope="scope">
+            <router-link v-if="scope.row.lastRunLogId!==null" :to="{name:'ViewTaskLogDetail', params:{flag:'tasklist', context:queryContent(), data:{id:scope.row.lastRunLogId}}}">
+              <el-link type="info" icon="el-icon-message">详情</el-link>
+            </router-link>
+            <router-link :to="{name:'FlinkLogManage', params:{flag:'tasklist', context:queryContent(), jobConfigId:scope.row.id}}">
+              <el-link type="info" icon="el-icon-chat-line-square">历史</el-link>
+            </router-link>
+          </template>
+        </el-table-column>
         <el-table-column prop="editTime" :show-overflow-tooltip="true" label="最后提交时间" min-width="100" width="135" align="center">
           <template slot-scope="scope">
             <span>{{ formatDateTime(scope.row.editTime) }}</span>
@@ -126,16 +136,6 @@
             </router-link>
             <el-link type="primary" icon="el-icon-document-copy" @click.native="copyConfig(scope.row)">复制</el-link>
             <el-link v-if="scope.row.isOpen===0" type="danger" icon="el-icon-delete" @click.native="deleteTask(scope.row)">删除</el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="日志" width="115" align="center">
-          <template slot-scope="scope">
-            <router-link v-if="scope.row.lastRunLogId!==null" :to="{name:'ViewTaskLogDetail', params:{flag:'tasklist', context:queryContent(), data:{id:scope.row.lastRunLogId}}}">
-              <el-link type="info" icon="el-icon-message">详情</el-link>
-            </router-link>
-            <router-link :to="{name:'FlinkLogManage', params:{flag:'tasklist', context:queryContent(), jobConfigId:scope.row.id}}">
-              <el-link type="info" icon="el-icon-chat-line-square">历史</el-link>
-            </router-link>
           </template>
         </el-table-column>
       </el-table>

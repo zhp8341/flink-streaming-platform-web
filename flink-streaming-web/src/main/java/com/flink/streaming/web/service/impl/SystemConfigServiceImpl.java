@@ -1,11 +1,15 @@
 package com.flink.streaming.web.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
+import com.flink.streaming.web.config.LocalCache;
 import com.flink.streaming.web.enums.DeployModeEnum;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysConfigEnumType;
@@ -35,6 +39,9 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
   @Autowired
   private SystemConfigMapper systemConfigMapper;
+
+  @Autowired
+  private LocalCache localCache;
 
 
   @Override
@@ -75,15 +82,14 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
   @Override
   public String getYarnRmHttpAddress() {
-    String url = this.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
-    if (StringUtils.isEmpty(url)) {
+    String urlHa = this.getSystemConfigByKey(SysConfigEnum.YARN_RM_HTTP_ADDRESS.getKey());
+    if (StringUtils.isEmpty(urlHa)) {
       throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_YARN_RM_HTTP_ADDRESS);
     }
-    String checkUrl = url + FlinkYarnRestUriConstants.URI_YARN_INFO;
-    if (HttpServiceCheckerUtil.checkUrlConnect(checkUrl)) {
-      return url.trim();
-    }
-    throw new BizException("网络异常 url=" + url);
+
+    return getActiveYarnUrl(urlHa);
+
+
   }
 
   @Override
@@ -118,7 +124,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         if (StringUtils.isEmpty(urlHA)) {
           throw new BizException(SysErrorEnum.SYSTEM_CONFIG_IS_NULL_FLINK_REST_HA_HTTP_ADDRESS);
         }
-        String[] urls = urlHA.split(";");
+        String[] urls = urlHA.split(SystemConstant.SEMICOLON);
         for (String http : urls) {
           if (HttpServiceCheckerUtil.checkUrlConnect(http)) {
             return http.trim();
@@ -133,13 +139,35 @@ public class SystemConfigServiceImpl implements SystemConfigService {
   }
 
   @Override
+  public String getFlinkUrl(DeployModeEnum deployModeEnum) {
+    String url = localCache.get(deployModeEnum.name());
+    if (StringUtils.isNotEmpty(url)) {
+      return url;
+    }
+    switch (deployModeEnum) {
+      case LOCAL:
+      case STANDALONE:
+        url = getFlinkHttpAddress(deployModeEnum);
+        break;
+      case YARN_APPLICATION:
+      case YARN_PER:
+        url = getYarnRmHttpAddress();
+        break;
+      default:
+        throw new BizException("不支持该模式=" + deployModeEnum.name());
+    }
+    localCache.put(deployModeEnum.name(), url);
+    return url;
+  }
+
+  @Override
   public String getUploadJarsPath() {
     String path = this
         .getSystemConfigByKey(SysConfigEnum.FLINK_STREAMING_PLATFORM_WEB_HOME.getKey());
     if (StringUtils.isEmpty(path)) {
       throw new BizException("请先去系统设置界面设置Flink管理平台目录(即flink_streaming_platform_web)");
     }
-    return path + "/" + SystemConstant.JAR_ROOT_PATH;
+    return path + SystemConstant.VIRGULE + SystemConstant.JAR_ROOT_PATH;
   }
 
   @Override
@@ -207,20 +235,15 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
   private void checkUrlValid(SysConfigEnum sysConfigEnum, String url) {
     switch (sysConfigEnum) {
-      case YARN_RM_HTTP_ADDRESS:
-        String checkUrl = url + FlinkYarnRestUriConstants.URI_YARN_INFO;
-        if (!HttpServiceCheckerUtil.checkUrlConnect(checkUrl)) {
-          throw new BizException("网络异常 url=" + checkUrl);
-        }
-        break;
       case FLINK_REST_HTTP_ADDRESS:
       case DINGDING_ALARM_URL:
         if (!HttpServiceCheckerUtil.checkUrlConnect(url)) {
           throw new BizException("网络异常 url=" + url);
         }
         break;
+      case YARN_RM_HTTP_ADDRESS:
       case FLINK_REST_HA_HTTP_ADDRESS:
-        String[] urls = url.split(";");
+        String[] urls = url.split(SystemConstant.SEMICOLON);
         for (String http : urls) {
           if (!HttpServiceCheckerUtil.checkUrlConnect(http)) {
             throw new BizException("网络异常 url=" + http);
@@ -233,5 +256,25 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
   }
 
+  private String getActiveYarnUrl(String urlHa) {
+    String[] urls = urlHa.split(SystemConstant.SEMICOLON);
+    for (String http : urls) {
+      try {
+        String url = com.flink.streaming.web.common.util.HttpUtil
+            .buildUrl(http, FlinkYarnRestUriConstants.URI_YARN_INFO);
+        String request = HttpUtil.get(url, HttpServiceCheckerUtil.TIMEOUTMILLSECONDS);
+        if (StringUtils.isNotEmpty(request)) {
+          JSONObject jsonObject = (JSONObject) JSON.parse(request);
+          String haState = jsonObject.getJSONObject("clusterInfo").get("haState").toString();
+          if ("ACTIVE".equalsIgnoreCase(haState)) {
+            return http;
+          }
+        }
+      } catch (Exception e) {
+        log.error("单个http异常={}", http, e);
+      }
+    }
+    throw new BizException("网络异常 url=" + urls);
+  }
 
 }

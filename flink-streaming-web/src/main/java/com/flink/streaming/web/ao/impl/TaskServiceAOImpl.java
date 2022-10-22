@@ -88,6 +88,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
           .findByJobId(jobConfigDTO.getId());
       switch (jobConfigDTO.getDeployModeEnum()) {
         case YARN_PER:
+        case YARN_APPLICATION:
           this.checkYarn(jobConfigDTO, alarmTypeEnumList);
           this.sleep();
           break;
@@ -120,6 +121,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
       }
       switch (jobConfigDTO.getDeployModeEnum()) {
         case YARN_PER:
+        case YARN_APPLICATION:
           String appId = null;
           try {
             String queueName = YarnUtil.getQueueName(jobConfigDTO.getFlinkRunConfig());
@@ -189,6 +191,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
       try {
         switch (jobConfigDTO.getDeployModeEnum()) {
           case YARN_PER:
+          case YARN_APPLICATION:
             jobYarnServerAO.savepoint(jobConfigDTO.getId());
             break;
           case LOCAL:
@@ -219,9 +222,12 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     }
     //查询任务状态
     JobInfo jobInfo = yarnRestRpcAdapter.getJobInfoForPerYarnByAppId(jobConfigDTO.getJobId());
-    if (jobInfo != null && SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())) {
+    if (jobInfo != null && (SystemConstants.STATUS_RUNNING.equals(jobInfo.getStatus())
+        || SystemConstants.STATUS_INITIALIZING.equals(jobInfo.getStatus())
+        || SystemConstants.STATUS_SCHEDULED.equals(jobInfo.getStatus()))) {
       return;
     }
+    log.info("jobInfo={}", jobInfo);
     //变更任务状态
     log.error("发现本地任务[{}]状态和yarn上不一致，准备自动修复本地web任务状态， {}",
         jobConfigDTO.getId(), jobConfigDTO);
@@ -230,7 +236,8 @@ public class TaskServiceAOImpl implements TaskServiceAO {
     //发送告警并且自动拉起任务
     this.alermAndAutoJob(alarmTypeEnumList,
         SystemConstants.buildDingdingMessage("检测到任务[" + jobConfigDTO.getId()
-            + "]停止运行，任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO, DeployModeEnum.YARN_PER);
+            + "]停止运行，任务名称：" + jobConfigDTO.getJobName()), jobConfigDTO,
+        jobConfigDTO.getDeployModeEnum());
   }
 
   private void checkStandalone(JobConfigDTO jobConfigDTO, List<AlarmTypeEnum> alarmTypeEnumList) {
@@ -298,6 +305,7 @@ public class TaskServiceAOImpl implements TaskServiceAO {
       try {
         switch (deployModeEnum) {
           case YARN_PER:
+          case YARN_APPLICATION:
             jobYarnServerAO
                 .start(callbackDTO.getJobConfigId(), null, SystemConstants.USER_NAME_TASK_AUTO);
             break;

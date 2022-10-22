@@ -4,6 +4,7 @@ package com.flink.streaming.core;
 import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.common.enums.JobTypeEnum;
 import com.flink.streaming.common.sql.SqlFileParser;
+import com.flink.streaming.common.utils.UrlUtils;
 import com.flink.streaming.core.checkpoint.CheckPointParams;
 import com.flink.streaming.core.checkpoint.FsCheckPoint;
 import com.flink.streaming.core.execute.ExecuteSql;
@@ -40,7 +41,13 @@ public class JobApplication {
 
       JobRunParam jobRunParam = buildParam(args);
 
-      List<String> fileList = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
+      List<String> fileList = null;
+
+      if (UrlUtils.isHttpsOrHttp(jobRunParam.getSqlPath())) {
+        fileList = UrlUtils.getSqlList(jobRunParam.getSqlPath());
+      } else {
+        fileList = Files.readAllLines(Paths.get(jobRunParam.getSqlPath()));
+      }
 
       List<String> sqlList = SqlFileParser.parserSql(fileList);
 

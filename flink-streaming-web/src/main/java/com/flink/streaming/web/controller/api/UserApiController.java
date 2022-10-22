@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import com.flink.streaming.common.constant.SystemConstant;
 import com.flink.streaming.web.common.RestResult;
 import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.util.UserSessionUtil;
@@ -53,7 +54,7 @@ public class UserApiController extends BaseController {
       //24小时有效
       cookie.setMaxAge(24 * 60 * 60);
       //全局有效
-      cookie.setPath("/");
+      cookie.setPath(SystemConstant.VIRGULE);
       response.addCookie(cookie);
       log.info("cookieId={},name={}", cookieId, name);
     } catch (Exception e) {

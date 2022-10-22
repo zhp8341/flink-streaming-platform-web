@@ -33,6 +33,8 @@ public class SystemConstant {
 
   public static final String JAR_ROOT_PATH = "/upload_jars/";
 
+  public static final String HADOOP_CLASSPATH = "HADOOP_CLASSPATH";
+
   public static final String LOCAL_IP = "127.0.0.1";
 
 
