@@ -43,7 +43,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
    * **[9] 支持自动、手动savepoint备份，并且从savepoint恢复任务。**
    * **[10] 支持批任务如：hive。**
 
-  **目前flink版本已经升级到1.13.2**
+  **目前flink版本已经升级到1.14.3**
 
 
   **如果您觉得还不错请在右上角点一下star 谢谢 🙏 大家的支持是开源最大动力**
@@ -133,7 +133,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 **官方相关连接器下载** 
 
-请移步 https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/table/overview/
+请移步 https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/connectors/table/overview/
 
 
 
@@ -223,7 +223,7 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
 
 ##  七、RoadMap
 
-
+1、批量任务将加入调度系统
 
 
 
