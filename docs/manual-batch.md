@@ -81,7 +81,13 @@ CREATE   FUNCTION jsonHasKey as 'com.xx.udf.JsonHasKeyUDF';
 ![图片](http://img.ccblog.cn/flink/9.png)
 
  多个url使用换行
+### 或者：  如果使用三方jar管理功能 可直接填写jar包名字
 
+flink-connector-jdbc_2.11-1.12.0.jar
+
+flink-streaming-udf.jar
+
+mysql-connector-java-5.1.25.jar
 
 udf 开发demo 详见  [https://github.com/zhp8341/flink-streaming-udf](https://github.com/zhp8341/flink-streaming-udf)
 

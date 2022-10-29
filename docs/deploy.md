@@ -24,14 +24,15 @@ mysql版本 5.6+
 #### 1、flink客户端安装
 
 下载对应版本 
-https://www.apache.org/dyn/closer.lua/flink/flink-1.12.0/flink-1.12.0-bin-scala_2.11.tgz 然后解压
+https://www.apache.org/dyn/closer.lua/flink/flink-1.14.3/flink-1.14.3-bin-scala_2.11.tgz 然后解压
 
 
-a: /flink-1.12.0/conf  
+a: /flink-1.14.3/conf  
 
 **1、YARN_PER模式** 
 
 文件下面放入hadoop客户端配置文件
+配置hadoop客户端环境 （HADOOP_CLASSPATH 环境变量）
 
 
 ~~~~
@@ -49,6 +50,11 @@ hdfs-site.xml
 **3、STANDALONE模式**
 
 无
+
+**3、yarn-Application模式**
+
+无
+
 
 
 以上三种模式都需要修改  **flink-conf.yaml**   开启 classloader.resolve-order 并且设置   

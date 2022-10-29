@@ -33,7 +33,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 ### 1、主要功能
 
    * **[1] 任务支持单流 、双流、 单流与维表等。**
-   * **[2] 支持本地模式、yarn-per模式、STANDALONE模式。**
+   * **[2] 支持本地模式、yarn-per模式、STANDALONE模式 Application模式**
    * **[3] 支持catalog、hive。**
    * **[4] 支持自定义udf、连接器等,完全兼容官方连接器。**
    * **[5] 支持sql的在线开发，语法提示，格式化。**
@@ -42,6 +42,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
    * **[8] 支持多版本flink版本（需要用户编译对应flink版本）。**
    * **[9] 支持自动、手动savepoint备份，并且从savepoint恢复任务。**
    * **[10] 支持批任务如：hive。**
+   * **[11] 连接器、udf等三jar管理**
 
   **目前flink版本已经升级到1.14.3**
 
@@ -66,6 +67,8 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 3、 [docker容器化制作镜像(参考)](/docs/tristan-deploy-use)
 
 4、[flink-streaming-platform-web 体验（基于docker）适合体验者](/docs/docker-demo.md)
+
+5、关于k8s理论上是可行的，需要结合flink版本（或者hadoop版本）定制镜像
 
 **如需技术支持[详见](/docs/service.md)**
 
@@ -202,6 +205,12 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
     http://ccblog.cn/jars/flink-sql-connector-kafka_2.11-1.12.0.jar
     http://ccblog.cn/jars/flink-streaming-udf.jar
     http://ccblog.cn/jars/mysql-connector-java-5.1.25.jar
+
+    如果使用jar管理功能 可直接填写jar包名字
+    flink-connector-jdbc_2.11-1.12.0.jar
+    flink-streaming-udf.jar
+    mysql-connector-java-5.1.25.jar
+    
 
 
  ![图片](http://img.ccblog.cn/flink/9.png)

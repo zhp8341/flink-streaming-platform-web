@@ -10,7 +10,14 @@
 ## 说明
  
  
- **重要：自研的jar流计算任务必须先放到http服务上（自己搭建一个http服务器）**
+ ### 重要：自研的jar流计算任务必须先放到http服务上（自己搭建一个http服务器）
+ ### 或者：  如果使用三方jar管理功能 可直接填写jar包名字
+
+flink-connector-jdbc_2.11-1.12.0.jar
+
+flink-streaming-udf.jar
+
+ mysql-connector-java-5.1.25.jar
  
 
 ### 主类名*
