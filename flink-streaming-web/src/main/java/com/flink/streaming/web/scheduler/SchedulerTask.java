@@ -1,6 +1,7 @@
 package com.flink.streaming.web.scheduler;
 
 import com.flink.streaming.web.ao.TaskServiceAO;
+import com.flink.streaming.web.quartz.BatchJobManagerScheduler;
 import com.flink.streaming.web.service.IpStatusService;
 import com.flink.streaming.web.service.SystemConfigService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,9 @@ public class SchedulerTask {
 
   @Autowired
   private SystemConfigService systemConfigService;
+
+  @Autowired
+  private BatchJobManagerScheduler batchJobManagerScheduler;
 
 
   /**
@@ -122,6 +126,29 @@ public class SchedulerTask {
     log.info("#####[task]开始自动执行savePoint#######");
     try {
       taskServiceAO.autoSavePoint();
+    } catch (Exception e) {
+      log.error("autoSavePoint is error", e);
+    }
+  }
+
+  /**
+   * 定时检测离线任务调度注册情况（补偿）
+   *
+   * @Param:[]
+   * @return: void
+   * @Author: zhuhuipei
+   * @date 2022/10/30
+   */
+  @Async("taskExecutor")
+  @Scheduled(cron = "0 */30 * * * ?")
+  //@Scheduled(cron = "0 */1 * * * ?")
+  public void autoBatchRegisterJob() {
+    if (!ipStatusService.isLeader()) {
+      return;
+    }
+    log.info("#####定时检测离线任务调度注册情况（半个小时一次检测）#######");
+    try {
+      batchJobManagerScheduler.batchRegisterJob();
     } catch (Exception e) {
       log.error("autoSavePoint is error", e);
     }

@@ -11,7 +11,7 @@
 
   <groupId>com.streaming.platform.web</groupId>
   <artifactId>flink-streaming-web</artifactId>
-  <version>1.4.0.RELEASE</version>
+  <version>1.5.0.RELEASE</version>
 
   <properties>
     <nacos.config.version>0.2.7</nacos.config.version>

@@ -18,7 +18,7 @@
 
 6、将 flink-streaming-core/target/flink-streaming-core.jar 移动到 刚创建的lib 中
 
-7、将 flink-streaming-core.jar 改名为 flink-streaming-core-1.4.0.RELEASE.jar
+7、将 flink-streaming-core.jar 改名为 flink-streaming-core-1.5.0.RELEASE.jar
 
 8、flink-streaming-web 模块是REST服务模块，运行启动类是：com.flink.streaming.web.StartApplication
 
@@ -38,9 +38,9 @@
 
 2、command 类似于，下面这个命令是 平台生成的 使用 yarn 提交 批任务
 
-/Users/gump/dreamware/flink-1.13.1/bin/flink run -yjm 1024m -ytm 1024m -p 1 -yqu default  -ynm flink@my_batch_job  -yd -m yarn-cluster  -c com.flink.streaming.core.JobApplication /Users/gump/study/source/github/flink-streaming-platform-web/lib/flink-streaming-core-1.4.0.RELEASE.jar -sql /Users/gump/study/source/github/flink-streaming-platform-web/sql/job_sql_3.sql  -type 2 
+/Users/gump/dreamware/flink-1.13.1/bin/flink run -yjm 1024m -ytm 1024m -p 1 -yqu default  -ynm flink@my_batch_job  -yd -m yarn-cluster  -c com.flink.streaming.core.JobApplication /Users/gump/study/source/github/flink-streaming-platform-web/lib/flink-streaming-core-1.5.0.RELEASE.jar -sql /Users/gump/study/source/github/flink-streaming-platform-web/sql/job_sql_3.sql  -type 2 
 
-3、大家可以去分析这个命令，其实就是要知道 Flink 的客户端在哪个目录 ，提交的jar 就是导入到lib下的 flink-streaming-core-1.4.0.RELEASE.jar 
+3、大家可以去分析这个命令，其实就是要知道 Flink 的客户端在哪个目录 ，提交的jar 就是导入到lib下的 flink-streaming-core-1.5.0.RELEASE.jar 
 
 4、yarn 的url 貌似只是 日志那里有使用
 

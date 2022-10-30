@@ -81,6 +81,7 @@
                 <exclude>com.carrotsearch.*:*</exclude>
                 <exclude>com.yammer.*:*</exclude>
                 <exclude>com.thoughtworks.*:*</exclude>
+                <exclude>com.mchange:*</exclude>
 
                 <exclude>org.apache.*:*</exclude>
                 <exclude>org.apache:*</exclude>

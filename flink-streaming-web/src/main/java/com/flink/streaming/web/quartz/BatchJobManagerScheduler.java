@@ -45,19 +45,10 @@ public class BatchJobManagerScheduler implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     log.info("##########开始注册批任务调度##########");
-    List<BatchJob> list = jobConfigService.getAllBatchJobs();
-    if (CollectionUtils.isEmpty(list)) {
-      log.info("没有找到批任务，不需要注册定时调度");
-      return;
-    }
-    for (BatchJob batchJob : list) {
-      if (!StringUtils.isEmpty(batchJob.getCron())) {
-        this.registerJob(batchJob);
-      }
-
-    }
-    log.info("##########结束注册批任务调度########## 任务数量是:{}", list.size());
+    this.batchRegisterJob();
+    log.info("##########结束注册批任务调度##########");
   }
+
 
   /*
    *注册单个任务到调度器
@@ -118,7 +109,27 @@ public class BatchJobManagerScheduler implements ApplicationRunner {
       log.error("getJobKeys is error");
     }
     return 0;
+  }
 
+  /*
+   *批量注册
+   * @Param:[]
+   * @return: void
+   * @Author: zhuhuipei
+   * @date 2022/10/30
+   */
+  public void batchRegisterJob() {
+    List<BatchJob> list = jobConfigService.getAllBatchJobs();
+    if (CollectionUtils.isEmpty(list)) {
+      log.info("没有找到批任务，不需要注册定时调度");
+      return;
+    }
+    for (BatchJob batchJob : list) {
+      if (!StringUtils.isEmpty(batchJob.getCron())) {
+        this.registerJob(batchJob);
+      }
+    }
+    log.info("本次批量注册完成后一共有 {} 个任务 ", this.getJobKeysCount());
   }
 
 }

@@ -6,7 +6,7 @@ ACTION=$1
 
 ##变量设置##
 env=docker
-project="/data/projects/flink-streaming-platform-web/lib/flink-streaming-web-1.4.0.RELEASE.jar"
+project="/data/projects/flink-streaming-platform-web/lib/flink-streaming-web-1.5.0.RELEASE.jar"
 
 
 ##JAVA_OPTS设置
