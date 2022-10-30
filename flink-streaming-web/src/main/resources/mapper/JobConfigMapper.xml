@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.flink.streaming.web.mapper.JobConfigMapper">
+
+  <resultMap id="BatchJobMap" type="com.flink.streaming.web.model.entity.BatchJob">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+    <result column="cron" jdbcType="VARCHAR" property="cron"/>
+  </resultMap>
   <resultMap id="BaseResultMap" type="com.flink.streaming.web.model.entity.JobConfig">
     <id column="id" jdbcType="BIGINT" property="id"/>
     <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
@@ -12,6 +18,7 @@
     <result column="job_id" jdbcType="VARCHAR" property="jobId"/>
     <result column="is_open" jdbcType="BIT" property="isOpen"/>
     <result column="status" jdbcType="BIT" property="status"/>
+    <result column="cron" jdbcType="VARCHAR" property="cron"/>
     <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
     <result column="last_start_time" jdbcType="TIMESTAMP" property="lastStartTime"/>
     <result column="last_run_log_id" jdbcType="BIT" property="lastRunLogId"/>
@@ -44,6 +51,7 @@
         job_id,
         is_open,
         status,
+        cron,
         ext_jar_path,
         last_start_time,
         last_run_log_id,
@@ -70,7 +78,7 @@
     flink_checkpoint_config, job_id, is_open,
     status, last_start_time, version, job_type,custom_args,custom_main_class,custom_jar_url,
     is_deleted, create_time, edit_time,
-    creator, editor, flink_sql,ext_jar_path
+    creator, editor, flink_sql,ext_jar_path,cron
     )
     values (#{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
     #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
@@ -79,7 +87,7 @@
     #{customArgs,jdbcType=VARCHAR},#{customMainClass,jdbcType=VARCHAR},#{customJarUrl,jdbcType=VARCHAR},
     0, now(), now(),
     #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR},
-    #{extJarPath,jdbcType=VARCHAR}
+    #{extJarPath,jdbcType=VARCHAR},#{cron,jdbcType=VARCHAR}
     )
   </insert>
 
@@ -89,7 +97,7 @@
                             status, last_start_time, version, job_type, custom_args,
                             custom_main_class, custom_jar_url,
                             is_deleted, create_time, edit_time,
-                            creator, editor, flink_sql, ext_jar_path)
+                            creator, editor, flink_sql, ext_jar_path,cron)
     values (#{id,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR}, #{jobDesc,jdbcType=VARCHAR},
             #{deployMode,jdbcType=VARCHAR}, #{flinkRunConfig,jdbcType=VARCHAR},
             #{flinkCheckpointConfig,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR},
@@ -100,7 +108,7 @@
             0, now(), now(),
             #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR},
             #{flinkSql,jdbcType=LONGVARCHAR},
-            #{extJarPath,jdbcType=VARCHAR})
+            #{extJarPath,jdbcType=VARCHAR}),,#{cron,jdbcType=VARCHAR}
   </insert>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
@@ -269,6 +277,10 @@
       <if test="editor != null">
         editor = #{editor,jdbcType=VARCHAR},
       </if>
+
+      <if test="cron != null">
+        cron = #{cron,jdbcType=VARCHAR},
+      </if>
       <if test="flinkSql != null">
         flink_sql = #{flinkSql,jdbcType=LONGVARCHAR},
       </if>
@@ -295,5 +307,13 @@
     where id = #{id,jdbcType=BIGINT}
       and is_deleted = 1
   </update>
+
+  <select id="getAllBatchJobs" resultMap="BatchJobMap">
+    select id, job_name, cron
+    from job_config
+    where is_open = 1
+      and is_deleted = 0
+      and job_type = 2 and  cron is  not null  and  cron !=''
+  </select>
 
 </mapper>

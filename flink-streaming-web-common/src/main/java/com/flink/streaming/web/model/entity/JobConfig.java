@@ -115,5 +115,10 @@ public class JobConfig {
    */
   private String flinkSql;
 
+  /**
+   * cron表达式
+   */
+  private String cron;
+
 
 }

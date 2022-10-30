@@ -232,19 +232,21 @@ public class JobBaseServiceAOImpl implements JobBaseServiceAO {
         try {
           String command = "";
           jobConfigDTO.setDownloadUrl(customConfig.getUrlForDown());
-
+          String hadoopClassPath = SystemInfoUtil.getEnv(SystemConstant.HADOOP_CLASSPATH);
+          log.info("HADOOP_CLASSPATH={}",hadoopClassPath);
+          localLog.append("HADOOP_CLASSPATH=").append(hadoopClassPath)
+              .append(SystemConstant.LINE_FEED);
           //如果是自定义提交jar模式下载文件到本地
           this.downJar(jobRunParamDTO, jobConfigDTO);
           switch (jobConfigDTO.getDeployModeEnum()) {
             case YARN_PER:
             case YARN_APPLICATION:
-              String hadoopClassPath = SystemInfoUtil.getEnv(SystemConstant.HADOOP_CLASSPATH);
+
               if (StringUtils.isEmpty(hadoopClassPath)){
                 throw new BizException("yarn 模式 需要在客户端配置 HADOOP_CLASSPATH环境变量");
               }
               log.info("YARN模式下 HADOOP_CLASSPATH={}", hadoopClassPath);
-              localLog.append("HADOOP_CLASSPATH=").append(hadoopClassPath)
-                  .append(SystemConstant.LINE_FEED);
+
               //1、构建执行命令
               command = CommandUtil.buildRunCommandForYarnCluster(jobRunParamDTO,
                   jobConfigDTO, savepointPath);

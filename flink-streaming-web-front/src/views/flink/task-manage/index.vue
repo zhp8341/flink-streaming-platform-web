@@ -100,6 +100,11 @@
             </router-link>
           </template>
         </el-table-column>
+        <el-table-column prop="cron" :show-overflow-tooltip="true" label="调度时间" min-width="90" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.cron }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="editTime" :show-overflow-tooltip="true" label="最后提交时间" min-width="100" width="135" align="center">
           <template slot-scope="scope">
             <span>{{ formatDateTime(scope.row.editTime) }}</span>
@@ -113,7 +118,7 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="报警模式" :show-overflow-tooltip="true" align="center">
+        <el-table-column label="报警模式" :show-overflow-tooltip="true" width="165" align="center">
           <template slot-scope="scope">
             <el-link v-if="scope.row.alarmStrs">{{ scope.row.alarmStrs }}</el-link><!-- 辅助 -->
           </template>

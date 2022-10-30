@@ -89,6 +89,8 @@ public class JobConfigHistoryDTO implements Serializable {
    */
   private JobTypeEnum jobTypeEnum;
 
+  private String cron;
+
 
   public static JobConfigHistory toEntity(JobConfigHistoryDTO jobConfigHistoryDTO) {
     if (jobConfigHistoryDTO == null) {
@@ -109,6 +111,7 @@ public class JobConfigHistoryDTO implements Serializable {
     jobConfigHistory.setCreator(jobConfigHistoryDTO.getCreator());
     jobConfigHistory.setEditor(jobConfigHistoryDTO.getEditor());
     jobConfigHistory.setFlinkSql(jobConfigHistoryDTO.getFlinkSql());
+    jobConfigHistory.setCron(jobConfigHistoryDTO.getCron());
     if (jobConfigHistoryDTO.getJobTypeEnum() != null) {
       jobConfigHistory.setJobType(jobConfigHistoryDTO.getJobTypeEnum().getCode());
     }
@@ -135,6 +138,7 @@ public class JobConfigHistoryDTO implements Serializable {
     jobConfigHistoryDTO.setCreator(jobConfigHistory.getCreator());
     jobConfigHistoryDTO.setEditor(jobConfigHistory.getEditor());
     jobConfigHistoryDTO.setFlinkSql(jobConfigHistory.getFlinkSql());
+    jobConfigHistoryDTO.setCron(jobConfigHistory.getCron());
     jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfigHistory.getJobType()));
     return jobConfigHistoryDTO;
   }
@@ -176,6 +180,7 @@ public class JobConfigHistoryDTO implements Serializable {
     jobConfigHistoryDTO.setCreator(jobConfig.getCreator());
     jobConfigHistoryDTO.setEditor(jobConfig.getEditor());
     jobConfigHistoryDTO.setFlinkSql(jobConfig.getFlinkSql());
+    jobConfigHistoryDTO.setCron(jobConfig.getCron());
     jobConfigHistoryDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfig.getJobType()));
     return jobConfigHistoryDTO;
   }

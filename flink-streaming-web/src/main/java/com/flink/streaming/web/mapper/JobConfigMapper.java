@@ -1,12 +1,12 @@
 package com.flink.streaming.web.mapper;
 
+import com.flink.streaming.web.model.entity.BatchJob;
 import com.flink.streaming.web.model.entity.JobConfig;
 import com.flink.streaming.web.model.param.JobConfigParam;
 import com.github.pagehelper.Page;
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface JobConfigMapper {
@@ -35,4 +35,6 @@ public interface JobConfigMapper {
   int recoveryDeleteJobConfigById(@Param("id") Long id, @Param("userName") String userName);
 
   List<JobConfig> findJobConfigByStatus(@Param("statusList") List<Integer> statusList);
+
+  List<BatchJob> getAllBatchJobs();
 }

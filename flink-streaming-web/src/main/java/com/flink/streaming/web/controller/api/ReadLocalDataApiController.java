@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.util.FileUtils;
 import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.service.SystemConfigService;
@@ -53,7 +54,7 @@ public class ReadLocalDataApiController {
       InputStream inputStream = new FileInputStream(sqlPath);
       String filename = file.getName();
       response.addHeader("Content-Disposition",
-          "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
+          "attachment; filename=" + URLEncoder.encode(filename, SystemConstants.CODE_UTF_8));
       byte[] b = new byte[1024];
       int len;
       while ((len = inputStream.read(b)) > 0) {

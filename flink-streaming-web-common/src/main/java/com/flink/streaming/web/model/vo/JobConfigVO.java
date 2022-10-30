@@ -77,6 +77,10 @@ public class JobConfigVO {
 
   private String alarmStrs;
 
+  /**
+   * cron表达式
+   */
+  private String cron;
 
   public static JobConfigVO toVO(JobConfigDTO jobConfigDTO, Map<DeployModeEnum, String> map) {
     if (jobConfigDTO == null) {
@@ -90,6 +94,7 @@ public class JobConfigVO {
     jobConfigVO.setIsOpenStr(YN.getYNByValue(jobConfigDTO.getIsOpen()).getDescribe());
     jobConfigVO.setStatus(jobConfigDTO.getStatus().getCode());
     jobConfigVO.setStatusStr(jobConfigDTO.getStatus().getDesc());
+    jobConfigVO.setCron(jobConfigDTO.getCron());
     if (jobConfigDTO.getDeployModeEnum() != null) {
       jobConfigVO.setDeployMode(jobConfigDTO.getDeployModeEnum().name());
     }

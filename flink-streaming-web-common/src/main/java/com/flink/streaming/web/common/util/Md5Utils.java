@@ -1,5 +1,6 @@
 package com.flink.streaming.web.common.util;
 
+import com.flink.streaming.web.common.SystemConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.MessageDigest;
@@ -27,7 +28,7 @@ public class Md5Utils {
   public static final String md5(String s) {
 
     try {
-      byte[] btInput = s.getBytes("UTF-8");
+      byte[] btInput = s.getBytes(SystemConstants.CODE_UTF_8);
       MessageDigest mdInst = MessageDigest.getInstance("MD5");
       mdInst.update(btInput);
       byte[] md = mdInst.digest();

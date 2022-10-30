@@ -1,5 +1,6 @@
 package com.flink.streaming.web.controller.api;
 
+import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.model.dto.UploadFileDTO;
 import com.flink.streaming.web.service.UploadFileService;
 import java.io.File;
@@ -49,7 +50,7 @@ public class DownController {
       InputStream inputStream = new FileInputStream(uploadFileDTO.getFilePath());
       String filename = file.getName();
       response.addHeader("Content-Disposition",
-          "attachment; filename=" + URLEncoder.encode(filename, "UTF-8"));
+          "attachment; filename=" + URLEncoder.encode(filename, SystemConstants.CODE_UTF_8));
       byte[] b = new byte[1024];
       int len;
       while ((len = inputStream.read(b)) > 0) {

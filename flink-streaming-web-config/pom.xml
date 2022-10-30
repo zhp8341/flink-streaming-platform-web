@@ -17,6 +17,10 @@
             <groupId>com.streaming.platform.web</groupId>
             <artifactId>flink-streaming-web-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
     </dependencies>
 
 

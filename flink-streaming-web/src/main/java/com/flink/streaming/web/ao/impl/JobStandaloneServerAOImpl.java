@@ -5,23 +5,28 @@ import com.flink.streaming.web.ao.JobBaseServiceAO;
 import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.MessageConstants;
 import com.flink.streaming.web.common.SystemConstants;
-import com.flink.streaming.web.enums.*;
+import com.flink.streaming.web.enums.DeployModeEnum;
+import com.flink.streaming.web.enums.JobConfigStatus;
+import com.flink.streaming.web.enums.SysConfigEnum;
+import com.flink.streaming.web.enums.SysErrorEnum;
+import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.exceptions.BizException;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobRunParamDTO;
+import com.flink.streaming.web.model.entity.BatchJob;
+import com.flink.streaming.web.quartz.BatchJobManagerScheduler;
 import com.flink.streaming.web.rpc.CommandRpcClinetAdapter;
 import com.flink.streaming.web.rpc.FlinkRestRpcAdapter;
 import com.flink.streaming.web.rpc.model.JobStandaloneInfo;
 import com.flink.streaming.web.service.JobConfigService;
 import com.flink.streaming.web.service.SavepointBackupService;
+import java.util.Date;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * @author zhuhuipei
@@ -29,7 +34,7 @@ import java.util.Map;
  * @date 2020-07-20
  * @time 23:11
  */
-@Component("jobStandaloneServerAO")
+@Component(SystemConstants.BEANNAME_JOBSTANDALONESERVERAO)
 @Slf4j
 public class JobStandaloneServerAOImpl implements JobServerAO {
 
@@ -48,6 +53,9 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 
   @Autowired
   private JobBaseServiceAO jobBaseServiceAO;
+
+  @Autowired
+  private BatchJobManagerScheduler batchJobRegister;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -171,14 +179,32 @@ public class JobStandaloneServerAOImpl implements JobServerAO {
 
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public void open(Long id, String userName) {
+    JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+    if (jobConfigDTO == null) {
+      return;
+    }
+    if (jobConfigDTO.getJobTypeEnum() == JobTypeEnum.SQL_BATCH && StringUtils
+        .isNotEmpty(jobConfigDTO.getCron())) {
+      batchJobRegister
+          .registerJob(new BatchJob(id, jobConfigDTO.getJobName(), jobConfigDTO.getCron()));
+    }
+
     jobConfigService.openOrClose(id, YN.Y, userName);
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public void close(Long id, String userName) {
-    jobBaseServiceAO.checkClose(jobConfigService.getJobConfigById(id));
+    JobConfigDTO jobConfigDTO = jobConfigService.getJobConfigById(id);
+    jobBaseServiceAO.checkClose(jobConfigDTO);
     jobConfigService.openOrClose(id, YN.N, userName);
+    if (jobConfigDTO.getJobTypeEnum() == JobTypeEnum.SQL_BATCH) {
+      batchJobRegister.deleteJob(id);
+
+    }
+
   }
 
 

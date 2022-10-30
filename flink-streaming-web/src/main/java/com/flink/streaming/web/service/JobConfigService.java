@@ -4,6 +4,7 @@ import com.flink.streaming.web.enums.JobConfigStatus;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.PageModel;
+import com.flink.streaming.web.model.entity.BatchJob;
 import com.flink.streaming.web.model.param.JobConfigParam;
 
 import java.util.List;
@@ -131,6 +132,16 @@ public interface JobConfigService {
    * @time 23:04
    */
   List<JobConfigDTO> findJobConfigByStatus(Integer... status);
+
+
+  /*
+   * 获取有效的批任务
+   * @Param:[]
+   * @return: java.util.List<com.flink.streaming.web.model.entity.BatchJob>
+   * @Author: zhuhuipei
+   * @date 2022/10/29
+   */
+  List<BatchJob> getAllBatchJobs();
 
 
 }

@@ -25,6 +25,10 @@ public class SystemConstants {
 
   public static final String STATUS_RESTARTING = "RESTARTING";
 
+  public static final String BEANNAME_JOBSTANDALONESERVERAO = "jobStandaloneServerAO";
+
+  public static final String BEANNAME_JOBYARNSERVERAO = "jobYarnServerAO";
+
   public static final String USER_NAME_TASK_AUTO = "task-auto";
 
   public static final String CODE_UTF_8 = "UTF-8";
@@ -46,6 +50,7 @@ public class SystemConstants {
   public static final String HTTP_STANDALONE_APPS = "#/job/";
 
   public static final String YQU = "yqu";
+
 
   public static String buildHttpQuery(String queueName) {
     if (StringUtils.isEmpty(queueName)) {
@@ -78,6 +83,10 @@ public class SystemConstants {
    */
   public static String buildDingdingMessage(String content) {
     return "Flink任务告警：" + content;
+  }
+
+  public static String buildQuartzJobKeyName(Long id) {
+    return "job_key_id#" + id;
   }
 
 }

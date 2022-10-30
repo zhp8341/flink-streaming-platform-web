@@ -22,6 +22,11 @@
             <el-input v-model="form.id" placeholder="任务编号" disabled />
           </el-form-item>
         </el-col>
+        <el-col :span="14">
+          <el-form-item label="cron" prop="cron">
+            <el-input v-model="form.cron" placeholder="离线批任务表达式 如 0 0/3 * * * ?  流任务不需要填写 " :disabled="!(this.form.jobType===2)" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="22">
@@ -231,6 +236,7 @@ export default {
         status: '',
         checkSQLResult: '',
         version: '',
+        cron: '',
         createTime: ''
       },
       rules: {
@@ -296,6 +302,7 @@ export default {
     this.form.extJarPath = task.extJarPath ? task.extJarPath : ''
     this.form.isOpen = task.isOpen ? task.isOpen : ''
     this.form.status = task.status ? task.status : ''
+    this.form.cron = task.cron ? task.cron : ''
     this.form.version = task.version ? task.version : ''
     this.form.createTime = task.createTime ? task.createTime : ''
     //
@@ -323,6 +330,7 @@ export default {
             flinkCheckpointConfig: this.form.flinkCheckpointConfig,
             flinkSql: this.form.flinkSql,
             jobType: this.form.jobType,
+            cron: this.form.cron,
             alarmTypes: alarmTypes,
             extJarPath: this.form.extJarPath
           }

@@ -83,5 +83,5 @@ public class JobConfigHistory implements Serializable {
    */
   private String flinkSql;
 
-
+  private String cron;
 }

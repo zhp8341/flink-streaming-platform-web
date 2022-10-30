@@ -97,6 +97,8 @@ public class UpsertJobConfigParam {
    */
   private Integer status = JobConfigStatus.STOP.getCode();
 
+  private String cron;
+
 
   public static JobConfigDTO toDTO(UpsertJobConfigParam upsertJobConfigParam) {
     if (upsertJobConfigParam == null) {
@@ -130,6 +132,8 @@ public class UpsertJobConfigParam {
     } else {
       jobConfigDTO.setExtJarPath(SystemConstant.SPACE);
     }
+    jobConfigDTO.setCron(upsertJobConfigParam.getCron());
+
     if (StringUtils.isNotEmpty(upsertJobConfigParam.getAlarmTypes())) {
       List<AlarmTypeEnum> list = new ArrayList<>();
       String[] types = upsertJobConfigParam.getAlarmTypes().split(",");

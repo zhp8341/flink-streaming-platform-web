@@ -6,6 +6,7 @@ import com.flink.streaming.web.mapper.JobConfigMapper;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobConfigHistoryDTO;
 import com.flink.streaming.web.model.dto.PageModel;
+import com.flink.streaming.web.model.entity.BatchJob;
 import com.flink.streaming.web.model.entity.JobConfig;
 import com.flink.streaming.web.model.param.JobConfigParam;
 import com.flink.streaming.web.service.*;
@@ -235,6 +236,11 @@ public class JobConfigServiceImpl implements JobConfigService {
       statusList.add(s);
     }
     return JobConfigDTO.toListDTO(jobConfigMapper.findJobConfigByStatus(statusList));
+  }
+
+  @Override
+  public List<BatchJob> getAllBatchJobs() {
+    return jobConfigMapper.getAllBatchJobs();
   }
 
 

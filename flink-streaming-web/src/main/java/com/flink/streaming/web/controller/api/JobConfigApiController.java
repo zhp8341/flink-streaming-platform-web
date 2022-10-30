@@ -9,6 +9,7 @@ import com.flink.streaming.web.ao.JobServerAO;
 import com.flink.streaming.web.common.FlinkConstants;
 import com.flink.streaming.web.common.FlinkYarnRestUriConstants;
 import com.flink.streaming.web.common.RestResult;
+import com.flink.streaming.web.common.SystemConstants;
 import com.flink.streaming.web.common.util.CliConfigUtil;
 import com.flink.streaming.web.common.util.HttpServiceCheckerUtil;
 import com.flink.streaming.web.common.util.HttpUtil;
@@ -20,6 +21,7 @@ import com.flink.streaming.web.enums.SysConfigEnum;
 import com.flink.streaming.web.enums.SysErrorEnum;
 import com.flink.streaming.web.enums.YN;
 import com.flink.streaming.web.exceptions.BizException;
+import com.flink.streaming.web.factory.JobServerAOFactory;
 import com.flink.streaming.web.model.dto.JobConfigDTO;
 import com.flink.streaming.web.model.dto.JobConfigHistoryDTO;
 import com.flink.streaming.web.model.dto.PageModel;
@@ -46,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.shaded.jackson2.org.yaml.snakeyaml.Yaml;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,12 +65,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 @Slf4j
 public class JobConfigApiController extends BaseController {
-
-  @Autowired
-  private JobServerAO jobYarnServerAO;
-
-  @Autowired
-  private JobServerAO jobStandaloneServerAO;
 
   @Autowired
   private JobConfigService jobConfigService;
@@ -442,7 +439,7 @@ public class JobConfigApiController extends BaseController {
       byte[] buffer = new byte[fin.available()];
       fin.read(buffer);
       fin.close();
-      String result = new String(buffer, "utf-8");
+      String result = new String(buffer, SystemConstants.CODE_UTF_8);
       return result;
     } catch (Exception e) {
       log.error("读取文件[" + fileName + "]失败！", e);
@@ -492,6 +489,12 @@ public class JobConfigApiController extends BaseController {
         }
       }
     }
+    if (JobTypeEnum.SQL_BATCH.getCode() == upsertJobConfigParam.getJobType() && StringUtils
+        .isNotEmpty(upsertJobConfigParam.getCron())) {
+      if (!CronExpression.isValidExpression(upsertJobConfigParam.getCron())) {
+        return RestResult.error("cron表达式不准确");
+      }
+    }
 
     if (StringUtils.isNotEmpty(upsertJobConfigParam.getFlinkCheckpointConfig())) {
       CheckPointParam checkPointParam = CliConfigUtil
@@ -528,21 +531,7 @@ public class JobConfigApiController extends BaseController {
     if (jobConfigDTO == null) {
       throw new BizException(SysErrorEnum.JOB_CONFIG_JOB_IS_NOT_EXIST);
     }
-    DeployModeEnum deployModeEnum = jobConfigDTO.getDeployModeEnum();
-    switch (deployModeEnum) {
-      case LOCAL:
-        log.info(" 本地模式启动 {}", deployModeEnum);
-        return jobStandaloneServerAO;
-      case YARN_PER:
-      case YARN_APPLICATION:
-        log.info(" yan  模式启动 {}", deployModeEnum);
-        return jobYarnServerAO;
-      case STANDALONE:
-        log.info(" STANDALONE模式启动 {}", deployModeEnum);
-        return jobStandaloneServerAO;
-      default:
-        throw new RuntimeException("不支持该模式系统");
-    }
+    return JobServerAOFactory.getJobServerAO(jobConfigDTO.getDeployModeEnum());
   }
 
   private RestResult checkPointParam(CheckPointParam checkPointParam) {

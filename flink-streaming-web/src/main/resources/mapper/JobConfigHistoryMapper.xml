@@ -8,6 +8,7 @@
     <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
     <result column="job_desc" jdbcType="VARCHAR" property="jobDesc"/>
     <result column="deploy_mode" jdbcType="VARCHAR" property="deployMode"/>
+    <result column="cron" jdbcType="VARCHAR" property="cron"/>
     <result column="flink_run_config" jdbcType="VARCHAR" property="flinkRunConfig"/>
     <result column="flink_checkpoint_config" jdbcType="VARCHAR" property="flinkCheckpointConfig"/>
     <result column="ext_jar_path" jdbcType="VARCHAR" property="extJarPath"/>
@@ -27,7 +28,7 @@
   <sql id="Base_Column_List">
     id
     , job_config_id, job_name, job_desc, deploy_mode, flink_run_config, flink_checkpoint_config,
-    ext_jar_path, version, job_type, is_deleted, create_time, edit_time, creator, editor
+    ext_jar_path, version, job_type, is_deleted, create_time, edit_time, creator, editor,cron
   </sql>
   <sql id="Blob_Column_List">
     flink_sql
@@ -42,13 +43,13 @@
     flink_run_config, flink_checkpoint_config,
     ext_jar_path, version, job_type, is_deleted,
     create_time, edit_time, creator,
-    editor, flink_sql)
+    editor, flink_sql,cron)
     values (#{jobConfigId,jdbcType=BIGINT}, #{jobName,jdbcType=VARCHAR},
     #{jobDesc,jdbcType=VARCHAR}, #{deployMode,jdbcType=VARCHAR},
     #{flinkRunConfig,jdbcType=VARCHAR}, #{flinkCheckpointConfig,jdbcType=VARCHAR},
     #{extJarPath,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{jobType,jdbcType=INTEGER}, 0,
     now(), now(), #{creator,jdbcType=VARCHAR},
-    #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR})
+    #{editor,jdbcType=VARCHAR}, #{flinkSql,jdbcType=LONGVARCHAR} , #{cron,jdbcType=VARCHAR})
   </insert>
 
   <select id="selectByJobConfigId" resultMap="ResultMapWithBLOBs">

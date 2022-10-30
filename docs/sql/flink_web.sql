@@ -75,6 +75,7 @@ ALTER TABLE job_config add `custom_args` varchar(128)  DEFAULT NULL COMMENT '启
 ALTER TABLE job_config add `custom_main_class` varchar(128)  DEFAULT NULL COMMENT '程序入口类' AFTER custom_args;
 ALTER TABLE job_config add `custom_jar_url` varchar(128)  DEFAULT NULL   COMMENT'自定义jar的http地址 如:http://ccblog.cn/xx.jar' AFTER custom_main_class;
 ALTER TABLE job_config ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
+ALTER TABLE job_config ADD COLUMN cron  VARCHAR(128) NULL COMMENT '批任务定时调度 如 0/20 * * * * ? 表示每20秒 执行任务 ' AFTER status;
 
 -- ----------------------------
 -- Table structure for job_config_history
@@ -99,7 +100,7 @@ CREATE TABLE `job_config_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='flink任务配置历史变更表';
 ALTER TABLE job_config_history ADD COLUMN job_desc VARCHAR(255) NULL COMMENT '任务描述' AFTER job_name;
 ALTER TABLE job_config_history add `job_type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '任务类型 0:sql 1:自定义jar' AFTER version ;
-
+ALTER TABLE job_config_history ADD COLUMN cron  VARCHAR(128) NULL COMMENT '批任务定时调度 如 0/20 * * * * ? 表示每20秒 执行任务 ' AFTER version;
 -- ----------------------------
 -- Table structure for job_run_log
 -- ----------------------------

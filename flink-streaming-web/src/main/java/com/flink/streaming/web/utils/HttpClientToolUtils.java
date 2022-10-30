@@ -1,5 +1,6 @@
 package com.flink.streaming.web.utils;
 
+import com.flink.streaming.web.common.SystemConstants;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -54,7 +55,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 
-
 @Slf4j
 public class HttpClientToolUtils {
   //CHECKSTYLE:OFF
@@ -96,12 +96,12 @@ public class HttpClientToolUtils {
 
   public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap)
       throws IOException {
-    return doPost(url, paramMap, headMap, null, null, "utf-8");
+    return doPost(url, paramMap, headMap, null, null, SystemConstants.CODE_UTF_8);
   }
 
   public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap,
       int connectTimeout) throws IOException {
-    return doPost(url, paramMap, headMap, null, null, "utf-8", connectTimeout);
+    return doPost(url, paramMap, headMap, null, null, SystemConstants.CODE_UTF_8, connectTimeout);
   }
 
   public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap,
@@ -131,7 +131,7 @@ public class HttpClientToolUtils {
       String body, String mimeType, String charset,
       int connectTimeout) throws IOException {
     if (StringUtils.isBlank(charset)) {
-      charset = "utf=8";
+      charset = SystemConstants.CODE_UTF_8;
     }
     String result = "";
     // 采用绕过验证的方式处理https请求
@@ -219,21 +219,21 @@ public class HttpClientToolUtils {
   }
 
   public static String doGet(String url) throws IOException {
-    return doGet(url, null, null, "utf-8", 0);
+    return doGet(url, null, null, SystemConstants.CODE_UTF_8, 0);
   }
 
   public static String doGet(String url, int connectTimeout) throws IOException {
-    return doGet(url, null, null, "utf-8", connectTimeout);
+    return doGet(url, null, null, SystemConstants.CODE_UTF_8, connectTimeout);
   }
 
   public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap)
       throws IOException {
-    return doGet(url, paramMap, headMap, "utf-8", 0);
+    return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, 0);
   }
 
   public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
       int connectTimeout) throws IOException {
-    return doGet(url, paramMap, headMap, "utf-8", connectTimeout);
+    return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, connectTimeout);
   }
 
   public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
@@ -335,13 +335,13 @@ public class HttpClientToolUtils {
   public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
       String charset, int connectTimeout)
       throws IOException {
-    return doGet(url, paramMap, headMap, "utf-8", connectTimeout, null);
+    return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, connectTimeout, null);
   }
 
   public static Map<String, Object> doGetFull(String url, Map<String, String> paramMap,
       Map<String, String> headMap, String charset,
       int connectTimeout) throws IOException {
-    charset = StringUtils.isBlank(charset) ? "utf-8" : charset;
+    charset = StringUtils.isBlank(charset) ? SystemConstants.CODE_UTF_8 : charset;
     Map<String, Object> retMap = new HashMap<String, Object>();
     String result = "";
     // 采用绕过验证的方式处理https请求
@@ -444,7 +444,7 @@ public class HttpClientToolUtils {
   public static Map<String, Object> doPostFull(String url, Map<String, String> paramMap,
       Map<String, String> headMap, String body, String mimeType,
       String charset, int connectTimeout, String cookieSpec) throws IOException {
-    charset = StringUtils.isBlank(charset) ? "utf-8" : charset;
+    charset = StringUtils.isBlank(charset) ? SystemConstants.CODE_UTF_8 : charset;
     Map<String, Object> retMap = new HashMap<String, Object>();
     String result = "";
     // 采用绕过验证的方式处理https请求
@@ -745,7 +745,7 @@ public class HttpClientToolUtils {
       return map;
     }
     try {
-      list = URLEncodedUtils.parse(new URI(url), "UTF-8");
+      list = URLEncodedUtils.parse(new URI(url), SystemConstants.CODE_UTF_8);
     } catch (URISyntaxException e) {
       log.error("HttpClientToolUtils.getParamByUrl.error.解析url出错");
     }

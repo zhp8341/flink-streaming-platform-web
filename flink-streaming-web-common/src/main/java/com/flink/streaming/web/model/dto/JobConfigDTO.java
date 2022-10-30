@@ -141,6 +141,11 @@ public class JobConfigDTO implements Serializable {
 
   private String downloadUrl;
 
+  /**
+   * cron表达式
+   */
+  private String cron;
+
 
   public List<String> getExtJarPathUrl() {
     if (extJarPath == null) {
@@ -186,6 +191,7 @@ public class JobConfigDTO implements Serializable {
     jobConfig.setEditor(jobConfigDTO.getEditor());
     jobConfig.setLastRunLogId(jobConfigDTO.getLastRunLogId());
     jobConfig.setExtJarPath(jobConfigDTO.getExtJarPath());
+    jobConfig.setCron(jobConfigDTO.getCron());
 
     if (jobConfigDTO.getJobTypeEnum() != null) {
       jobConfig.setJobType(jobConfigDTO.getJobTypeEnum().getCode());
@@ -220,7 +226,7 @@ public class JobConfigDTO implements Serializable {
     jobConfigDTO.setFlinkSql(jobConfig.getFlinkSql());
     jobConfigDTO.setLastRunLogId(jobConfig.getLastRunLogId());
     jobConfigDTO.setExtJarPath(jobConfig.getExtJarPath());
-
+    jobConfigDTO.setCron(jobConfig.getCron());
     jobConfigDTO.setJobTypeEnum(JobTypeEnum.getJobTypeEnum(jobConfig.getJobType()));
     jobConfigDTO.setCustomArgs(jobConfig.getCustomArgs());
     jobConfigDTO.setCustomMainClass(jobConfig.getCustomMainClass());
