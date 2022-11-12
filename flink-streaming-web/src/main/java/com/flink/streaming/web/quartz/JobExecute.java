@@ -10,6 +10,7 @@ import com.flink.streaming.web.service.JobConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
+@Lazy
 public class JobExecute implements Job {
 
   private static final String NAME = "quartz-job";

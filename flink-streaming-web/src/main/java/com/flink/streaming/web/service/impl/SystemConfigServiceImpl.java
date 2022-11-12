@@ -144,19 +144,24 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     if (StringUtils.isNotEmpty(url)) {
       return url;
     }
-    switch (deployModeEnum) {
-      case LOCAL:
-      case STANDALONE:
-        url = getFlinkHttpAddress(deployModeEnum);
-        break;
-      case YARN_APPLICATION:
-      case YARN_PER:
-        url = getYarnRmHttpAddress();
-        break;
-      default:
-        throw new BizException("不支持该模式=" + deployModeEnum.name());
+    try {
+      switch (deployModeEnum) {
+        case LOCAL:
+        case STANDALONE:
+          url = getFlinkHttpAddress(deployModeEnum);
+          break;
+        case YARN_APPLICATION:
+        case YARN_PER:
+          url = getYarnRmHttpAddress();
+          break;
+        default:
+          throw new BizException("不支持该模式=" + deployModeEnum.name());
+      }
+      localCache.put(deployModeEnum.name(), url);
+    } catch (Exception e) {
+      log.error("getFlinkUrl is error", e);
+      localCache.put(deployModeEnum.name(), "null");
     }
-    localCache.put(deployModeEnum.name(), url);
     return url;
   }
 
@@ -274,7 +279,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         log.error("单个http异常={}", http, e);
       }
     }
-    throw new BizException("网络异常 url=" + urls);
+    throw new BizException("网络异常 url=" + urlHa);
   }
 
 }
