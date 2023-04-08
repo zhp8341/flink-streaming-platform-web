@@ -23,7 +23,6 @@ public class Demo {
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     settings = EnvironmentSettings.newInstance()
-        .useBlinkPlanner()
         .inStreamingMode()
         .build();
     tEnv = StreamTableEnvironment.create(env, settings);

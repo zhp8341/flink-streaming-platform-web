@@ -12,9 +12,9 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.internal.TableEnvironmentInternal;
 import org.apache.flink.table.delegation.Parser;
-import org.apache.flink.table.operations.CatalogSinkModifyOperation;
 import org.apache.flink.table.operations.ModifyOperation;
 import org.apache.flink.table.operations.Operation;
+import org.apache.flink.table.operations.SinkModifyOperation;
 import org.apache.flink.table.operations.command.SetOperation;
 
 /**
@@ -61,6 +61,7 @@ public class ExecuteSql {
           break;
 
         case "BeginStatementSetOperation":
+        case "EndStatementSetOperation":
           System.out.println("####stmt= " + stmt);
           log.info("####stmt={}", stmt);
           break;
@@ -89,10 +90,11 @@ public class ExecuteSql {
         case "NopOperation":
           ((TableEnvironmentInternal) tEnv).executeInternal(parser.parse(stmt).get(0));
           break;
-        case "CatalogSinkModifyOperation":
-          modifyOperationList.add((CatalogSinkModifyOperation) operation);
+        case "SinkModifyOperation":
+          modifyOperationList.add((SinkModifyOperation) operation);
           break;
         default:
+          log.error("不支持此Operation类型  {}", operation.getClass().getSimpleName());
           throw new RuntimeException("不支持该语法 sql=" + stmt);
       }
     }
