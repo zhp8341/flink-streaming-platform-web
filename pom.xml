@@ -38,8 +38,8 @@
         <java_target_version>1.8</java_target_version>
         <file_encoding>UTF-8</file_encoding>
         <flink_streaming_version>1.5.0.RELEASE</flink_streaming_version>
-        <flink.version>1.14.3</flink.version>
-        <scala.binary.version>2.11</scala.binary.version>
+        <flink.version>1.15.3</flink.version>
+        <scala.binary.version>2.12</scala.binary.version>
         <spring.boot.version>2.2.8.RELEASE</spring.boot.version>
     </properties>
 

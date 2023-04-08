@@ -24,10 +24,10 @@ mysql版本 5.6+
 #### 1、flink客户端安装
 
 下载对应版本 
-https://www.apache.org/dyn/closer.lua/flink/flink-1.14.3/flink-1.14.3-bin-scala_2.11.tgz 然后解压
+https://www.apache.org/dyn/closer.lua/flink/flink-1.15.3/flink-1.15.3-bin-scala_2.11.tgz 然后解压
 
 
-a: /flink-1.14.3/conf  
+a: /flink-1.15.3/conf  
 
 **1、YARN_PER模式** 
 

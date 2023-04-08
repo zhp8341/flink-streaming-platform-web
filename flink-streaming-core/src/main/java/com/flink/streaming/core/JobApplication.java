@@ -16,7 +16,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.calcite.shaded.com.google.common.base.Preconditions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableEnvironment;
@@ -60,7 +59,6 @@ public class JobApplication {
         LOG.info("[SQL_BATCH]本次任务是批任务");
         //批处理
         settings = EnvironmentSettings.newInstance()
-            .useBlinkPlanner()
             .inBatchMode()
             .build();
         tEnv = TableEnvironment.create(settings);
@@ -70,7 +68,6 @@ public class JobApplication {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         settings = EnvironmentSettings.newInstance()
-            .useBlinkPlanner()
             .inStreamingMode()
             .build();
         tEnv = StreamTableEnvironment.create(env, settings);
@@ -97,7 +94,9 @@ public class JobApplication {
   private static JobRunParam buildParam(String[] args) throws Exception {
     ParameterTool parameterTool = ParameterTool.fromArgs(args);
     String sqlPath = parameterTool.get("sql");
-    Preconditions.checkNotNull(sqlPath, "-sql参数 不能为空");
+    if (StringUtils.isEmpty(sqlPath)) {
+      throw new NullPointerException("-sql参数 不能为空");
+    }
     JobRunParam jobRunParam = new JobRunParam();
     jobRunParam.setSqlPath(sqlPath);
     jobRunParam.setCheckPointParam(CheckPointParams.buildCheckPointParam(parameterTool));
