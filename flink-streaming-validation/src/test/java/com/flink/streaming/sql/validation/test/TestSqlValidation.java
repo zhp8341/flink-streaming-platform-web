@@ -17,7 +17,8 @@ import org.junit.Test;
  */
 public class TestSqlValidation {
 
-  private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/hive-test.sql";
+  private static String test_sql_file = "/Users/liquan/workspace/git_project/flink-streaming-platform-web/flink-streaming-core/src/hive-test.sql";
+//  private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/hive-test.sql";
 
   @Test
   public void checkSql() throws IOException {

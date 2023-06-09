@@ -22,7 +22,7 @@
 
 8、flink-streaming-web 模块是REST服务模块，运行启动类是：com.flink.streaming.web.StartApplication
 
-9、启动完成后，访问本地: localhost:8080   用户名: admin  密码: 123456
+9、启动完成后，访问本地: localhost:8180   用户名: admin  密码: 123456
 
 10、系统设置：flink_streaming_platform_web_home=你自己的路径/flink-streaming-platform-web/
 
