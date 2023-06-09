@@ -1,4 +1,4 @@
-目前web客户端支持的flink版本是1.15.3,如果需要调整flink版本可下载源码
+目前web客户端支持的flink版本是1.16.2,如果需要调整flink版本可下载源码
 然后修改pom里面的版本号 https://github.com/zhp8341/flink-streaming-platform-web/blob/master/pom.xml 
 ~~~~
 <flink.version>1.12.0</flink.version> <!--flink版本-->
