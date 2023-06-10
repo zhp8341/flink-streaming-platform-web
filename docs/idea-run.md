@@ -22,13 +22,13 @@
 
 8、flink-streaming-web 模块是REST服务模块，运行启动类是：com.flink.streaming.web.StartApplication
 
-9、启动完成后，访问本地: localhost:8080   用户名: admin  密码: 123456
+9、启动完成后，访问本地: localhost:8180   用户名: admin  密码: 123456
 
 10、系统设置：flink_streaming_platform_web_home=你自己的路径/flink-streaming-platform-web/
 
-11、如果你开发环境有 YARN 就配置 yarn_rm_http_address  (根据你自己的确定)
+11、本地启动flink集群./start-cluster.sh 并在系统配置中 flink_rest_http_address为http://localhost:8180/
 
-12、如果是standalone模式，需要本地运行Flink 集群，并配置 flink_rest_http_address
+12、创建任务,并设置运行模式为Local Cluster，然后就可以愉快的写sql了
 ```
 
 ## 原理

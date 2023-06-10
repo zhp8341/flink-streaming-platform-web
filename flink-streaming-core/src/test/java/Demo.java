@@ -10,8 +10,8 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 public class Demo {
 
-
-  private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/test.sql";
+  private static String test_sql_file = "/Users/liquan/workspace/git_project/flink-streaming-platform-web/flink-streaming-core/src/test.sql";
+//  private static String test_sql_file = "/Users/edy/git/flink-streaming-platform-web/flink-streaming-core/src/test.sql";
 
 
   public static void main(String[] args) throws Exception {
