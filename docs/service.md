@@ -41,7 +41,7 @@
 2022-09-04 | 1小时 | flink-streaming-platform-web平台介绍及对方业务需求支持讨论
 2022-11-04 | 2小时30分 | flink-streaming-platform-web平台介绍及大数据相关基础知识讲解
 2022-11-24 | 2小时30分 | flink-streaming-platform-web平台介绍及环境搭建（flink hadoop等）
-
+2023-11-14 | 1小时30分 | flink-streaming-platform-web平台介绍及环境搭建（大数据相关知识等）
 ### 联系方式
 
 * E-mail: zhuhuipei@163.com
