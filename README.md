@@ -13,6 +13,14 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 ### 如需[技术付费服务点击查看](/docs/service.md)
 
+* **大环境差、生活所逼，兼职做项目、大学生毕业设计等。 有需要的可联系本人，本人15年以上互联网开发工作经验，精通Java、python**
+```text
+内容含如下：
+1、后端应用系统开发，实现高并发 高性能 高可用 、
+2、大数据领域 spark flink  hadoop体系 流计算、批处理 、etl 。
+3、大模型领域（基于各种开源模型实现平台化、产品化，图、文、视频都可做、 langchain 、ControlNet 、stablediffusionxl及各种开源模型等）
+```
+* **联系方式：下面有钉钉群二维码， （或者搜索钉钉群： 34315096 ）入群后可私聊我（群主）**
 
 ## 一、简介 
   flink-streaming-platform-web系统是基于[Apache Flink](https://flink.apache.org) 封装的一个可视化的、轻量级的flink web客户端系统，用户只需在web
@@ -178,9 +186,7 @@ https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b
 
 
 
-钉钉  http://img.ccblog.cn/flink/dd2.png 
 
-微信二维码 http://img.ccblog.cn/flink/wx2.png
 
 
  完全按照1.14.3的连接器相关的配置详见
@@ -248,10 +254,8 @@ https://nightlies.apache.org/flink/flink-docs-release-1.13/zh/docs/connectors/ta
  请加钉钉群： 34315096 
 
 钉钉 
- [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
 
-http://img.ccblog.cn/flink/dd2.png 
-
+![钉钉群](./docs/img/dd.png)
 
  
  ##  十、使用情况 
@@ -268,11 +272,6 @@ http://img.ccblog.cn/flink/dd2.png
 ### 如需[技术付费服务点击查看](/docs/service.md)
      
 ## 十三、 捐赠
-
-[点击打开支付宝捐赠](http://img.ccblog.cn/jz/zfb.jpg)
-
-
-[点击打开微信捐赠](http://img.ccblog.cn/jz/wxzf.jpg)
 
 
 
