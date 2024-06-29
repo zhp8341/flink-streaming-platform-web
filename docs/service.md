@@ -45,8 +45,10 @@
 ### 联系方式
 
 * E-mail: zhuhuipei@163.com
-* 钉钉群： 34315096  （入群后加我钉钉即可）
 * 微信号： zhp8341 (加的时候 备注：付费服务)  
+* 个人钉钉
+*  ![本人钉钉](./img/me.jpg)
+
 
 钉钉
 [钉钉二维码](http://img.ccblog.cn/flink/dd2.png)
