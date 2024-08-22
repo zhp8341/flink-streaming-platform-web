@@ -1,5 +1,5 @@
 
-## 该项目获得 [Flink Forward Asia Hackathon (2021) 季军 ](https://mp.weixin.qq.com/s/J2OkX_D34ktfwSfhwdmXYQ)     备用地址 https://blog.csdn.net/weixin_44904816/article/details/122485916
+## 该项目获得 [Flink Forward Asia Hackathon (2021) 季军 ](https://mp.weixin.qq.com/s/J2OkX_D34ktfwSfhwdmXYQ)    
 
 **国内文章备用地址（因为github上面 图片效果可能看不到，原因你懂的 哈哈）**
 
