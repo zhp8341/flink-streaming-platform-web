@@ -5,6 +5,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 CREATE DATABASE `flink_web` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE flink_web;
 -- ----------------------------
+-- CREATE DATABASES test
+-- ----------------------------
+CREATE DATABASE IF NOT EXISTS test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+USE test;
+
+-- ----------------------------
 -- Table structure for alart_log
 -- ----------------------------
 DROP TABLE IF EXISTS `alart_log`;
