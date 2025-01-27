@@ -1,13 +1,5 @@
 package com.flink.streaming.web.utils;
 
-import java.io.IOException;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,6 +14,12 @@ import com.fasterxml.jackson.databind.deser.std.DateDeserializers.DateDeserializ
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.io.IOException;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * JacksonUtil
@@ -218,8 +216,8 @@ public class JacksonUtil {
     for (int i = 1; i < clazz.length; i++) {
       parameterClasses[i - 1] = clazz[i];
     }
-    JavaType javatype = mapper.getTypeFactory()
-        .constructParametricType(parametrized, parameterClasses);
+    JavaType javatype =
+        mapper.getTypeFactory().constructParametricType(parametrized, parameterClasses);
     return mapper.readValue(json, javatype);
   }
 
@@ -237,8 +235,8 @@ public class JacksonUtil {
     if (parametrized == null || parameterClasses == null || parameterClasses.length == 0) {
       return null;
     }
-    JavaType javatype = mapper.getTypeFactory()
-        .constructParametricType(parametrized, parameterClasses);
+    JavaType javatype =
+        mapper.getTypeFactory().constructParametricType(parametrized, parameterClasses);
     return javatype;
   }
 
@@ -258,17 +256,16 @@ public class JacksonUtil {
     mapper.registerModule(newModule);
   }
 
-  /**
-   * 自定义格式化日期类
-   */
+  /** 自定义格式化日期类 */
   private static class MyDateTimeFormat extends SimpleDateFormat {
 
     private static final long serialVersionUID = 1899483410257705750L;
 
-     MyDateTimeFormat(String pattern) {
+    MyDateTimeFormat(String pattern) {
       super(pattern);
     }
 
+    @Override
     public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
       if (date.getTime() % 1000 > 0) {
         SimpleDateFormat formatTimstamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -279,7 +276,7 @@ public class JacksonUtil {
       }
     }
 
-    //CHECKSTYLE:OFF
+    // CHECKSTYLE:OFF
     @Override
     public Date parse(String source, ParsePosition pos) {
       if (source == null || source.length() == 0) {
@@ -300,11 +297,10 @@ public class JacksonUtil {
       return super.parse(source, pos);
     }
   }
-  //CHECKSTYLE:ON
 
-  /**
-   * 解决时间戳为整数转换的问题
-   */
+  // CHECKSTYLE:ON
+
+  /** 解决时间戳为整数转换的问题 */
   private static class MyDateDeserializer extends DateDeserializer {
 
     private static final long serialVersionUID = -6218693745160760598L;
