@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author zhuhuipei
- * @Description:
+ * @author zhuhuipei @Description:
  * @date 2018/7/19
  * @time 下午6:18
  */
@@ -34,10 +33,7 @@ public final class IpUtil {
     return ipUtil;
   }
 
-
-  /**
-   * 获取本机的ip地址
-   */
+  /** 获取本机的ip地址 */
   public String getLocalIP() {
     if (StringUtils.isEmpty(ip)) {
       return getIp();
@@ -53,14 +49,14 @@ public final class IpUtil {
       return "UnknownHost";
     }
     byte[] ipAddr = addr.getAddress();
-    String ipAddrStr = "";
+    StringBuilder ipAddrStr = new StringBuilder();
     for (int i = 0; i < ipAddr.length; i++) {
       if (i > 0) {
-        ipAddrStr += ".";
+        ipAddrStr.append(".");
       }
-      ipAddrStr += ipAddr[i] & 0xFF;
+      ipAddrStr.append(ipAddr[i] & 0xFF);
     }
-    return ipAddrStr;
+    return ipAddrStr.toString();
   }
 
   public String getHostIp() {
@@ -72,7 +68,9 @@ public final class IpUtil {
         Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
         while (addresses.hasMoreElements()) {
           inetAddress = addresses.nextElement();
-          if (inetAddress != null && inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress()
+          if (inetAddress != null
+              && inetAddress instanceof Inet4Address
+              && !inetAddress.isLoopbackAddress()
               && inetAddress.getHostAddress().indexOf(":") == -1) {
             return inetAddress.getHostAddress();
           }
@@ -83,7 +81,6 @@ public final class IpUtil {
     }
     return null;
   }
-
 
   private List<String> getIpAddress() {
     try {
@@ -108,6 +105,7 @@ public final class IpUtil {
       return null;
     }
   }
+
   public static InetAddress getInetAddress() throws SocketException {
     Enumeration<NetworkInterface> allNetInterfaces = NetworkInterface.getNetworkInterfaces();
     InetAddress ipHost = null;
@@ -127,13 +125,11 @@ public final class IpUtil {
   public static String getHostName() {
     try {
       InetAddress addr = InetAddress.getLocalHost();
-      return addr.getHostName(); //获取本机计算机名称
+      return addr.getHostName(); // 获取本机计算机名称
     } catch (Exception e) {
       log.error("getHostName is error", e);
       throw new BizException(e.getMessage());
     }
-
-
   }
 
   public static void main(String[] args) throws Exception {

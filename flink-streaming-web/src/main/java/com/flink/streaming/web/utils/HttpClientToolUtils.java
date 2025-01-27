@@ -54,10 +54,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-
 @Slf4j
 public class HttpClientToolUtils {
-  //CHECKSTYLE:OFF
+  // CHECKSTYLE:OFF
 
   /**
    * 绕过验证
@@ -71,26 +70,25 @@ public class HttpClientToolUtils {
     SSLContext sc = SSLContext.getInstance("TLSv1.2");
 
     // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
-    X509TrustManager trustManager = new X509TrustManager() {
-      @Override
-      public void checkClientTrusted(
-          java.security.cert.X509Certificate[] paramArrayOfX509Certificate, String paramString)
-          throws CertificateException {
-      }
+    X509TrustManager trustManager =
+        new X509TrustManager() {
+          @Override
+          public void checkClientTrusted(
+              java.security.cert.X509Certificate[] paramArrayOfX509Certificate, String paramString)
+              throws CertificateException {}
 
-      @Override
-      public void checkServerTrusted(
-          java.security.cert.X509Certificate[] paramArrayOfX509Certificate, String paramString)
-          throws CertificateException {
-      }
+          @Override
+          public void checkServerTrusted(
+              java.security.cert.X509Certificate[] paramArrayOfX509Certificate, String paramString)
+              throws CertificateException {}
 
-      @Override
-      public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-        return null;
-      }
-    };
+          @Override
+          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
+          }
+        };
 
-    sc.init(null, new TrustManager[]{trustManager}, null);
+    sc.init(null, new TrustManager[] {trustManager}, null);
     return sc;
   }
 
@@ -99,13 +97,19 @@ public class HttpClientToolUtils {
     return doPost(url, paramMap, headMap, null, null, SystemConstants.CODE_UTF_8);
   }
 
-  public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      int connectTimeout) throws IOException {
+  public static String doPost(
+      String url, Map<String, String> paramMap, Map<String, String> headMap, int connectTimeout)
+      throws IOException {
     return doPost(url, paramMap, headMap, null, null, SystemConstants.CODE_UTF_8, connectTimeout);
   }
 
-  public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      String body, String mimeType, String charset)
+  public static String doPost(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String body,
+      String mimeType,
+      String charset)
       throws IOException {
     return doPost(url, paramMap, headMap, body, mimeType, charset, 0);
   }
@@ -113,12 +117,12 @@ public class HttpClientToolUtils {
   /**
    * 模拟请求
    *
-   * @param url            资源地址
-   * @param paramMap       参数列表
-   * @param headMap        请求头列表
-   * @param body           请求body
-   * @param mimeType       MIME type
-   * @param charset        编码
+   * @param url 资源地址
+   * @param paramMap 参数列表
+   * @param headMap 请求头列表
+   * @param body 请求body
+   * @param mimeType MIME type
+   * @param charset 编码
    * @param connectTimeout 超时时间
    * @return
    * @throws NoSuchAlgorithmException
@@ -126,10 +130,15 @@ public class HttpClientToolUtils {
    * @throws IOException
    * @throws ClientProtocolException
    */
-
-  public static String doPost(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      String body, String mimeType, String charset,
-      int connectTimeout) throws IOException {
+  public static String doPost(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String body,
+      String mimeType,
+      String charset,
+      int connectTimeout)
+      throws IOException {
     if (StringUtils.isBlank(charset)) {
       charset = SystemConstants.CODE_UTF_8;
     }
@@ -143,12 +152,13 @@ public class HttpClientToolUtils {
       return null;
     }
     // 设置协议http和https对应的处理socket链接工厂的对象
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-        .<ConnectionSocketFactory>create()
-        .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslcontext)).build();
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(
-        socketFactoryRegistry);
+    Registry<ConnectionSocketFactory> socketFactoryRegistry =
+        RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.INSTANCE)
+            .register("https", new SSLConnectionSocketFactory(sslcontext))
+            .build();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(socketFactoryRegistry);
     // HttpClients.custom().setConnectionManager(connManager);
 
     // 创建自定义的httpclient对象
@@ -159,15 +169,20 @@ public class HttpClientToolUtils {
     }
     // 设置代理
     HttpHost proxy = null;
-    if (headMap != null && headMap.containsKey("caohua_proxy_ip") && headMap
-        .containsKey("caohua_proxy_port")) {
+    if (headMap != null
+        && headMap.containsKey("caohua_proxy_ip")
+        && headMap.containsKey("caohua_proxy_port")) {
       String proxyIp = headMap.get("caohua_proxy_ip");
       int proxyPort = Integer.parseInt(headMap.get("caohua_proxy_port"));
       proxy = new HttpHost(proxyIp, proxyPort);
     }
     RequestConfig defaultRequestConfig = null;
-    defaultRequestConfig = RequestConfig.custom().setConnectTimeout(connectTimeout)
-        .setSocketTimeout(connectTimeout).setProxy(proxy).build();
+    defaultRequestConfig =
+        RequestConfig.custom()
+            .setConnectTimeout(connectTimeout)
+            .setSocketTimeout(connectTimeout)
+            .setProxy(proxy)
+            .build();
 
     // 创建自定义的httpclient对象
     HttpClientBuilder builder = HttpClients.custom().setConnectionManager(connManager);
@@ -231,14 +246,20 @@ public class HttpClientToolUtils {
     return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, 0);
   }
 
-  public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      int connectTimeout) throws IOException {
+  public static String doGet(
+      String url, Map<String, String> paramMap, Map<String, String> headMap, int connectTimeout)
+      throws IOException {
     return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, connectTimeout);
   }
 
-  public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      String charset, int connectTimeout,
-      String cookieSpec) throws IOException {
+  public static String doGet(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String charset,
+      int connectTimeout,
+      String cookieSpec)
+      throws IOException {
     String result = "";
     // 采用绕过验证的方式处理https请求
     SSLContext sslcontext = null;
@@ -250,12 +271,13 @@ public class HttpClientToolUtils {
     }
 
     // 设置协议http和https对应的处理socket链接工厂的对象
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-        .<ConnectionSocketFactory>create()
-        .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslcontext)).build();
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(
-        socketFactoryRegistry);
+    Registry<ConnectionSocketFactory> socketFactoryRegistry =
+        RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.INSTANCE)
+            .register("https", new SSLConnectionSocketFactory(sslcontext))
+            .build();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(socketFactoryRegistry);
     // HttpClients.custom().setConnectionManager(connManager);
 
     if (connectTimeout <= 0) {
@@ -263,20 +285,29 @@ public class HttpClientToolUtils {
     }
     // 设置代理
     HttpHost proxy = null;
-    if (headMap != null && headMap.containsKey("caohua_proxy_ip") && headMap
-        .containsKey("caohua_proxy_port")) {
+    if (headMap != null
+        && headMap.containsKey("caohua_proxy_ip")
+        && headMap.containsKey("caohua_proxy_port")) {
       String proxyIp = headMap.get("caohua_proxy_ip");
       int proxyPort = Integer.parseInt(headMap.get("caohua_proxy_port"));
       proxy = new HttpHost(proxyIp, proxyPort);
     }
     RequestConfig defaultRequestConfig = null;
     if (StringUtils.isNotBlank(cookieSpec)) {
-      defaultRequestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout)
-          .setConnectTimeout(connectTimeout).setCookieSpec(cookieSpec)
-          .setProxy(proxy).build();
+      defaultRequestConfig =
+          RequestConfig.custom()
+              .setSocketTimeout(connectTimeout)
+              .setConnectTimeout(connectTimeout)
+              .setCookieSpec(cookieSpec)
+              .setProxy(proxy)
+              .build();
     } else {
-      defaultRequestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout)
-          .setConnectTimeout(connectTimeout).setProxy(proxy).build();
+      defaultRequestConfig =
+          RequestConfig.custom()
+              .setSocketTimeout(connectTimeout)
+              .setConnectTimeout(connectTimeout)
+              .setProxy(proxy)
+              .build();
     } // 创建自定义的httpclient对象
     HttpClientBuilder builder = HttpClients.custom().setConnectionManager(connManager);
     builder.setDefaultRequestConfig(defaultRequestConfig);
@@ -332,15 +363,23 @@ public class HttpClientToolUtils {
     return result;
   }
 
-  public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headMap,
-      String charset, int connectTimeout)
+  public static String doGet(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String charset,
+      int connectTimeout)
       throws IOException {
     return doGet(url, paramMap, headMap, SystemConstants.CODE_UTF_8, connectTimeout, null);
   }
 
-  public static Map<String, Object> doGetFull(String url, Map<String, String> paramMap,
-      Map<String, String> headMap, String charset,
-      int connectTimeout) throws IOException {
+  public static Map<String, Object> doGetFull(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String charset,
+      int connectTimeout)
+      throws IOException {
     charset = StringUtils.isBlank(charset) ? SystemConstants.CODE_UTF_8 : charset;
     Map<String, Object> retMap = new HashMap<String, Object>();
     String result = "";
@@ -354,12 +393,13 @@ public class HttpClientToolUtils {
     }
 
     // 设置协议http和https对应的处理socket链接工厂的对象
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-        .<ConnectionSocketFactory>create()
-        .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslcontext)).build();
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(
-        socketFactoryRegistry);
+    Registry<ConnectionSocketFactory> socketFactoryRegistry =
+        RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.INSTANCE)
+            .register("https", new SSLConnectionSocketFactory(sslcontext))
+            .build();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(socketFactoryRegistry);
     // HttpClients.custom().setConnectionManager(connManager);
 
     // setConnectTimeout：设置连接超时时间，单位毫秒。
@@ -371,16 +411,20 @@ public class HttpClientToolUtils {
     }
     // 设置代理
     HttpHost proxy = null;
-    if (headMap != null && headMap.containsKey("caohua_proxy_ip") && headMap
-        .containsKey("caohua_proxy_port")) {
+    if (headMap != null
+        && headMap.containsKey("caohua_proxy_ip")
+        && headMap.containsKey("caohua_proxy_port")) {
       String proxyIp = headMap.get("caohua_proxy_ip");
       int proxyPort = Integer.parseInt(headMap.get("caohua_proxy_port"));
       proxy = new HttpHost(proxyIp, proxyPort);
     }
     CookieStore cookieStore = new BasicCookieStore();
-    RequestConfig defaultRequestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout)
-        .setConnectTimeout(connectTimeout).setProxy(proxy)
-        .build();
+    RequestConfig defaultRequestConfig =
+        RequestConfig.custom()
+            .setSocketTimeout(connectTimeout)
+            .setConnectTimeout(connectTimeout)
+            .setProxy(proxy)
+            .build();
     // 创建自定义的httpclient对象
     HttpClientBuilder builder = HttpClients.custom().setConnectionManager(connManager);
     builder.setDefaultRequestConfig(defaultRequestConfig);
@@ -435,15 +479,27 @@ public class HttpClientToolUtils {
     return retMap;
   }
 
-  public static Map<String, Object> doPostFull(String url, Map<String, String> paramMap,
-      Map<String, String> headMap, String body, String mimeType,
-      String charset) throws IOException {
+  public static Map<String, Object> doPostFull(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String body,
+      String mimeType,
+      String charset)
+      throws IOException {
     return doPostFull(url, paramMap, headMap, body, mimeType, charset, 0);
   }
 
-  public static Map<String, Object> doPostFull(String url, Map<String, String> paramMap,
-      Map<String, String> headMap, String body, String mimeType,
-      String charset, int connectTimeout, String cookieSpec) throws IOException {
+  public static Map<String, Object> doPostFull(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String body,
+      String mimeType,
+      String charset,
+      int connectTimeout,
+      String cookieSpec)
+      throws IOException {
     charset = StringUtils.isBlank(charset) ? SystemConstants.CODE_UTF_8 : charset;
     Map<String, Object> retMap = new HashMap<String, Object>();
     String result = "";
@@ -457,12 +513,13 @@ public class HttpClientToolUtils {
     }
 
     // 设置协议http和https对应的处理socket链接工厂的对象
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-        .<ConnectionSocketFactory>create()
-        .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslcontext)).build();
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(
-        socketFactoryRegistry);
+    Registry<ConnectionSocketFactory> socketFactoryRegistry =
+        RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.INSTANCE)
+            .register("https", new SSLConnectionSocketFactory(sslcontext))
+            .build();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(socketFactoryRegistry);
     // HttpClients.custom().setConnectionManager(connManager);
     // setSocketTimeout：请求获取数据的超时时间，单位毫秒。 如果访问一个接口，多少时间内无法返回数据，就直接放弃此次调用。
     if (connectTimeout == 0) {
@@ -470,8 +527,9 @@ public class HttpClientToolUtils {
     }
     // 设置代理
     HttpHost proxy = null;
-    if (headMap != null && headMap.containsKey("caohua_proxy_ip") && headMap
-        .containsKey("caohua_proxy_port")) {
+    if (headMap != null
+        && headMap.containsKey("caohua_proxy_ip")
+        && headMap.containsKey("caohua_proxy_port")) {
       String proxyIp = headMap.get("caohua_proxy_ip");
       int proxyPort = Integer.parseInt(headMap.get("caohua_proxy_port"));
       proxy = new HttpHost(proxyIp, proxyPort);
@@ -479,11 +537,15 @@ public class HttpClientToolUtils {
     CookieStore cookieStore = new BasicCookieStore();
     RequestConfig defaultRequestConfig = null;
     if (StringUtils.isNotBlank(cookieSpec)) {
-      defaultRequestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout)
-          .setCookieSpec(cookieSpec).setProxy(proxy).build();
+      defaultRequestConfig =
+          RequestConfig.custom()
+              .setSocketTimeout(connectTimeout)
+              .setCookieSpec(cookieSpec)
+              .setProxy(proxy)
+              .build();
     } else {
-      defaultRequestConfig = RequestConfig.custom().setSocketTimeout(connectTimeout).setProxy(proxy)
-          .build();
+      defaultRequestConfig =
+          RequestConfig.custom().setSocketTimeout(connectTimeout).setProxy(proxy).build();
     }
 
     // 创建自定义的httpclient对象
@@ -542,52 +604,57 @@ public class HttpClientToolUtils {
     return retMap;
   }
 
-  public static Map<String, Object> doPostFull(String url, Map<String, String> paramMap,
-      Map<String, String> headMap, String body, String mimeType,
-      String charset, int connectTimeout) throws IOException {
+  public static Map<String, Object> doPostFull(
+      String url,
+      Map<String, String> paramMap,
+      Map<String, String> headMap,
+      String body,
+      String mimeType,
+      String charset,
+      int connectTimeout)
+      throws IOException {
     return doPostFull(url, paramMap, headMap, body, mimeType, charset, connectTimeout, null);
   }
 
-  /**
-   * 创建SSL安全连接
-   */
+  /** 创建SSL安全连接 */
   @SuppressWarnings("deprecation")
   public static SSLConnectionSocketFactory createSSLConnSocketFactory() {
     SSLConnectionSocketFactory sslsf = null;
     try {
       X509TrustManager xtm = new X509TrustManager() { // 创建TrustManager
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-            throws CertificateException {
-        }
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {}
 
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-            throws CertificateException {
-        }
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {}
 
-        public X509Certificate[] getAcceptedIssuers() {
-          return null;
-        }
-      };
+            public X509Certificate[] getAcceptedIssuers() {
+              return null;
+            }
+          };
       SSLContext ctx = SSLContext.getInstance("SSL");
-      ctx.init(null, new TrustManager[]{xtm}, null);
-      sslsf = new SSLConnectionSocketFactory(ctx, new X509HostnameVerifier() {
-        @Override
-        public boolean verify(String arg0, SSLSession arg1) {
-          return true;
-        }
+      ctx.init(null, new TrustManager[] {xtm}, null);
+      sslsf =
+          new SSLConnectionSocketFactory(
+              ctx,
+              new X509HostnameVerifier() {
+                @Override
+                public boolean verify(String arg0, SSLSession arg1) {
+                  return true;
+                }
 
-        @Override
-        public void verify(String host, SSLSocket ssl) throws IOException {
-        }
+                @Override
+                public void verify(String host, SSLSocket ssl) throws IOException {}
 
-        @Override
-        public void verify(String host, X509Certificate cert) throws SSLException {
-        }
+                @Override
+                public void verify(String host, X509Certificate cert) throws SSLException {}
 
-        @Override
-        public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
-        }
-      });
+                @Override
+                public void verify(String host, String[] cns, String[] subjectAlts)
+                    throws SSLException {}
+              });
     } catch (GeneralSecurityException e) {
       e.printStackTrace();
     }
@@ -758,8 +825,12 @@ public class HttpClientToolUtils {
   public static String doPut(String url, Map<String, String> cookieMap, String paramJsonStr) {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     HttpPut httpPut = new HttpPut(url);
-    RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(35000)
-        .setConnectionRequestTimeout(35000).setSocketTimeout(60000).build();
+    RequestConfig requestConfig =
+        RequestConfig.custom()
+            .setConnectTimeout(35000)
+            .setConnectionRequestTimeout(35000)
+            .setSocketTimeout(60000)
+            .build();
     httpPut.setConfig(requestConfig);
 
     for (String key : cookieMap.keySet()) {
@@ -799,6 +870,5 @@ public class HttpClientToolUtils {
     }
     return null;
   }
-//CHECKSTYLE:ON
+  // CHECKSTYLE:ON
 }
-
