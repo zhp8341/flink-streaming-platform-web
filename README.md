@@ -6,9 +6,6 @@
 https://xie.infoq.cn/article/1af0cb75be056fea788e6c86b 
 
 
-**AI信息工具一体的网站**: https://www.aibars.net/zh
-
-
 
 **github地址**  https://github.com/zhp8341/flink-streaming-platform-web
 
